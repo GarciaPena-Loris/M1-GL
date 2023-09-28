@@ -1,0 +1,146 @@
+-- Cachier des charges #1
+
+
+-- Table des Utilisateurs
+CREATE TABLE Utilisateur (
+    email VARCHAR(255),
+    nom VARCHAR(255),
+    adresse VARCHAR(255)
+);
+
+-- Table des Photographies
+CREATE TABLE Photographie (
+    photo_id INT references contenue_id PRIMARY KEY,
+    lieu VARCHAR(255),
+    date_prise DATE,
+    idendifiant_appareil INT,
+    configuration_id INT,
+    license_id INT,
+    FOREIGN KEY (idendifiant_appareil) REFERENCES AppareilsPhoto (idendifiant_appareil),
+    FOREIGN KEY (configuration_id) REFERENCES Configurations (configuration_id),
+    FOREIGN KEY (license_id) REFERENCES LicenseDeDistribution (license_id)
+);
+
+-- Table des Appareils Photo
+CREATE TABLE AppareilPhoto (
+    appareil_id INT PRIMARY KEY,
+    modele VARCHAR(255)
+);
+
+-- Table des Configurations
+CREATE TABLE Configuration (
+    configuration_id INT PRIMARY KEY,
+    ouverture_focale DECIMAL(4, 2),
+    temps_exposition DECIMAL(4, 2),
+    flash BOOLEAN,
+    distance_focale DECIMAL(4, 2)
+);
+
+-- Table des LicenceDeDistribution
+CREATE TABLE LicenceDeDistribution (
+    licence_id INT PRIMARY KEY,
+    droit_reserves VARCHAR(255),
+    utilisation_commerciale BOOLEAN,
+    modification_autorisee BOOLEAN,
+);
+
+-- Table associant les Photographies aux Utilisateurs
+CREATE TABLE Publication (
+    email VARCHAR(255),
+    photo_id INT,
+    date_publication DATE,
+    PRIMARY KEY (email, code_photo),
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email),
+    FOREIGN KEY (code_photo) REFERENCES Photographies (code_photo)
+);
+
+
+-- ############################################################################################################
+-- Cachier des charges #2
+
+-- Table des CollectionsDePhotos
+CREATE TABLE CollectionDePhotos (
+    collection_id INT PRIMARY KEY,
+    description VARCHAR(255),
+    email VARCHAR(255) AS proprietaire,
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email)
+);
+
+-- Table d'association entre les CollectionsDePhotos et les Photographies
+CREATE TABLE Contient (
+    collection_id INT,
+    photo_id INT,
+    PRIMARY KEY (collection_id, photo_id),
+    FOREIGN KEY (collection_id) REFERENCES CollectionsDePhotos (collection_id),
+    FOREIGN KEY (photo_id) REFERENCES Photographies (photo_id)
+);
+
+-- Table des Albums
+CREATE TABLE Album (
+    albums_id references CollectionsDePhotos (collection_id),   
+    PRIMARY KEY (collection_id)
+);
+
+-- Table des Galerie
+CREATE TABLE Galerie (
+    galerie_id references CollectionsDePhotos (collection_id),
+    PRIMARY KEY (collection_id)
+);
+
+-- Table d'association Galerie - Utilisateurs
+CREATE TABLE GaleriePublicateur (
+    galerie_id INT,
+    email VARCHAR(255) AS publicateur,
+    PRIMARY KEY (galerie_id, email),
+    FOREIGN KEY (galerie_id) REFERENCES Galerie (collection_id),
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email)
+);
+
+-- ############################################################################################################
+-- Cachier des charges #3
+
+-- Table des Abonnements
+CREATE TABLE Abonnement (
+    email VARCHAR(255),
+    email_abonnement VARCHAR(255),
+    PRIMARY KEY (email, email_abonnement),
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email),
+    FOREIGN KEY (email_abonnement) REFERENCES Utilisateurs (email)
+);
+
+-- Table des Likes
+CREATE TABLE Like (
+    email VARCHAR(255),
+    photo_id INT,
+    nombre_like INT,
+    PRIMARY KEY (email, photo_id),
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email),
+    FOREIGN KEY (photo_id) REFERENCES Photographies (photo_id)
+);
+
+-- Table des Marques
+CREATE TABLE Marques (
+    email VARCHAR(255),
+    photo_id INT,
+    tag VARCHAR(255),
+    mots_cles VARCHAR(255),
+    PRIMARY KEY (email, photo_id),
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email),
+    FOREIGN KEY (photo_id) REFERENCES Photographies (photo_id)
+);
+
+-- Table des Vues
+CREATE TABLE Vue (
+    email VARCHAR(255),
+    photo_id INT,
+    nombre_vues INT,
+    PRIMARY KEY (email, photo_id),
+    FOREIGN KEY (email) REFERENCES Utilisateurs (email),
+    FOREIGN KEY (photo_id) REFERENCES Photographies (photo_id)
+);
+
+-- Table des ContenueNumerique
+CREATE TABLE ContenueNumerique (
+    contenue_id INT PRIMARY KEY
+);
+
