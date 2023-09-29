@@ -193,12 +193,12 @@ public class UtilisationDictiannaire {
         System.out.println("\tPomme ? " + sortedDictionary.containsKey("Pomme"));
         System.out.println("\tLivre ? " + sortedDictionary.containsKey("Livre"));
         System.out.println("\tPoire ? " + sortedDictionary.containsKey("Poire"));
-    
+
         // ################################################################################################################
 
         System.out.println("\n####################################\n");
 
-        System.out.println("Test de la classe sortedDictionary : \n");
+        System.out.println("Test de la classe sortedDictionaryDichoto : \n");
 
         System.out.println("## Création d'un dictionnaire vide ##");
         IDictionary sortedDictionaryDichoto = new SortedDictionaryDichoto();
@@ -256,6 +256,7 @@ public class UtilisationDictiannaire {
         System.out.println("\tPomme : " + sortedDictionaryDichoto.get("Pomme"));
         System.out.println("\tLivre : " + sortedDictionaryDichoto.get("Livre"));
         System.out.println("\tMaison : " + sortedDictionaryDichoto.get("Maison"));
+        System.out.println("\tTrotoir : " + sortedDictionaryDichoto.get("Trotoir"));
         System.out.println("\tPoire : " + sortedDictionaryDichoto.get("Poire"));
 
         System.out.println("## Test fonction containsKey ##");
@@ -264,6 +265,7 @@ public class UtilisationDictiannaire {
         System.out.println("\tPomme ? " + sortedDictionaryDichoto.containsKey("Pomme"));
         System.out.println("\tLivre ? " + sortedDictionaryDichoto.containsKey("Livre"));
         System.out.println("\tPoire ? " + sortedDictionaryDichoto.containsKey("Poire"));
-        
+        System.out.println("\tTrotoir ? " + sortedDictionaryDichoto.containsKey("Trotoir"));
+
     }
 }

@@ -42,8 +42,6 @@ public class SortedDictionary extends AbstractDictionary {
         Object[] newKeys = new Object[size + 1]; // On cree deux nouveaux tableaux de taille + 1
         Object[] newValues = new Object[size + 1];
         int index = 0;
-        if (size > 0) {
-        }
         while (index < size && ((Comparable<Object>) keys[index]).compareTo(key) < 0) {
             index++;
         }

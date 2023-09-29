@@ -9,26 +9,24 @@ public class SortedDictionaryDichoto extends AbstractDictionary {
         size = 0;
     }
 
-    // IndexOf
+    // IndexOf dichotomique
     protected int indexOf(Object key) {
-        int index = size / 2;
-        int pos = ((Comparable<Object>) keys[index]).compareTo(key);
-        if (pos == 0) {
-            return index;
-        }
-        if (pos < 0) {
-            for (int i = index; i < size; i++) {
-                if (((Comparable<Object>) keys[i]).compareTo(key) == 0) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = index; i >= 0; i--) {
-                if (((Comparable<Object>) keys[i]).compareTo(key) == 0) {
-                    return i;
-                }
+        int min = 0;
+        int max = size - 1;
+        int index = 0;
+        int pos = 0;
+        while (min <= max) {
+            index = (min + max) / 2;
+            pos = ((Comparable<Object>) keys[index]).compareTo(key);
+            if (pos < 0) { // Si l'élément est plus petit que la clé (dans l'ordre alphabétique a < b)
+                min = index + 1; // On place le min à l'index + 1
+            } else if (pos > 0) { // Si l'élément est plus grand que la clé (dans l'ordre alphabétique b > a)
+                max = index - 1; // On place le max à l'index - 1
+            } else {
+                return index;
             }
         }
+        return -1;
     }
 
     // NewIndexOf
@@ -38,21 +36,24 @@ public class SortedDictionaryDichoto extends AbstractDictionary {
         }
         Object[] newKeys = new Object[size + 1]; // On cree deux nouveaux tableaux de taille + 1
         Object[] newValues = new Object[size + 1];
-        int index = size / 2;
-        int pos = ((Comparable<Object>) keys[index]).compareTo(key);
-        if (pos < 0) {
-            for (int i = index; i < size; i++) {
-                if (((Comparable<Object>) keys[i]).compareTo(key) == 0) {
-                    return i;
-                }
-            }
-        } else {
-            for (int i = index; i >= 0; i--) {
-                if (((Comparable<Object>) keys[i]).compareTo(key) == 0) {
-                    return i;
-                }
+
+        // Utilisation de min et max
+        int min = 0;
+        int max = size - 1;
+        int index = 0;
+        int pos = 0;
+        while (min <= max) {
+            index = (min + max) / 2;
+            pos = ((Comparable<Object>) keys[index]).compareTo(key);
+            if (pos < 0) { // Si l'élément est plus petit que la clé (dans l'ordre alphabétique a < b)
+                min = index + 1; // On place le min à l'index + 1
+            } else if (pos > 0) { // Si l'élément est plus grand que la clé (dans l'ordre alphabétique b > a)
+                max = index - 1; // On place le max à l'index - 1
+            } else {
+                break;
             }
         }
+
         // On copie les élements avant l'index
         for (int i = 0; i < index; i++) {
             newKeys[i] = keys[i];
