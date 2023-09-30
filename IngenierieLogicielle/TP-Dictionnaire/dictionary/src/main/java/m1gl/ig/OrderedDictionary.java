@@ -1,3 +1,4 @@
+package m1gl.ig;
 public class OrderedDictionary extends AbstractDictionary {
 
     public OrderedDictionary() {
@@ -16,9 +17,6 @@ public class OrderedDictionary extends AbstractDictionary {
     }
 
     protected int newIndexOf(Object key) {
-        if (indexOf(key) != -1) { // Verifier si key n'est pas dans le dictionnaire
-            return -1;
-        }
         Object[] newKeys = new Object[size + 1]; // On cree deux nouveaux tableaux de taille + 1
         Object[] newValues = new Object[size + 1];
         for (int i = 0; i < size; i++) { // On copie les valeurs du tableau dans le nouveau tableau

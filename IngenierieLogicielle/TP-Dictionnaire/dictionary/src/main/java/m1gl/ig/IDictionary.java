@@ -1,3 +1,4 @@
+package m1gl.ig;
 /**
  * IDictionary
  */

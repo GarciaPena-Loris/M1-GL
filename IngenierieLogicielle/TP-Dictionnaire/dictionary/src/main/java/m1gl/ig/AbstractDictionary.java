@@ -1,3 +1,4 @@
+package m1gl.ig;
 public abstract class AbstractDictionary implements IDictionary {
     protected Object[] keys;
     protected Object[] values;
@@ -40,10 +41,10 @@ public abstract class AbstractDictionary implements IDictionary {
             return "{}";
         }
         String s = "{\n";
-        for (int i = 0; i < keys.length - 1 ; i++) {
-            s += "\t " + keys[i] + " : " + values[i] + ",  \n";
+        for (int i = 0; i < keys.length; i++) {
+            s += "\t " + keys[i] + " : " + values[i] + " \n";
         }
-        s += "\t " + keys[keys.length-1] + " : " + values[keys.length-1] + "\n\t}";
+        s += "\t}";
         return s;
     }
 

@@ -1,3 +1,4 @@
+package m1gl.ig;
 public class FastDictionary extends AbstractDictionary {
     /*
      * Pour les instances de FaslDictionary, on utilise une technique de hachage
@@ -65,9 +66,6 @@ public class FastDictionary extends AbstractDictionary {
     }
 
     protected int newIndexOf(Object key) {
-        if (indexOf(key) != -1) { // Verifier si key n'est pas dans le dictionnaire
-            return -1;
-        }
         if (mustGrow()) { // Verifier si les tableaux sont au 3/4 pleins
             grow(); // Si oui, on les agrandit
         }
