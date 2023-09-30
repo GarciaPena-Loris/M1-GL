@@ -6,10 +6,10 @@ import java.rmi.RemoteException;
 public interface IAnimal extends Remote {
 	/* METHODS */
 	String getNom() throws RemoteException;
-	
-	String afficherNomAnimal() throws RemoteException;
 
-	String afficherRace() throws RemoteException;
+	String afficherAnimal() throws RemoteException;
+
+	String afficherAnimalComplet() throws RemoteException;
 
 	void crier() throws RemoteException;
 
@@ -18,7 +18,5 @@ public interface IAnimal extends Remote {
 	void modifierDossierDeSuivi(String contenue) throws RemoteException;
 
 	Espece getEspece() throws RemoteException;
-
-	void nommer() throws RemoteException;
 
 }

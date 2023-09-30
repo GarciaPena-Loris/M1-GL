@@ -5,8 +5,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.cabinet.common.rmi.IAnimal;
 import com.cabinet.common.rmi.Espece;
+import com.cabinet.common.rmi.IAnimal;
 
 public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 
@@ -30,7 +30,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 		String dateString = formatter.format(date);
-		this.dossierDeSuivi = new DossierDeSuivi("\n\t" + dateString + " : RAS \n");
+		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1mRAS\033[0m \n");
 	}
 
 	protected AnimalImpl(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri)
@@ -44,7 +44,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 		String dateString = formatter.format(date);
-		this.dossierDeSuivi = new DossierDeSuivi("\n\t" + dateString + " : RAS \n");
+		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1mRAS\033[0m \n");
 	}
 
 	protected AnimalImpl(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri,
@@ -59,7 +59,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 		String dateString = formatter.format(date);
-		this.dossierDeSuivi = new DossierDeSuivi("\n\t" + dateString + " : " + etat + "\n");
+		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1m" + etat + "\033[0m\n");
 	}
 
 	/* METHODS */
@@ -69,13 +69,33 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 	}
 
 	@Override
-	public String afficherNomAnimal() throws RemoteException {
-		return "L'animal " + this.nom + " appartient à " + this.maitre;
+	public String afficherAnimal() throws RemoteException {
+		String detailAnimal = "\033[31m" + this.nom + "\033[0m le \033[33m" + this.race + "\033[0m";
+
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+		String dateString = formatter.format(date);
+		System.out.println("\033[3m" + dateString + "\033[0m - Un client regarde " + detailAnimal + ".");
+		return "- " + detailAnimal;
 	}
 
 	@Override
-	public String afficherRace() throws RemoteException {
-		return "L'animal " + this.nom + " est un " + this.race;
+	public String afficherAnimalComplet() throws RemoteException {
+		Espece copieEspece = new Espece(espece.getNom(), espece.getDureeDeVieMoyenne());
+		String detailAnimal = "\033[31m" + this.nom + "\033[0m"
+				+ " appartenant à \033[34m" + this.maitre + "\033[0m"
+				+ " est un \033[33m" + copieEspece.getNom() + "\033[0m"
+				+ " de type \033[32m" + this.race + "\033[0m"
+				+ ", ça durée de vie moyenne est de \033[1m" + copieEspece.getDureeDeVieMoyenne() + " ans\033[0m,"
+				+ " il crie \033[35m" + this.cri + "\033[0m."
+				+ "\n  Son nouveau dossier médical est : " + this.dossierDeSuivi.afficherDossierDeSuivi();
+
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+		String dateString = formatter.format(date);
+
+		System.out.println("\033[3m" + dateString + "\033[0m - Un client se renseigne sur l'animal " + detailAnimal);
+		return "- L'animal " + detailAnimal;
 	}
 
 	@Override
@@ -93,7 +113,8 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 		String dateString = formatter.format(date);
-		this.dossierDeSuivi.modifierDossierDeSuivi("\t" + dateString + " : " + contenue + "\n");
+		this.dossierDeSuivi
+				.modifierDossierDeSuivi("\t\033[3m" + dateString + "\033[0m : \033[1m" + contenue + "\033[0m\n");
 	}
 
 	@Override
@@ -101,14 +122,9 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		return new Espece(espece.getNom(), espece.getDureeDeVieMoyenne());
 	}
 
+	// toString
 	@Override
-	public void nommer() throws RemoteException {
-		Espece copieEspece = new Espece(espece.getNom(), espece.getDureeDeVieMoyenne());
-		System.out.println("L'animal " + this.nom
-				+ " appartient à " + this.maitre
-				+ " c'est un " + copieEspece.getNom()
-				+ " de type " + this.race
-				+ ", ça durée de vie moyenne est de " + copieEspece.getDureeDeVieMoyenne() + " ans."
-				+ "\nSon dossier médical est : " + this.dossierDeSuivi.afficherDossierDeSuivi());
+	public String toString() {
+		return "\033[31m" + this.nom + "\033[0m le \033[33m" + this.race + "\033[0m";
 	}
 }

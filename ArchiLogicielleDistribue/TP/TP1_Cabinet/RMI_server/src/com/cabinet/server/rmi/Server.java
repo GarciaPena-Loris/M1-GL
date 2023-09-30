@@ -28,8 +28,8 @@ public class Server {
 			cabinet.ajoutAnimal("Rex", "Paul", "Bulldog", "Chien", 15, "Wouaf !");
 			cabinet.ajoutAnimal("Médor", "Jean", "Labrador", "Chien", 15, "Wouaf !");
 			cabinet.ajoutAnimal("Edouar", "Hugue", "Lézard", "Reptile", 10, "Sssiou !", "Mort");
-			cabinet.ajoutAnimal("Denver", "Hugue", "T-Rex", "Dinausaure", 100, "Graou !");
-			cabinet.ajoutAnimal("Shrek", "Dreamworks", "Ogre", "Ogre", 14000000, "Greuh", "Vieux");
+			cabinet.ajoutAnimal("Denver", "Hugue", "T-Rex", "Dinausaure", 14000000, "Graou !", "Vieux");
+			cabinet.ajoutAnimal("Shrek", "Dreamworks", "Ogre", "Ogre", 150, "Greuh");
 			cabinet.ajoutAnimal("Nemo", "Disney", "Poisson-Clown", "Poisson", 5, "Bloup");
 			cabinet.ajoutAnimal("Franklin", "Nickelodeon", "Tortue", "Reptile", 100, "Tortue");
 			cabinet.ajoutAnimal("Titi", "Warner Bros", "Canari", "Oiseau", 5, "Cui cui");

@@ -6,79 +6,162 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 
+import com.cabinet.common.rmi.Espece;
 import com.cabinet.common.rmi.IAnimal;
 import com.cabinet.common.rmi.ICabinetMedical;
-import com.cabinet.common.rmi.Espece;
 
 public class Client {
 	private Client() {
 	}
 
-	public static void main(String[] args) {
-		String host = (args.length < 1) ? null : args[0];
+	private static void afficherAnimaux(ICabinetMedical cabinet) {
+		// Afficher tous les animaux
 		try {
-			Registry registry = LocateRegistry.getRegistry(host);
-
-			// IAnimal animal = (IAnimal) registry.lookup("Animal");
-			ICabinetMedical cabinet = (ICabinetMedical) registry.lookup("Cabinet");
-
-			// Afficher tous les animaux
 			System.out.println("Liste des animaux: ");
 			cabinet.getPatients().forEach((animal) -> {
 				try {
-					System.out.println(animal.afficherNomAnimal());
+					System.out.println("\t" + animal.afficherAnimal());
+					Thread.sleep(30);
+
 				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			});
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 
-			// Chercher un animal
-			Scanner scanner = new Scanner(System.in);
-			try {
-				System.out.println("Saisir un nom d'animal: ");
-				String inputString = scanner.nextLine();
-				IAnimal animal = cabinet.chercherAnimal(inputString);
+	private static void chercherAnimal(ICabinetMedical cabinet) {
+		// Chercher un animal
+		Scanner scanner = new Scanner(System.in);
+		try {
+			System.out.println("Saisir un nom d'animal: ");
+			String inputString = scanner.nextLine();
+			IAnimal animal = cabinet.chercherAnimal(inputString);
 
-				if (animal != null) {
-					System.out.println(animal);
+			if (animal != null) {
+				// System.out.println("Object : " + animal + "\n");
 
-					String nom = animal.afficherNomAnimal();
-					String race = animal.afficherRace();
-					Espece espece = animal.getEspece();
+				System.out.println(animal.afficherAnimalComplet());
 
-					System.out.println(nom);
-					System.out.println(race);
-					System.out.println("Cet animal est un " + espece.getNom()
-							+ ", il a donc une durée de vie d'environ " + espece.getDureeDeVieMoyenne() + " ans.");
-
-					animal.crier();
-
-					// Dossier de suivi
-					System.out.println("Dossier de suivi: " + animal.afficherDossierDeSuivi());
-
+				// Choix modification dossier de suivi
+				System.out.println("Voulez-vous modifier le dossier de suivi ? (oui/non)");
+				inputString = scanner.nextLine();
+				if (inputString.equals("oui")) {
 					// Saisir nouveau dossier de suivi
-					try {
-						System.out.println("Saisir nouveau dossier de suivi: ");
-						inputString = scanner.nextLine();
-						animal.modifierDossierDeSuivi(inputString);
-						System.out.println("Le nouveau dossier de suivi: " + animal.afficherDossierDeSuivi());
-					} finally {
-						scanner.close();
-					}
-
-					// Nommer
-					animal.nommer();
-
+					System.out.println("Saisir nouveau dossier de suivi: ");
+					inputString = scanner.nextLine();
+					animal.modifierDossierDeSuivi(inputString);
+					System.out.println("Le nouveau dossier de suivi: " + animal.afficherDossierDeSuivi());
 				} else {
-					System.out.println("Animal non trouvé");
+					System.out.println("Dossier de suivi non modifié");
 				}
-			} finally {
-				scanner.close();
+
+			} else {
+				System.out.println("Animal non trouvé");
 			}
 
 		} catch (RemoteException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private static void ajouterAnimal(ICabinetMedical cabinet) {
+		System.out.println("Veuillez saisir les informations de l'animal...");
+		Scanner scanner = new Scanner(System.in);
+		try {
+			System.out.println("  Saisir un nom d'animal: ");
+			String nom = scanner.nextLine();
+			System.out.println("  Saisir un nom de maitre: ");
+			String maitre = scanner.nextLine();
+			System.out.println("  Saisir une race: ");
+			String race = scanner.nextLine();
+			System.out.println("  Saisir une espece: ");
+			String nomEspece = scanner.nextLine();
+			System.out.println("  Saisir une durée de vie moyenne: ");
+			int dureeDeVieMoyenne = scanner.nextInt();
+			System.out.println("  Saisir un cri: ");
+			String cri = scanner.nextLine();
+
+			boolean succed = cabinet.ajoutAnimal(nom, maitre, race, nomEspece, dureeDeVieMoyenne, cri);
+			if (succed) {
+				System.out.println("Animal ajouté :");
+				System.out.println(cabinet.chercherAnimal(nom).afficherAnimalComplet());
+			} else
+				System.out.println("Animal non ajouté.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void supprimerAnimal(ICabinetMedical cabinet) {
+		// Supprimer un animal
+		Scanner scanner = new Scanner(System.in);
+		try {
+			System.out.println("Saisir un nom d'animal: ");
+			String inputString = scanner.nextLine();
+			boolean succed = cabinet.supprimerAnimal(inputString);
+			if (succed)
+				System.out.println("Animal supprimé !");
+			else
+				System.out.println("Animal non trouvé");
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) {
+		String host = (args.length < 1) ? null : args[0];
+		Registry registry;
+		try {
+			registry = LocateRegistry.getRegistry(host);
+
+			// IAnimal animal = (IAnimal) registry.lookup("Animal");
+			ICabinetMedical cabinet = (ICabinetMedical) registry.lookup("Cabinet");
+
+			Scanner scanner = new Scanner(System.in);
+			while (true) {
+				// Choix action
+				System.out.println("\nChoisir une action : ");
+				System.out.println("\t1. Afficher tous les animaux");
+				System.out.println("\t2. Chercher un animal");
+				System.out.println("\t3. Ajouter un animal");
+				System.out.println("\t4. Supprimer un animal");
+				System.out.println("\t5. Quitter");
+
+				int inputInt = scanner.nextInt();
+				switch (inputInt) {
+					case 1:
+						afficherAnimaux(cabinet);
+						break;
+					case 2:
+						chercherAnimal(cabinet);
+						break;
+					case 3:
+						ajouterAnimal(cabinet);
+						break;
+					case 4:
+						supprimerAnimal(cabinet);
+						break;
+					case 5:
+						System.out.println("Au revoir !");
+						scanner.close();
+						System.exit(0);
+						break;
+					default:
+						System.out.println("Choix invalide...");
+						break;
+				}
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		} catch (NotBoundException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
