@@ -20,16 +20,15 @@ int main(int argc, char *argv[]) {
     int nb_pi = atoi(argv[2]);
     int nb_pi_recu = 0;
 
-    in_addr_t* tab_ip_pi = malloc(sizeof(in_addr_t) * nb_pi);
-    in_port_t* tab_port_pi = malloc(sizeof(in_port_t) * nb_pi);
+    struct sockaddr_in* tab_socket = malloc(sizeof(struct sockaddr_in) * nb_pi);
 
     // -- Etape 1 : Création socket pconfig
     int socket_pconfig = socket(PF_INET, SOCK_DGRAM, 0);
     if (socket_pconfig == -1){
-        perror("❌ Pconfig : problème création socket :");
+        perror("❌ Pconfig : problème création 🧦 :");
         exit(1);
     }
-    printf("✅ Pconfig : Création de la socket réussie.\n");
+    printf("✅ Pconfig : Création de la 🧦 réussie.\n");
 
     // -- Etape 2 : Nommage la socket pconfig
     struct sockaddr_in ss;
@@ -43,7 +42,7 @@ int main(int argc, char *argv[]) {
         perror("❌ Pconfig : problème de bind :");
         exit(1); 
     }
-    printf("✅ Pconfig : Nommage de la socket réussi.\n");
+    printf("✅ Pconfig : Nommage de la 🧦 réussi.\n");
 
     //-- Etape 2 bis : affichage de l'ip
       struct ifaddrs *ifap, *ifa;
@@ -67,75 +66,70 @@ int main(int argc, char *argv[]) {
         
         struct sockaddr_in sockPi;
         socklen_t lgAdr = sizeof(struct sockaddr_in);
-        char messageRecu[20];
 
-        ssize_t resRecv = recvfrom(socket_pconfig, &messageRecu, sizeof(messageRecu), 0, (struct sockaddr *) &sockPi, &lgAdr);
+        int numero_pi;
+        ssize_t resRecv = recvfrom(socket_pconfig, &numero_pi, sizeof(numero_pi), 0, (struct sockaddr *) &sockPi, &lgAdr);
         if (resRecv == -1) {
             perror("❌ Pconfig : problème avec le recvFrom :");
             exit(1);
         }
-        printf("📧 Message reçus : %s\n", messageRecu);
+        printf("📧 Message reçus : %d\n", numero_pi);
 
         printf("---\n");
 
-        int numero_pi = atoi(messageRecu);
-        int ip_pi = atoi(inet_ntoa(sockPi.sin_addr));
-        int port_pi = (int) htons(sockPi.sin_port);
+        char* ip_pi = inet_ntoa(sockPi.sin_addr);
+        int port_pi = ntohs(sockPi.sin_port);
 
-        printf("\tNuméro du Pi : %d\n", numero_pi);
-        printf("\tIp du Pi : %d\n", ip_pi);
-        printf("\tPort du Pi : %d\n", port_pi);
+        printf("\t🧮 Numéro du Pi : %d\n", numero_pi);
+        printf("\t📮 Ip du Pi : %s\n", ip_pi);
+        printf("\t🐖 Port du Pi : %d\n", port_pi);
+
+        printf("---\n");
 
         // Affectation dans les tableaux
-        tab_ip_pi[numero_pi-1] = sockPi.sin_addr.s_addr;
-        tab_port_pi[numero_pi-1] = sockPi.sin_port;
+        tab_socket[numero_pi-1] = sockPi;
 
         nb_pi_recu++;
     }
 
-    for (int i = 0; i < nb_pi; i++) {
-        printf("📨 Envois des données au Pi n°%d...\n", i+1);
+    printf("🏁 Tout les Pi on bien été receptionés, maintenant on distribut 🌐 :\n");
 
-        int numero_pi;
-        if (i == (nb_pi-1)) {
-            numero_pi = 0;
+    for (int numero_pi = 0; numero_pi < nb_pi; numero_pi++) {
+        printf("----- 📨 Envois des données au Pi n°%d -----\n", numero_pi+1);
+
+        int numero_pi_suivant;
+        if (numero_pi == (nb_pi-1)) {
+            numero_pi_suivant = 0;
         }
         else {
-            numero_pi = i+1;
+            numero_pi_suivant = numero_pi+1;
         }
 
         struct sockaddr_in socket_pi;
         socket_pi.sin_family = AF_INET;
-        socket_pi.sin_addr.s_addr = tab_ip_pi[numero_pi];
-        socket_pi.sin_port = tab_port_pi[numero_pi];
-
-        printf("📨 Envois de l'ip du suivant du Pi n°%d...\n", i+1);
-
-        in_addr_t ip_pi_suivant = tab_ip_pi[numero_pi];
+        socket_pi.sin_addr.s_addr = tab_socket[numero_pi].sin_addr.s_addr;
+        socket_pi.sin_port = tab_socket[numero_pi].sin_port;
 
         socklen_t sizeAdr = sizeof(struct sockaddr_in);
-        int resSend = sendto(socket_pconfig, &ip_pi_suivant, sizeof(ip_pi_suivant), 0, (struct sockaddr *) &socket_pi, sizeAdr);
+        int resSend = sendto(socket_pconfig, &tab_socket[numero_pi_suivant], sizeof(tab_socket[numero_pi_suivant]), 0, (struct sockaddr *) &socket_pi, sizeAdr);
 
         if (resSend == -1) {
             perror("❌ Pconfig : problème avec le send to :");
             exit(1);
         }
-        printf("✅ Nombre d'octets envoyés : %d\n", resSend);
 
-        printf("📨 Envois du port du suivant du Pi n°%d...\n", i+1);
+        char* ip_pi_suivant = inet_ntoa(tab_socket[numero_pi_suivant].sin_addr);
+        int port_pi_suivant = ntohs(tab_socket[numero_pi_suivant].sin_port);
 
-        in_port_t port_pi_suivant = tab_port_pi[numero_pi];
-        resSend = sendto(socket_pconfig, &port_pi_suivant, sizeof(port_pi_suivant), 0, (struct sockaddr *) &socket_pi, sizeAdr);
+        printf("\t🧮 Numéro du Pi suivant : %d\n", numero_pi_suivant+1);
+        printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
+        printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
+        printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
 
-        if (resSend == -1) {
-            perror("❌ Pconfig : problème avec le send to :");
-            exit(1);
-        }
-        printf("✅Nombre d'octets envoyés : %d\n", resSend);
-
-        printf("🏆 Fin envois des données au Pi n°%d...\n", i+1);
+        printf("----- 🏆 Fin envois des données au Pi n°%d -----\\nn", numero_pi+1);
     }
 
+    printf("🏁 Toutes les 🧦 on bien été envoyées !\n");
 
     // -- Etape 9 : Fermer la socket (lorsqu'elle n'est plus utilisée)
     int cls = close(socket_pconfig);
@@ -143,7 +137,7 @@ int main(int argc, char *argv[]) {
         perror("❌ Pconfig : problème avec le close :");
         exit(1);
     }
-    printf("✅ Pconfig : Fermture de la socket réussi.\n");
+    printf("🚪 Pconfig : Fermture de la socket réussi.\n");
 
     printf("🙅 Pconfig : je termine.\n");
 

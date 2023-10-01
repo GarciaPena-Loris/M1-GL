@@ -11,16 +11,16 @@
 #include "fonctionTPC.h"
 
 
-void initialisation(char* adresseIP_pconfig, char* port_pconfig, char* IP_pi, char* port_pi, char* numero_pi, in_addr_t IP_voisin, in_port_t port_voisin) {
+struct sockaddr_in initialisation(char* adresseIP_pconfig, char* port_pconfig, int numero_pi) {
     // -- Etape 1 : Création socket client  
     int socket_pi = socket(PF_INET, SOCK_DGRAM, 0);
 
     if (socket_pi == -1){
-        perror("❌ Pi : problème creation socket :");
+        perror("❌ Pi : problème creation 🧦 :");
         exit(1);
     }
 
-    printf("✅ Pi : Creation de la socket Pi réussie.\n");
+    printf("✅ Pi : Creation de la 🧦 Pi réussie.\n");
 
 
     // -- Etape 2 : Designation de la socket pconfig
@@ -29,18 +29,18 @@ void initialisation(char* adresseIP_pconfig, char* port_pconfig, char* IP_pi, ch
     socket_pconfig.sin_addr.s_addr = inet_addr(adresseIP_pconfig);
     socket_pconfig.sin_port = htons(atoi(port_pconfig));
 
-    printf("✅ Pi : Désignation de la socket pconfig réussie.\n");
+    printf("✅ Pi : Désignation de la 🧦 pconfig réussie.\n");
 
     // -- Etape 3 : Envois de son numero de processus
     printf("----- 📨 Envois numero Pi -----\n");
 
-    printf("\tNumero Pi : '%s'\n", numero_pi);
+    printf("\t🧮 Numero Pi : '%d'\n", numero_pi);
 
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
 
     printf("\t📨 Envois du numéro a l'ip : %s et au port %s\n", adresseIP_pconfig, port_pconfig);
 
-    int resSend = sendto(socket_pi, &numero_pi, strlen(numero_pi)+1, 0, (struct sockaddr *) &socket_pconfig, sizeAdr) ;
+    int resSend = sendto(socket_pi, &numero_pi, sizeof(numero_pi)+1, 0, (struct sockaddr *) &socket_pconfig, sizeAdr) ;
     
     if (resSend == -1) {
         perror("\t❌ Pi : problème avec le send to :");
@@ -52,49 +52,36 @@ void initialisation(char* adresseIP_pconfig, char* port_pconfig, char* IP_pi, ch
 
     // ---------------------------------------------------------------------
 
-    printf("----- 📩 Recevoir IP voisin -----\n");
+    printf("----- 📩 Recevoir 🧦 voisin -----\n");
 
     struct sockaddr_in sockExpediteur;
     socklen_t lgAdr = sizeof(struct sockaddr_in);
 
-    in_addr_t ip_suivant = 0;
-    ssize_t resRecv = recvfrom(socket_pi, &ip_suivant, sizeof(ip_suivant), 0, (struct sockaddr *) &sockExpediteur, &lgAdr);
+    struct sockaddr_in socket_suivant;
+    ssize_t resRecv = recvfrom(socket_pi, &socket_suivant, sizeof(socket_suivant), 0, (struct sockaddr *) &sockExpediteur, &lgAdr);
     if (resRecv == -1) {
         perror("\t❌ Pi : problème avec le recvFrom :");
         exit(1);
     }
 
-    printf("\tMessage reçus : %d\n", ip_suivant);
+    char* ip_pi_suivant = inet_ntoa(socket_suivant.sin_addr);
+    int port_pi_suivant = ntohs(socket_suivant.sin_port);
 
-    IP_voisin = ip_suivant;
+    printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
+    printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
 
-    printf("-----Fin reception IP voisin -----\n");
-
-    // ---------------------------------------------------------------------
-
-    printf("----- 📩 Recevoir port voisin -----\n");
-
-    in_port_t port_suivant = 0;
-    resRecv = recvfrom(socket_pi, &ip_suivant, sizeof(ip_suivant), 0, (struct sockaddr *) &sockExpediteur, &lgAdr);
-    if (resRecv == -1) {
-        perror("\t❌ Pi : problème avec le recvFrom :");
-        exit(1);
-    }
-
-    printf("\tMessage reçus : %d\n", ip_suivant);
-
-    port_voisin = port_suivant;
-
-    printf("-----Fin reception port voisin -----\n");
+    printf("----- 🏆 Fin reception 🧦 voisin -----\n");
 
     int cls = close(socket_pi);
     if (cls == -1) {
         perror("❌ Pi : problème avec le close :");
         exit(1); // je choisis ici d'arrêter le programme
     }
-    printf("✅ Fermeture de la socket réussi.\n");
+    printf("🚪 Fermeture de la 🧦 réussi.\n");
 
-    printf("*************Fin des échanges avec Pconfig*************\n");
+    printf(" --- 👋 Fin des échanges avec Pconfig --- \n");
+
+    return socket_suivant;
 
 }
 
@@ -138,24 +125,17 @@ void traitementClassique(int socketPconfig) {
 
 int main(int argc, char *argv[]) {
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
-    if (argc != 6){
-        printf("utilisation : %s IP_pi port_pi IP_pconfig port_pconfig numero_pi\n", argv[0]);
+    if (argc != 4){
+        printf("utilisation : %s IP_pconfig port_pconfig numero_pi\n", argv[0]);
         exit(1);
     }
-    char* IP_pi = argv[1];
-    char* port_pi = argv[2];
-    char* adresseIP_pconfig = argv[3];
-    char* port_pconfig = argv[4];
-    char* numero_pi = argv[5];
+    char* adresseIP_pconfig = argv[1];
+    char* port_pconfig = argv[2];
+    int numero_pi = atoi(argv[3]);
 
-    in_addr_t IP_voisin = 0;
-    in_port_t port_voisin = 0;
+    struct sockaddr_in socket_suivant = initialisation(adresseIP_pconfig, port_pconfig, numero_pi);
 
-    initialisation(adresseIP_pconfig, port_pconfig, IP_pi, port_pi, numero_pi, IP_voisin, port_voisin);
-
-    printf("Finiiis");
-
-    
+    printf("Finiiis \n ");
 
     printf("Pi terminé.\n");
 
