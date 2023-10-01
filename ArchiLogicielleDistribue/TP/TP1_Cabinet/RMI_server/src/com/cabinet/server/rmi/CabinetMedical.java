@@ -33,6 +33,20 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
     }
 
     @Override
+    public boolean ajoutAnimal(String nom, String maitre, String race, Espece espece, String cri, String etat)
+            throws RemoteException {
+        IAnimal patient = new AnimalImpl(nom, maitre, race, espece, cri, etat);
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+        String dateString = formatter.format(date);
+
+        System.out.println(
+                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
+        return patients.add(patient);
+    }
+
+    @Override
     public boolean ajoutAnimal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne,
             String cri)
             throws RemoteException {

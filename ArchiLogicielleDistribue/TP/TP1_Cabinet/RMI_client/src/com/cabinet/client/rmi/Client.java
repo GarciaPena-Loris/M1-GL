@@ -34,6 +34,26 @@ public class Client {
 		}
 	}
 
+	private static void afficherAnimauxComplet(ICabinetMedical cabinet) {
+		// Afficher tous les animaux complet
+		try {
+			System.out.println("Liste des animaux: ");
+			cabinet.getPatients().forEach((animal) -> {
+				try {
+					System.out.println("\t" + animal.afficherAnimalComplet());
+					Thread.sleep(50);
+
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			});
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private static void chercherAnimal(ICabinetMedical cabinet) {
 		// Chercher un animal
 		Scanner scanner = new Scanner(System.in);
@@ -114,6 +134,31 @@ public class Client {
 		}
 	}
 
+	public static void ajouterOurs(ICabinetMedical cabinet) {
+		System.out.println("Veuillez saisir les informations de l'animal...");
+		Scanner scanner = new Scanner(System.in);
+		try {
+			System.out.println("  Saisir un nom d'animal: ");
+			String nom = scanner.nextLine();
+			System.out.println("  Saisir un nom de maitre: ");
+			String maitre = scanner.nextLine();
+			System.out.println("  Saisir une race: ");
+			String race = scanner.nextLine();
+
+			Espece ours = new Ours();
+			boolean succed = cabinet.ajoutAnimal(nom, maitre, race, ours, "Rouaaaahhh !");
+
+			if (succed) {
+				System.out.println("Animal ajouté :");
+				System.out.println(cabinet.chercherAnimal(nom).afficherAnimalComplet());
+			} else
+				System.out.println("Animal non ajouté.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
 		String host = (args.length < 1) ? null : args[0];
 		Registry registry;
@@ -127,11 +172,13 @@ public class Client {
 			while (true) {
 				// Choix action
 				System.out.println("\nChoisir une action : ");
-				System.out.println("\t1. Afficher tous les animaux");
-				System.out.println("\t2. Chercher un animal");
-				System.out.println("\t3. Ajouter un animal");
-				System.out.println("\t4. Supprimer un animal");
-				System.out.println("\t5. Quitter");
+				System.out.println("\t1. Afficher tous les animaux (court)");
+				System.out.println("\t2. Afficher tous les animaux (complet)");
+				System.out.println("\t3. Chercher un animal");
+				System.out.println("\t4. Ajouter un animal");
+				System.out.println("\t5. Supprimer un animal");
+				System.out.println("\t6. Ajouter un Ours");
+				System.out.println("\t7. Quitter");
 
 				int inputInt = scanner.nextInt();
 				switch (inputInt) {
@@ -139,15 +186,21 @@ public class Client {
 						afficherAnimaux(cabinet);
 						break;
 					case 2:
-						chercherAnimal(cabinet);
+						afficherAnimauxComplet(cabinet);
 						break;
 					case 3:
-						ajouterAnimal(cabinet);
+						chercherAnimal(cabinet);
 						break;
 					case 4:
-						supprimerAnimal(cabinet);
+						ajouterAnimal(cabinet);
 						break;
 					case 5:
+						supprimerAnimal(cabinet);
+						break;
+					case 6:
+						ajouterOurs(cabinet);
+						break;
+					case 7:
 						System.out.println("Au revoir !");
 						scanner.close();
 						System.exit(0);

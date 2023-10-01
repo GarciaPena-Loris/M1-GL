@@ -33,6 +33,20 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1mRAS\033[0m \n");
 	}
 
+	protected AnimalImpl(String nom, String maitre, String race, Espece espece, String cri, String etat)
+			throws RemoteException {
+		this.nom = nom;
+		this.maitre = maitre;
+		this.race = race;
+		this.espece = espece;
+		this.cri = cri;
+
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+		String dateString = formatter.format(date);
+		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1m" + etat + "\033[0m\n");
+	}
+
 	protected AnimalImpl(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri)
 			throws RemoteException {
 		this.nom = nom;
