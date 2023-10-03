@@ -16,16 +16,15 @@ public class Server {
 	/* METHODS */
 	public static void main(String[] args) {
 		try {
-			
-			System.setProperty("java.security.policy", "security.policy");
+
+			System.setProperty("java.security.policy", "security/security.policy");
 			// Security manager
-			if (System.getSecurityManager() == null) {
-				System.setSecurityManager(new SecurityManager());
-			}
+			System.setSecurityManager(new SecurityManager());
 
 			// Codebase
 			System.setProperty("java.rmi.server.codebase",
-					"file:/C:/Users/loloy/Desktop/cours/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/RMI_client/codebase/Ours.class");
+					"file:///C:/Users/loloy/Desktop/cours/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/RMI_client/codebase/");
+
 			CabinetMedical cabinet = new CabinetMedical();
 
 			// Especes
