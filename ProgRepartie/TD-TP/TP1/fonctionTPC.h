@@ -16,8 +16,18 @@ int creerSocket() {
         perror("creerSocket : ERROR : probleme de creation socket ");
         exit(1); 
     }
-    printf("creerSocket : Création de la socket réussie.\n");
+    printf("\t🪛  creerSocket : Création de la socket réussie.\n");
     return ds;
+}
+
+void connectionSocket(int socketClient, struct sockaddr_in socket) {
+    /*Etape 3  Demandes de connection au serveur*/
+    if (connect(socketClient, (struct sockaddr *) &socket, sizeof(socket)) == -1) {
+        perror("connectionSocket : ERROR : probleme avec le connect ");
+        close(socketClient);
+        exit(1);
+    }
+    printf("\tconnectionSocket : Connection réussi.\n"); 
 }
 
 void connectionServeur(int socketClient, char* IP, char* port) {
@@ -32,7 +42,7 @@ void connectionServeur(int socketClient, char* IP, char* port) {
         close(socketClient);
         exit(1);
     }
-    printf("connectionServeur : Connection réussi.\n"); 
+    printf("\t🛰️ connectionServeur : Connection réussi.\n"); 
 }
 
 void closeSocket(int socket) {
@@ -42,9 +52,9 @@ void closeSocket(int socket) {
     }
 }
 
-void nommerSocket(int socketServeur, char* port) {
-    if (atoi(port) < 1024) {
-        printf("nommerSocket : ERROR : le port est inférrieur à 1024.");
+struct sockaddr_in nommerSocket(int socketServeur, int port) {
+    if (port < 1024) {
+        printf("\tnommerSocket : ERROR : le port est inférrieur à 1024.");
         exit(1);
     } 
     
@@ -52,38 +62,30 @@ void nommerSocket(int socketServeur, char* port) {
     adresseServeur.sin_family = AF_INET;
     adresseServeur.sin_addr.s_addr = INADDR_ANY;
 
-    if (atoi(port) == -1) {
+    if (port == -1) {
         perror("nommerSocket : ERROR : le port est invalide ");
         exit(1);
     }
-    adresseServeur.sin_port = htons(atoi(port));
+    adresseServeur.sin_port = htons(port);
 
     if (bind(socketServeur, (struct sockaddr*) &adresseServeur, sizeof(adresseServeur)) == -1) {
         perror("nommerSocket : ERROR : probleme le nommage de la socket ");
         exit(1);
     }
 
-    printf("nommerSocket : Socket serveur nommée avec succès.\n");
+    printf("\t🏷️  nommerSocket : Socket nommée avec succès.\n");
     
-    // -- Afficher ip et port du serveur
-    /* Ne sert à rien avec INADDR_ANY car la socket est disponible pour écouter les connexions sur toutes les interfaces réseau disponible.
-    socklen_t tailleAdresse = sizeof(adresseServeur);
-    if (getsockname(socketServeur, (struct sockaddr*) &adresseServeur, &tailleAdresse) == -1) {
-        perror("nommerSocket : ERROR : probleme lors de la récupération de l'ip ");
-        exit(1);
-    } 
-    printf("nommerSocket : Serveur est nommé sur l'ip %s et le port %i.\n", inet_ntoa(adresseServeur.sin_addr), ntohs(adresseServeur.sin_port));
-    */
+    return adresseServeur;
 }
 
-void ecouterDemande(int socketServeur, char* port) {
+void ecouterDemande(int socketServeur) {
     if (listen(socketServeur, 5) == -1) {
         perror("ecouterDemande : ERROR : Formatage de la boite reseau impossible ");
         close(socketServeur);
         exit(1);
     }
 
-    printf("socketServeur : Serveur en écoute sur le port %s.\n", port);
+    printf("\t👂 ecouterDemande : Socket en écoute...\n");
 }
 
 int accepterDemande(int socketServeur, struct sockaddr_in *adresseClient) {
@@ -92,7 +94,7 @@ int accepterDemande(int socketServeur, struct sockaddr_in *adresseClient) {
     int socketClient = accept(socketServeur,(struct sockaddr *) adresseClient, &tailleAdresseClient);
 
     if (socketClient == -1) {
-        perror("accepterDemande : ERROR : probleme avec l'acceptation du client ");
+        perror("🤝 accepterDemande : ERROR : probleme avec l'acceptation du client ");
         close(socketClient);
         return -1;
     }
@@ -110,7 +112,7 @@ void afficherIPMachine() {
         if (ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET) {
             sa = (struct sockaddr_in *) ifa->ifa_addr;
             addr = inet_ntoa(sa->sin_addr);
-            printf("Address IP : %s\n", addr);
+            printf("\tAddress IP : %s\n", addr);
         }
     }
     freeifaddrs(ifap);
