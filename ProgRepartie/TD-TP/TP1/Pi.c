@@ -10,9 +10,14 @@
 
 #include "fonctionTPC.h"
 
-struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, int numero_pi)
+struct Couple {
+    int numero_pi;
+    int compteur_pi;
+};
+
+struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, int port_pi, int numero_pi)
 {
-    // -- Etape 1 : Création socket client
+    // -- Etape 1 : Creation socker pi 
     int socket_pi = socket(PF_INET, SOCK_DGRAM, 0);
 
     if (socket_pi == -1)
@@ -23,28 +28,45 @@ struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, i
 
     printf("✅ Pi : Creation de la 🧦 Pi réussie.\n");
 
-    // -- Etape 2 : Designation de la socket pconfig
-    struct sockaddr_in socket_pconfig;
-    socket_pconfig.sin_family = AF_INET;
-    socket_pconfig.sin_addr.s_addr = inet_addr(adresseIP_pconfig);
-    socket_pconfig.sin_port = htons(atoi(port_pconfig));
+    // -- Etape 2 : Nommer la socket du client
+    struct sockaddr_in strctureSocket_pi;
+    strctureSocket_pi.sin_family = AF_INET;
+    strctureSocket_pi.sin_addr.s_addr = INADDR_ANY;
+    strctureSocket_pi.sin_port = htons(port_pi);
 
-    printf("✅ Pi : Désignation de la 🧦 pconfig réussie.\n");
+    int res = bind(socket_pi, (struct sockaddr*) &strctureSocket_pi, sizeof(strctureSocket_pi));
+    if (res == -1) {
+        perror("❌ Pi : probleme du bind :");
+        exit(1);
+    }
 
-    // -- Etape 3 : Envois de son numero de processus
+    printf("🏷️  Nommage de la socket réussi.\n");
+
+    printf(" --- 👋 Début des échanges avec Pconfig --- \n");
+
+    // -- Etape 1 : Designation de la socket pconfig
+    struct sockaddr_in strctureSocket_pconfig;
+    strctureSocket_pconfig.sin_family = AF_INET;
+    strctureSocket_pconfig.sin_addr.s_addr = inet_addr(adresseIP_pconfig);
+    strctureSocket_pconfig.sin_port = htons(atoi(port_pconfig));
+
+    printf("🏆 Pi : Désignation de la 🧦 pconfig réussie.\n"); 
+
+    // -- Etape 2 : Envois de son numero de processus
     printf("----- 📨 Envois numero Pi -----\n");
 
     printf("\t🧮 Numero Pi : '%d'\n", numero_pi);
+    printf("\t🐖 Port du Pi : %d\n", port_pi);
 
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
 
     printf("\t📨 Envois du numéro a l'ip : %s et au port %s\n", adresseIP_pconfig, port_pconfig);
 
-    int resSend = sendto(socket_pi, &numero_pi, sizeof(numero_pi) + 1, 0, (struct sockaddr *)&socket_pconfig, sizeAdr);
+    int resSend = sendto(socket_pi, &numero_pi, sizeof(numero_pi) + 1, 0, (struct sockaddr *)&strctureSocket_pconfig, sizeAdr);
 
     if (resSend == -1)
     {
-        perror("\t❌ Pi : problème avec le send to :");
+        perror("\t❌ Pi : problème avec le send to :"); 
         exit(1);
     }
     printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
@@ -80,68 +102,142 @@ struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, i
         perror("❌ Pi : problème avec le close :");
         exit(1); // je choisis ici d'arrêter le programme
     }
-    printf("🚪 Fermeture de la 🧦 réussi.\n");
+    printf("\t🚪 Fermeture de la 🧦 réussi.\n");
 
-    printf(" --- 👋 Fin des échanges avec Pconfig --- \n");
+    printf(" --- 👋 Fin des échanges avec Pconfig --- \n\n");
 
     return socket_suivant;
 }
 
-void traitementClassique(int socketPconfig)
+
+
+int traitementClassique(int port_pi, int numero_pi, struct sockaddr_in structureSocket_suivant)
 {
-    // --- Etape 1 : Reception taille message
-    printf("-----Recevoir message-----\n");
-    printf("  --Recevoir la taille du message--\n");
+    printf(" --- 📲 Connection avec les voisins --- \n");
 
-    int tailleMessage;
-    ssize_t resRecvTCPsize = recvTCP(socketPconfig, &tailleMessage, sizeof(tailleMessage));
+    // --- Etape 1 : Creation des socket
+    int socketPi = creerSocket();
 
-    printf("\tMessage recus : '%d'\n", tailleMessage);
-    printf("\tNombre d'octet recus : '%ld'\n\n", resRecvTCPsize);
+    nommerSocket(socketPi, port_pi);
 
-    // --- Etape 2 : Reception du message
-    printf("  --Recevoir le message de taille %d--\n", tailleMessage);
+    printf("\t⌚ Pi : En attente de la connection du precedent...\n");
 
-    char messageRecu[30000];
-    ssize_t resRecvTCP = recvTCP(socketPconfig, messageRecu, tailleMessage);
+    ecouterDemande(socketPi);
 
-    printf("\tMessage recus : '%s'\n", messageRecu);
-    printf("\tNombre d'octet recus : '%ld'\n\n", resRecvTCP);
+    // printf("\t✅ Pi : Connection du \033[1mprecedent\033[0m reussi.\n");
 
-    printf("-----Fin reception message-----\n");
+    int socketSuivant = creerSocket();
+    
+    printf("\t⌚ Pi : En attente d'acceptation du suivant...\n");
 
-    // --- Etape 3 : Envois taille message recu
-    printf("-----Envoyer message------\n");
+    connectionSocket(socketSuivant, structureSocket_suivant);
 
-    int resSendTCP = sendTCP(socketPconfig, &resRecvTCP, sizeof(int));
+    // --- Etape 2 : Envoi demande connection au suivant
+    struct sockaddr_in adresseClient;
+    int socketPrecedent = accepterDemande(socketPi, &adresseClient);
+    if (socketPrecedent == -1) {
+        printf("\t❌ Pi : Annulation traitement avec le precedent\n");
+    }
+    printf("✅ Pi : Connection au \033[1msuivant\033[0m reussi.\n");
 
-    printf("\tMessage envoyé : %ld\n", resRecvTCP);
-    printf("\tNombre d'octets envoyés : %d\n", resSendTCP);
+    printf("🏆 Pi : Initialisation des 🧦 réussie.\n");
 
-    printf("-----Fin envoie message------\n");
+    printf(" --- 👋 Début des échanges avec les voisins --- \n");
 
-    // --- Etape 4 : Fermeture socketPconfig
-    closeSocket(socketPconfig);
-    return;
+    struct Couple couple;
+    couple.numero_pi = numero_pi;
+    couple.compteur_pi = 1;
+
+    while (1) {
+        // --- Etape 3 : Envoi du couple au suivant
+        printf("----- 📨 Envois du couple Pi suivant -----\n");
+        printf("  -- 📏 Envoi de la taille du message --\n");
+
+        int tailleMessage = sizeof(couple);
+        ssize_t resSendTCPsize = sendTCP(socketSuivant, &tailleMessage, sizeof(tailleMessage));
+        if (resSendTCPsize == 0 || resSendTCPsize == -1) {
+            printf("\t❌ Pi : Arret de la boucle.\n");
+            break;
+        }
+
+        printf("\tNombre d'octets envoyés : %zd\n", resSendTCPsize);
+        printf("\tMessage envoyé : '%d'\n", tailleMessage);
+
+        printf("  -- 💑 Envoi du couple --\n");
+        ssize_t resSendTCP = sendTCP(socketSuivant, &couple, sizeof(couple));
+        if (resSendTCP == 0 || resSendTCP == -1) {
+            printf("\t❌ Pi : Arret de la boucle.\n");
+            break;
+        } 
+        printf("\tCouple envoyé - Numero Pi : %d, Compteur Pi : %d\n", couple.numero_pi, couple.compteur_pi);
+        printf("\tNombre d'octets envoyés : %zd\n", resSendTCP);
+
+        printf("----- 🏆 Fin envoie du couple au suivant ------\n\n");
+
+        // --- Etape 4 : Recevoir le couple du precedent
+        printf("----- 📩 Réception du couple du voisin précédent -----\n");
+        printf("  -- 📏 Réception de la taille du message --\n");
+
+        ssize_t resRecvTCPsize = recvTCP(socketPrecedent, &tailleMessage, sizeof(tailleMessage));
+
+        if (resSendTCPsize == 0 || resSendTCPsize == -1) {
+            printf("\t❌ Pi : Arret de la boucle.\n");
+            break;
+        }
+        printf("\tNombre d'octets reçus : %zd\n", resRecvTCPsize);
+        printf("\tMessage reçu : '%d'\n", tailleMessage);
+
+        printf("  -- 💑 Réception du couple --\n");
+        struct Couple coupleRecu;
+        ssize_t resRecvTCP = recvTCP(socketPrecedent, &coupleRecu, sizeof(coupleRecu));
+
+        if (resRecvTCP == 0 || resRecvTCP == -1) {
+            printf("\t❌ Pi : Arret de la boucle.\n");
+            break;
+        }
+
+        printf("\tNombre d'octets reçus : %zd\n", resRecvTCP);
+        printf("\tCouple reçu - Numero Pi : %d, Compteur Pi : %d\n", coupleRecu.numero_pi, coupleRecu.compteur_pi);
+
+        // Etape 5 : Verifier numero Pi reçu :
+        if (coupleRecu.numero_pi == numero_pi) {
+    
+            printf("🎉🎉 Le couple a effectué un tour complet 🎉🎉\n");
+            printf("----- 🏆 Fin des echanges avec les voisins ------\n\n");
+
+            // --- Etape 6 : Fermeture des socket
+            closeSocket(socketSuivant);
+            closeSocket(socketPrecedent);
+
+            return coupleRecu.compteur_pi;
+        }
+        else {
+            couple = coupleRecu;
+            couple.compteur_pi++;
+        }
+    }
+
+    return 0;
 }
 
 int main(int argc, char *argv[])
 {
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
-    if (argc != 4)
+    if (argc != 5)
     {
-        printf("utilisation : %s IP_pconfig port_pconfig numero_pi\n", argv[0]);
+        printf("utilisation : %s IP_pconfig port_pconfig port_pi numero_pi\n", argv[0]);
         exit(1);
     }
     char *adresseIP_pconfig = argv[1];
     char *port_pconfig = argv[2];
-    int numero_pi = atoi(argv[3]);
+    int port_pi = atoi(argv[3]);
+    int numero_pi = atoi(argv[4]);
 
-    struct sockaddr_in socket_suivant = initialisation(adresseIP_pconfig, port_pconfig, numero_pi);
+    struct sockaddr_in socket_suivant = initialisation(adresseIP_pconfig, port_pconfig, port_pi, numero_pi);
 
-    printf("Finiiis \n ");
+    int nombre_pi = traitementClassique(port_pi, numero_pi, socket_suivant);
 
-    printf("Pi terminé.\n");
+    printf("🏁 Fin du programme, on sait qu'il y a %d Pi dans notre cercle\n", nombre_pi);
 
     return 0;
 }

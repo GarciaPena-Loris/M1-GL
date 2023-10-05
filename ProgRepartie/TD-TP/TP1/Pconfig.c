@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
         printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
         printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
 
-        printf("----- 🏆 Fin envois des données au Pi n°%d -----\\nn", numero_pi + 1);
+        printf("----- 🏆 Fin envois des données au Pi n°%d -----\n\n", numero_pi + 1);
     }
 
     printf("🏁 Toutes les 🧦 on bien été envoyées !\n");
