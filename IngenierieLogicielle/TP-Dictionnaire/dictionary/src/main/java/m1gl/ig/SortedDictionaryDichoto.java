@@ -5,7 +5,7 @@ public class SortedDictionaryDichoto extends AbstractDictionary {
      */
 
     public SortedDictionaryDichoto() {
-        keys = new Comparable[0];
+        keys = new Object[0];
         values = new Object[0];
         size = 0;
     }

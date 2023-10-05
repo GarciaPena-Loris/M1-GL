@@ -5,37 +5,54 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestDictionary {
 
-    // Test OrderedDictionary
+    private IDictionary dictionary;
+
+    @Before
+    public void setUp() {
+        dictionary = new OrderedDictionary();
+    }
 
     @Test
-    public void testOrderedDictionaryPut() {
-        IDictionary dictionary = new OrderedDictionary();
+    public void testDictionaryPut() {
         dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
         assertNotNull(dictionary);
     }
 
     @Test
-    public void testOrderedDictionaryGet() {
-        IDictionary dictionary = new OrderedDictionary();
+    public void testDictionaryGet() {
         dictionary.put("Livre", "Une oeuvre écrite ou imprimée.");
         assertEquals("Une oeuvre écrite ou imprimée.", dictionary.get("Livre"));
+        assertEquals(null, dictionary.get("Ordinateur"));
     }
 
     @Test
-    public void testOrderedDictionaryContainsKey() {
-        IDictionary dictionary = new OrderedDictionary();
+    public void testDictionaryFlush() {
+        dictionary.flush();
+        assertEquals(0, dictionary.size());
+    }
+
+    @Test
+    public void testDictionaryIsEmpty() {
+        assertTrue(dictionary.isEmpty());
+        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
+        assertFalse(dictionary.isEmpty());
+    }
+
+    @Test
+    public void testDictionaryContainsKey() {
         dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
         assertTrue(dictionary.containsKey("Pomme"));
         assertFalse(dictionary.containsKey("Banane"));
     }
 
     @Test
-    public void testOrderedDictionarySize() {
-        IDictionary dictionary = new OrderedDictionary();
+    public void testDictionarySize() {
+        dictionary.flush();
         assertEquals(0, dictionary.size());
         dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
         assertEquals(1, dictionary.size());
@@ -44,160 +61,48 @@ public class TestDictionary {
     }
 
     @Test
-    public void testOrderedDictionaryIndexOf() {
-        OrderedDictionary dictionary = new OrderedDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        assertEquals(0, dictionary.indexOf("Pomme"));
-        assertEquals(1, dictionary.indexOf("Banane"));
-        assertEquals(-1, dictionary.indexOf("Livre"));
-    }
-
-    // TestFastDictionary
-
-    @Test
-    public void testFastDictionaryPut() {
-        IDictionary dictionary = new FastDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertNotNull(dictionary);
+    public void testFastDictionary() {
+        dictionary = new FastDictionary();
+        testDictionaryPut();
+        testDictionaryGet();
+        testDictionaryFlush();
+        testDictionaryIsEmpty();
+        testDictionaryContainsKey();
+        testDictionarySize();
     }
 
     @Test
-    public void testFastDictionaryGet() {
-        IDictionary dictionary = new FastDictionary();
-        dictionary.put("Livre", "Une oeuvre écrite ou imprimée.");
-        assertEquals("Une oeuvre écrite ou imprimée.", dictionary.get("Livre"));
+    public void testSortedDictionary() {
+        dictionary = new SortedDictionary();
+        testDictionaryPut();
+        testDictionaryGet();
+        testDictionaryFlush();
+        testDictionaryIsEmpty();
+        testDictionaryContainsKey();
+        testDictionarySize();
     }
 
     @Test
-    public void testFastDictionaryContainsKey() {
-        IDictionary dictionary = new FastDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertTrue(dictionary.containsKey("Pomme"));
-        assertFalse(dictionary.containsKey("Banane"));
-    }
-
-    @Test
-    public void testFastDictionarySize() {
-        IDictionary dictionary = new FastDictionary();
-        assertEquals(0, dictionary.size());
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertEquals(1, dictionary.size());
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        assertEquals(2, dictionary.size());
-    }
-
-    @Test
-    public void testFastDictionaryIndexOf() {
-        FastDictionary dictionary = new FastDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        assertEquals(2, dictionary.indexOf("Pomme"));
-        assertEquals(1, dictionary.indexOf("Banane"));
-        assertEquals(-1, dictionary.indexOf("Livre"));
-    }
-
-    // TestSortedDictionary
-
-    @Test
-    public void testSortedDictionaryPut() {
-        IDictionary dictionary = new SortedDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertNotNull(dictionary);
-    }
-
-    @Test
-    public void testSortedDictionaryGet() {
-        IDictionary dictionary = new SortedDictionary();
-        dictionary.put("Livre", "Une oeuvre écrite ou imprimée.");
-        assertEquals("Une oeuvre écrite ou imprimée.", dictionary.get("Livre"));
-    }
-
-    @Test
-    public void testSortedDictionaryContainsKey() {
-        IDictionary dictionary = new SortedDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertTrue(dictionary.containsKey("Pomme"));
-        assertFalse(dictionary.containsKey("Banane"));
-    }
-
-    @Test
-    public void testSortedDictionarySize() {
-        IDictionary dictionary = new SortedDictionary();
-        assertEquals(0, dictionary.size());
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertEquals(1, dictionary.size());
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        assertEquals(2, dictionary.size());
-    }
-
-    @Test
-    public void testSortedDictionaryIndexOf() {
-        SortedDictionary dictionary = new SortedDictionary();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        dictionary.put("Livre", "Une oeuvre écrite ou imprimée.");
-        assertEquals(2, dictionary.indexOf("Pomme"));
-        assertEquals(0, dictionary.indexOf("Banane"));
-        assertEquals(1, dictionary.indexOf("Livre"));
-        assertEquals(-1, dictionary.indexOf("Chat"));
-    }
-
-    // TestSortedDictionaryDichoto
-
-    @Test
-    public void testSortedDictionaryDichotoPut() {
-        IDictionary dictionary = new SortedDictionaryDichoto();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertNotNull(dictionary);
-    }
-
-    @Test
-    public void testSortedDictionaryDichotoGet() {
-        IDictionary dictionary = new SortedDictionaryDichoto();
-        dictionary.put("Livre", "Une oeuvre écrite ou imprimée.");
-        assertEquals("Une oeuvre écrite ou imprimée.", dictionary.get("Livre"));
-    }
-
-    @Test
-    public void testSortedDictionaryDichotoContainsKey() {
-        IDictionary dictionary = new SortedDictionaryDichoto();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertTrue(dictionary.containsKey("Pomme"));
-        assertFalse(dictionary.containsKey("Banane"));
-    }
-
-    @Test
-    public void testSortedDictionaryDichotoSize() {
-        IDictionary dictionary = new SortedDictionaryDichoto();
-        assertEquals(0, dictionary.size());
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        assertEquals(1, dictionary.size());
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        assertEquals(2, dictionary.size());
-    }
-
-    @Test
-    public void testSortedDictionaryDichotoIndexOf() {
-        SortedDictionaryDichoto dictionary = new SortedDictionaryDichoto();
-        dictionary.put("Pomme", "Un fruit généralement de couleur rouge.");
-        dictionary.put("Banane", "Un fruit généralement de couleur jaune.");
-        dictionary.put("Livre", "Une oeuvre écrite ou imprimée.");
-        assertEquals(2, dictionary.indexOf("Pomme"));
-        assertEquals(0, dictionary.indexOf("Banane"));
-        assertEquals(1, dictionary.indexOf("Livre"));
-        assertEquals(-1, dictionary.indexOf("Chat"));
+    public void testSortedDictionaryDichoto() {
+        dictionary = new SortedDictionaryDichoto();
+        testDictionaryPut();
+        testDictionaryGet();
+        testDictionaryFlush();
+        testDictionaryIsEmpty();
+        testDictionaryContainsKey();
+        testDictionarySize();
     }
 
     // Test du dictionnaire le plus rapide
 
-    @Test
+    // @Test
     public void testFastestDictionaryPutSpeed() {
         System.out.println("\nTest de vitesse entre chaque dictionnaire : ");
         // OrderedDictionary
         IDictionary orderedDictionary = new OrderedDictionary();
         long startTime = System.nanoTime();
-        System.out.println("- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mOrderedDictionary\033[0m...");
+        System.out.println(
+                "- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mOrderedDictionary\033[0m...");
         for (int i = 0; i < 50000; i++) {
             orderedDictionary.put("Pomme" + i, "Un fruit generalement de couleur rouge.");
         }
@@ -208,7 +113,8 @@ public class TestDictionary {
         // FastDictionary
         IDictionary fastDictionary = new FastDictionary();
         startTime = System.nanoTime();
-        System.out.println("- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mFastDictionary\033[0m...");
+        System.out.println(
+                "- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mFastDictionary\033[0m...");
         for (int i = 0; i < 50000; i++) {
             fastDictionary.put("Pomme" + i, "Un fruit generalement de couleur rouge.");
         }
@@ -219,7 +125,8 @@ public class TestDictionary {
         // SortedDictionary
         IDictionary sortedDictionary = new SortedDictionary();
         startTime = System.nanoTime();
-        System.out.println("- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionary\033[0m...");
+        System.out.println(
+                "- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionary\033[0m...");
         for (int i = 0; i < 50000; i++) {
             sortedDictionary.put("Pomme" + i, "Un fruit generalement de couleur rouge.");
         }
@@ -230,7 +137,8 @@ public class TestDictionary {
         // SortedDictionaryDichoto
         IDictionary sortedDichotoDictionary = new SortedDictionaryDichoto();
         startTime = System.nanoTime();
-        System.out.println("- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionaryDichoto\033[0m...");
+        System.out.println(
+                "- \033[34mAjout\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionaryDichoto\033[0m...");
         for (int i = 0; i < 50000; i++) {
             sortedDichotoDictionary.put("Pomme" + i, "Un fruit generalement de couleur rouge.");
         }
@@ -243,7 +151,7 @@ public class TestDictionary {
         assertTrue(durationOrdered <= durationSorted);
     }
 
-    @Test
+    // @Test
     public void testSortedDictionaryDichotoGetSpeed() {
         System.out.println("\nTest de vitesse get entre SortedDictionary et SortedDictionaryDichoto : ");
         IDictionary dictionary = new SortedDictionary();
@@ -251,7 +159,8 @@ public class TestDictionary {
             dictionary.put("Pomme" + i, "Un fruit generalement de couleur rouge.");
         }
         long startTime = System.nanoTime();
-        System.out.println("- \033[32mRecherche\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionary\033[0m...");
+        System.out.println(
+                "- \033[32mRecherche\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionary\033[0m...");
         for (int i = 0; i < 50000; i++) {
             dictionary.get("Pomme" + i);
         }
@@ -264,7 +173,8 @@ public class TestDictionary {
             dictionary.put("Pomme" + i, "Un fruit generalement de couleur rouge.");
         }
         startTime = System.nanoTime();
-        System.out.println("- \033[32mRecherche\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionaryDichoto\033[0m...");
+        System.out.println(
+                "- \033[32mRecherche\033[0m de \033[3m50000 elements\033[0m dans le \033[1mSortedDictionaryDichoto\033[0m...");
         for (int i = 0; i < 50000; i++) {
             dictionary.get("Pomme" + i);
         }

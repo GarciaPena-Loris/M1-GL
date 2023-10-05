@@ -30,6 +30,13 @@ public class FastDictionary extends AbstractDictionary {
         return size;
     }
 
+    public IDictionary flush() {
+        keys = new Object[1];
+        values = new Object[1];
+        size = 0;
+        return this;
+    }
+
     // Ecrivez une methode booleenne mustGrow disant si les tableaux sont au 3/4
     // pleins.
     private boolean mustGrow() {

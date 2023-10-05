@@ -1,4 +1,5 @@
 package m1gl.ig;
+
 public abstract class AbstractDictionary implements IDictionary {
     protected Object[] keys;
     protected Object[] values;
@@ -23,6 +24,13 @@ public abstract class AbstractDictionary implements IDictionary {
         return this;
     }
 
+    public IDictionary flush() {
+        keys = new Object[0];
+        values = new Object[0];
+        size = 0;
+        return this;
+    }
+
     public boolean isEmpty() {
         return size() == 0;
     }
@@ -42,7 +50,8 @@ public abstract class AbstractDictionary implements IDictionary {
         }
         String s = "{\n";
         for (int i = 0; i < keys.length; i++) {
-            s += "\t " + keys[i] + " : " + values[i] + " \n";
+            int colorCode = (int) (Math.random() * 6) + 31; // 31-36 are the color codes for foreground colors
+            s += "\t \033[" + colorCode + "m" + keys[i] + "\033[0m : \033[1m" + values[i] + "\033[0m \n";
         }
         s += "\t}";
         return s;

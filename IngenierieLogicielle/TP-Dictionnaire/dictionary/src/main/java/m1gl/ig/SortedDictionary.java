@@ -1,5 +1,5 @@
 package m1gl.ig;
-public class SortedDictionary extends AbstractDictionary {
+public class SortedDictionary extends OrderedDictionary {
     /*
      * Les couples sont ici stockes par ordre alphabetique sur les cles. Ces
      * dictionnaires etant tries, on peut y chercher des elements sequentiellement.
@@ -19,21 +19,9 @@ public class SortedDictionary extends AbstractDictionary {
      */
 
     public SortedDictionary() {
-        keys = new Comparable[0];
+        keys = new Object[0];
         values = new Object[0];
         size = 0;
-    }
-
-    protected int indexOf(Object key) {
-        int index = 0;
-        while (index < size && ((Comparable<Object>) keys[index]).compareTo(key) < 0) { // On parcourt le tableau
-                                                                                        // jusqu'a trouver la cle
-            index++;
-        }
-        if (index < size && ((Comparable<Object>) keys[index]).compareTo(key) == 0) { // Si on a trouve la cle
-            return index;
-        }
-        return -1;
     }
 
     protected int newIndexOf(Object key) {

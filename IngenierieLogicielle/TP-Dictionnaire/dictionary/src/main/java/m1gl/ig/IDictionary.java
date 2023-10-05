@@ -9,6 +9,8 @@ public interface IDictionary { // Normalement utiliser la généréricité pour 
     IDictionary put(Object key, Object value); // entre une nouveau couple cle-valeur dans le receveur, rend le
                                                // receveur.
 
+    IDictionary flush(); // vide le receveur, rend le receveur.
+
     boolean isEmpty(); // rend vrai si le receveur est vide, faux sinon
 
     boolean containsKey(Object key); // rend vrai si la cle est connue dans le receveur, faux sinon.

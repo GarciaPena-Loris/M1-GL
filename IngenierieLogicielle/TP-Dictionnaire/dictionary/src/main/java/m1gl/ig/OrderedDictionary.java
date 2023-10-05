@@ -1,4 +1,5 @@
 package m1gl.ig;
+
 public class OrderedDictionary extends AbstractDictionary {
 
     public OrderedDictionary() {
