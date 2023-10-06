@@ -164,6 +164,11 @@ public class Client {
 		Registry registry;
 		try {
 			registry = LocateRegistry.getRegistry(host);
+			System.out.println("Registry : " + registry);
+			System.out.println("Registry list : " );
+			for (String name : registry.list()) {
+				System.out.println("\t" + name);
+			}
 
 			// IAnimal animal = (IAnimal) registry.lookup("Animal");
 			ICabinetMedical cabinet = (ICabinetMedical) registry.lookup("Cabinet");

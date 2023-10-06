@@ -28,7 +28,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
         return patients.add(patient);
     }
 
@@ -42,7 +42,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
         return patients.add(patient);
     }
 
@@ -57,7 +57,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
         return patients.add(patient);
     }
 
@@ -72,7 +72,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
 
         return patients.add(patient);
     }
@@ -96,7 +96,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
                 String dateString = formatter.format(date);
 
                 System.out.println(
-                        "\033[3m" + dateString + "\033[0m - Un client retire l'animal " + patient);
+                        "\033[3m" + dateString + "\033[0m - Un vétérinaire retire l'animal " + patient);
 
                 return patients.remove(patient);
             }
