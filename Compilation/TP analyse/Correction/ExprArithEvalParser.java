@@ -1,4 +1,4 @@
-// Generated from c:\Users\loloy\Desktop\cours\M1\Compilation\TP analyse\Correction\ExprArith.g4 by ANTLR 4.9.2
+// Generated from ExprArithEval.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
-public class ExprArithParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
+public class ExprArithEvalParser extends Parser {
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -72,7 +72,7 @@ public class ExprArithParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "ExprArith.g4"; }
+	public String getGrammarFileName() { return "ExprArithEval.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -83,12 +83,15 @@ public class ExprArithParser extends Parser {
 	@Override
 	public ATN getATN() { return _ATN; }
 
-	public ExprArithParser(TokenStream input) {
+	public ExprArithEvalParser(TokenStream input) {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ExprContext extends ParserRuleContext {
+		public int value;
+		public AdditionExprContext e;
 		public AdditionExprContext additionExpr() {
 			return getRuleContext(AdditionExprContext.class,0);
 		}
@@ -96,6 +99,14 @@ public class ExprArithParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).enterExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).exitExpr(this);
+		}
 	}
 
 	public final ExprContext expr() throws RecognitionException {
@@ -105,7 +116,8 @@ public class ExprArithParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(8);
-			additionExpr();
+			((ExprContext)_localctx).e = additionExpr();
+			((ExprContext)_localctx).value =  ((ExprContext)_localctx).e.value;
 			}
 		}
 		catch (RecognitionException re) {
@@ -119,7 +131,11 @@ public class ExprArithParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class AdditionExprContext extends ParserRuleContext {
+		public int value;
+		public MultiplyExprContext e1;
+		public MultiplyExprContext e2;
 		public List<MultiplyExprContext> multiplyExpr() {
 			return getRuleContexts(MultiplyExprContext.class);
 		}
@@ -130,6 +146,14 @@ public class ExprArithParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_additionExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).enterAdditionExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).exitAdditionExpr(this);
+		}
 	}
 
 	public final AdditionExprContext additionExpr() throws RecognitionException {
@@ -139,37 +163,40 @@ public class ExprArithParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(10);
-			multiplyExpr();
-			setState(17);
+			setState(11);
+			((AdditionExprContext)_localctx).e1 = multiplyExpr();
+			((AdditionExprContext)_localctx).value =  ((AdditionExprContext)_localctx).e1.value;
+			setState(23);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__0 || _la==T__1) {
 				{
-				setState(15);
+				setState(21);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case T__0:
 					{
-					setState(11);
+					setState(13);
 					match(T__0);
-					setState(12);
-					multiplyExpr();
+					setState(14);
+					((AdditionExprContext)_localctx).e2 = multiplyExpr();
+					_localctx.value += ((AdditionExprContext)_localctx).e2.value;
 					}
 					break;
 				case T__1:
 					{
-					setState(13);
+					setState(17);
 					match(T__1);
-					setState(14);
-					multiplyExpr();
+					setState(18);
+					((AdditionExprContext)_localctx).e2 = multiplyExpr();
+					_localctx.value -= ((AdditionExprContext)_localctx).e2.value;
 					}
 					break;
 				default:
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(19);
+				setState(25);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -186,7 +213,11 @@ public class ExprArithParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class MultiplyExprContext extends ParserRuleContext {
+		public int value;
+		public AtomExprContext e1;
+		public AtomExprContext e2;
 		public List<AtomExprContext> atomExpr() {
 			return getRuleContexts(AtomExprContext.class);
 		}
@@ -197,6 +228,14 @@ public class ExprArithParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_multiplyExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).enterMultiplyExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).exitMultiplyExpr(this);
+		}
 	}
 
 	public final MultiplyExprContext multiplyExpr() throws RecognitionException {
@@ -206,37 +245,40 @@ public class ExprArithParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(20);
-			atomExpr();
-			setState(27);
+			setState(26);
+			((MultiplyExprContext)_localctx).e1 = atomExpr();
+			((MultiplyExprContext)_localctx).value =  ((MultiplyExprContext)_localctx).e1.value;
+			setState(38);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__2 || _la==T__3) {
 				{
-				setState(25);
+				setState(36);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case T__2:
 					{
-					setState(21);
+					setState(28);
 					match(T__2);
-					setState(22);
-					atomExpr();
+					setState(29);
+					((MultiplyExprContext)_localctx).e2 = atomExpr();
+					_localctx.value *= ((MultiplyExprContext)_localctx).e2.value;
 					}
 					break;
 				case T__3:
 					{
-					setState(23);
+					setState(32);
 					match(T__3);
-					setState(24);
-					atomExpr();
+					setState(33);
+					((MultiplyExprContext)_localctx).e2 = atomExpr();
+					_localctx.value /= ((MultiplyExprContext)_localctx).e2.value;
 					}
 					break;
 				default:
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(29);
+				setState(40);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -253,8 +295,13 @@ public class ExprArithParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class AtomExprContext extends ParserRuleContext {
-		public TerminalNode Number() { return getToken(ExprArithParser.Number, 0); }
+		public int value;
+		public Token c;
+		public AdditionExprContext e1;
+		public AtomExprContext e2;
+		public TerminalNode Number() { return getToken(ExprArithEvalParser.Number, 0); }
 		public AdditionExprContext additionExpr() {
 			return getRuleContext(AdditionExprContext.class,0);
 		}
@@ -265,40 +312,51 @@ public class ExprArithParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_atomExpr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).enterAtomExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ExprArithEvalListener ) ((ExprArithEvalListener)listener).exitAtomExpr(this);
+		}
 	}
 
 	public final AtomExprContext atomExpr() throws RecognitionException {
 		AtomExprContext _localctx = new AtomExprContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_atomExpr);
 		try {
-			setState(37);
+			setState(52);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case Number:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(30);
-				match(Number);
+				setState(41);
+				((AtomExprContext)_localctx).c = match(Number);
+				((AtomExprContext)_localctx).value =  Integer.parseInt((((AtomExprContext)_localctx).c!=null?((AtomExprContext)_localctx).c.getText():null));
 				}
 				break;
 			case T__4:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(31);
+				setState(43);
 				match(T__4);
-				setState(32);
-				additionExpr();
-				setState(33);
+				setState(44);
+				((AtomExprContext)_localctx).e1 = additionExpr();
+				setState(45);
 				match(T__5);
+				((AtomExprContext)_localctx).value =  ((AtomExprContext)_localctx).e1.value;
 				}
 				break;
 			case T__1:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(35);
+				setState(48);
 				match(T__1);
-				setState(36);
-				atomExpr();
+				setState(49);
+				((AtomExprContext)_localctx).e2 = atomExpr();
+				((AtomExprContext)_localctx).value =  -((AtomExprContext)_localctx).e2.value;
 				}
 				break;
 			default:
@@ -317,18 +375,42 @@ public class ExprArithParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\n*\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\3\2\3\2\3\3\3\3\3\3\3\3\3\3\7\3\22\n\3\f\3\16\3\25"+
-		"\13\3\3\4\3\4\3\4\3\4\3\4\7\4\34\n\4\f\4\16\4\37\13\4\3\5\3\5\3\5\3\5"+
-		"\3\5\3\5\3\5\5\5(\n\5\3\5\2\2\6\2\4\6\b\2\2\2+\2\n\3\2\2\2\4\f\3\2\2\2"+
-		"\6\26\3\2\2\2\b\'\3\2\2\2\n\13\5\4\3\2\13\3\3\2\2\2\f\23\5\6\4\2\r\16"+
-		"\7\3\2\2\16\22\5\6\4\2\17\20\7\4\2\2\20\22\5\6\4\2\21\r\3\2\2\2\21\17"+
-		"\3\2\2\2\22\25\3\2\2\2\23\21\3\2\2\2\23\24\3\2\2\2\24\5\3\2\2\2\25\23"+
-		"\3\2\2\2\26\35\5\b\5\2\27\30\7\5\2\2\30\34\5\b\5\2\31\32\7\6\2\2\32\34"+
-		"\5\b\5\2\33\27\3\2\2\2\33\31\3\2\2\2\34\37\3\2\2\2\35\33\3\2\2\2\35\36"+
-		"\3\2\2\2\36\7\3\2\2\2\37\35\3\2\2\2 (\7\t\2\2!\"\7\7\2\2\"#\5\4\3\2#$"+
-		"\7\b\2\2$(\3\2\2\2%&\7\4\2\2&(\5\b\5\2\' \3\2\2\2\'!\3\2\2\2\'%\3\2\2"+
-		"\2(\t\3\2\2\2\7\21\23\33\35\'";
+		"\u0004\u0001\b7\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0001\u0000\u0001\u0000\u0001"+
+		"\u0000\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0005\u0001\u0016"+
+		"\b\u0001\n\u0001\f\u0001\u0019\t\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0002\u0005\u0002%\b\u0002\n\u0002\f\u0002(\t\u0002\u0001\u0003"+
+		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003"+
+		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u00035\b\u0003"+
+		"\u0001\u0003\u0000\u0000\u0004\u0000\u0002\u0004\u0006\u0000\u00008\u0000"+
+		"\b\u0001\u0000\u0000\u0000\u0002\u000b\u0001\u0000\u0000\u0000\u0004\u001a"+
+		"\u0001\u0000\u0000\u0000\u00064\u0001\u0000\u0000\u0000\b\t\u0003\u0002"+
+		"\u0001\u0000\t\n\u0006\u0000\uffff\uffff\u0000\n\u0001\u0001\u0000\u0000"+
+		"\u0000\u000b\f\u0003\u0004\u0002\u0000\f\u0017\u0006\u0001\uffff\uffff"+
+		"\u0000\r\u000e\u0005\u0001\u0000\u0000\u000e\u000f\u0003\u0004\u0002\u0000"+
+		"\u000f\u0010\u0006\u0001\uffff\uffff\u0000\u0010\u0016\u0001\u0000\u0000"+
+		"\u0000\u0011\u0012\u0005\u0002\u0000\u0000\u0012\u0013\u0003\u0004\u0002"+
+		"\u0000\u0013\u0014\u0006\u0001\uffff\uffff\u0000\u0014\u0016\u0001\u0000"+
+		"\u0000\u0000\u0015\r\u0001\u0000\u0000\u0000\u0015\u0011\u0001\u0000\u0000"+
+		"\u0000\u0016\u0019\u0001\u0000\u0000\u0000\u0017\u0015\u0001\u0000\u0000"+
+		"\u0000\u0017\u0018\u0001\u0000\u0000\u0000\u0018\u0003\u0001\u0000\u0000"+
+		"\u0000\u0019\u0017\u0001\u0000\u0000\u0000\u001a\u001b\u0003\u0006\u0003"+
+		"\u0000\u001b&\u0006\u0002\uffff\uffff\u0000\u001c\u001d\u0005\u0003\u0000"+
+		"\u0000\u001d\u001e\u0003\u0006\u0003\u0000\u001e\u001f\u0006\u0002\uffff"+
+		"\uffff\u0000\u001f%\u0001\u0000\u0000\u0000 !\u0005\u0004\u0000\u0000"+
+		"!\"\u0003\u0006\u0003\u0000\"#\u0006\u0002\uffff\uffff\u0000#%\u0001\u0000"+
+		"\u0000\u0000$\u001c\u0001\u0000\u0000\u0000$ \u0001\u0000\u0000\u0000"+
+		"%(\u0001\u0000\u0000\u0000&$\u0001\u0000\u0000\u0000&\'\u0001\u0000\u0000"+
+		"\u0000\'\u0005\u0001\u0000\u0000\u0000(&\u0001\u0000\u0000\u0000)*\u0005"+
+		"\u0007\u0000\u0000*5\u0006\u0003\uffff\uffff\u0000+,\u0005\u0005\u0000"+
+		"\u0000,-\u0003\u0002\u0001\u0000-.\u0005\u0006\u0000\u0000./\u0006\u0003"+
+		"\uffff\uffff\u0000/5\u0001\u0000\u0000\u000001\u0005\u0002\u0000\u0000"+
+		"12\u0003\u0006\u0003\u000023\u0006\u0003\uffff\uffff\u000035\u0001\u0000"+
+		"\u0000\u00004)\u0001\u0000\u0000\u00004+\u0001\u0000\u0000\u000040\u0001"+
+		"\u0000\u0000\u00005\u0007\u0001\u0000\u0000\u0000\u0005\u0015\u0017$&"+
+		"4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
