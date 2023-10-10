@@ -1,3 +1,4 @@
+#include <netinet/in.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -10,12 +11,14 @@
 
 #include "fonctionTPC.h"
 
+#define NOMBRE_VOISIN_MAX 10
+
 struct Couple {
     int numero_pi;
     int compteur_pi;
 };
 
-struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, int port_pi, int numero_pi)
+int initialisation(char *adresseIP_pconfig, char *port_pconfig, int port_pi, int numero_pi, struct sockaddr_in* tab_voisins)
 {
     // -- Etape 1 : Creation socker pi 
     int socket_pi = socket(PF_INET, SOCK_DGRAM, 0);
@@ -75,26 +78,48 @@ struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, i
 
     // ---------------------------------------------------------------------
 
-    printf("----- 📩 Recevoir 🧦 voisin -----\n");
+    printf("----- 📩 Recevoir 🧦 des voisins -----\n");
 
-    struct sockaddr_in sockExpediteur;
-    socklen_t lgAdr = sizeof(struct sockaddr_in);
-
-    struct sockaddr_in socket_suivant;
-    ssize_t resRecv = recvfrom(socket_pi, &socket_suivant, sizeof(socket_suivant), 0, (struct sockaddr *)&sockExpediteur, &lgAdr);
-    if (resRecv == -1)
-    {
-        perror("\t❌ Pi : problème avec le recvFrom :");
+    int nombre_max_voisins = NOMBRE_VOISIN_MAX;
+    
+    if (tab_voisins == NULL) {
+         perror("\t❌ Pi : problème avec l'allocation mémoire :"); 
         exit(1);
     }
 
-    char *ip_pi_suivant = inet_ntoa(socket_suivant.sin_addr);
-    int port_pi_suivant = ntohs(socket_suivant.sin_port);
+    int nombreVoisin = 0;
 
-    printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
-    printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
+    struct sockaddr_in socket_suivant;
+    do {
+        struct sockaddr_in sockExpediteur;
+        socklen_t lgAdr = sizeof(struct sockaddr_in);
 
-    printf("----- 🏆 Fin reception 🧦 voisin -----\n");
+        ssize_t resRecv = recvfrom(socket_pi, &socket_suivant, sizeof(socket_suivant), 0, (struct sockaddr *)&sockExpediteur, &lgAdr);
+        if (resRecv == -1)
+        {
+            perror("\t❌ Pi : problème avec le recvFrom :");
+            exit(1);
+        }
+
+        char *ip_pi_suivant = inet_ntoa(socket_suivant.sin_addr);
+        int port_pi_suivant = ntohs(socket_suivant.sin_port);
+
+        printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
+        printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
+        printf("\t-----\n");
+
+        if (nombreVoisin < nombre_max_voisins) {
+            tab_voisins[nombreVoisin] = socket_suivant;
+            nombreVoisin++;
+        }
+        else {
+            nombre_max_voisins += 10;
+            tab_voisins = realloc(tab_voisins, nombre_max_voisins * sizeof(struct sockaddr_in));
+            tab_voisins[nombreVoisin] = socket_suivant;
+            nombreVoisin++;
+        } 
+    } while (socket_suivant.sin_addr.s_addr != 0);
+    nombreVoisin--;    
 
     int cls = close(socket_pi);
     if (cls == -1)
@@ -104,124 +129,35 @@ struct sockaddr_in initialisation(char *adresseIP_pconfig, char *port_pconfig, i
     }
     printf("\t🚪 Fermeture de la 🧦 réussi.\n");
 
+    printf("----- 🏆 Fin reception des 🧦 voisins -----\n");
+
     printf(" --- 👋 Fin des échanges avec Pconfig --- \n\n");
 
-    return socket_suivant;
+    return nombreVoisin;
 }
 
 
 
-int traitementClassique(int port_pi, int numero_pi, struct sockaddr_in structureSocket_suivant)
+void traitementClassique(int numero_pi, struct sockaddr_in* tab_voisins, int nombre_voisins)
 {
-    printf(" --- 📲 Connection avec les voisins --- \n");
-
-    // --- Etape 1 : Creation des socket
-    int socketPi = creerSocket();
-
-    nommerSocket(socketPi, port_pi);
-
-    printf("\t⌚ Pi : Mise en écoute de la socket;\n");
-
-    ecouterDemande(socketPi);
-
-    printf("\t👂 Pi : Attente de 2 secondes ⌚...\n");
-    sleep(2);
-    printf("\t✅ Pi : Attente terminée.\n");
-    // printf("\t✅ Pi : Connection du \033[1mprecedent\033[0m reussi.\n");
-
-    int socketSuivant = creerSocket();
     
-    printf("\t⌚ Pi : En attente d'acceptation du suivant...\n");
+    printf("🏠 Affichage des %d voisins du Pi n°%d:\n", nombre_voisins, numero_pi);
 
-    connectionSocket(socketSuivant, structureSocket_suivant);
+    for (int i = 0; i < nombre_voisins; i++) {
+        struct sockaddr_in voisin = tab_voisins[i];
+        
+        char *ip_voisin = inet_ntoa(voisin.sin_addr);
+        int port_voisin = ntohs(voisin.sin_port);
 
-    // --- Etape 2 : Envoi demande connection au suivant
-    struct sockaddr_in adresseClient;
-    int socketPrecedent = accepterDemande(socketPi, &adresseClient);
-    if (socketPrecedent == -1) {
-        printf("\t❌ Pi : Annulation traitement avec le precedent\n");
-    }
-    printf("✅ Pi : Connection au \033[1msuivant\033[0m reussi.\n");
+        printf("\t📮 Voisin n°%d du Pi n° %d - IP : %s\n", i + 1, numero_pi, ip_voisin);
+        printf("\t🐖 Voisin n°%d du Pi n° %d - Port : %d\n", i + 1, numero_pi, port_voisin);
 
-    printf("🏆 Pi : Initialisation des 🧦 réussie.\n");
-
-    printf(" --- 👋 Début des échanges avec les voisins --- \n");
-
-    struct Couple couple;
-    couple.numero_pi = numero_pi;
-    couple.compteur_pi = 1;
-
-    while (1) {
-        // --- Etape 3 : Envoi du couple au suivant
-        printf("----- 📨 Envois du couple Pi suivant -----\n");
-        printf("  -- 📏 Envoi de la taille du message --\n");
-
-        int tailleMessage = sizeof(couple);
-        ssize_t resSendTCPsize = sendTCP(socketSuivant, &tailleMessage, sizeof(tailleMessage));
-        if (resSendTCPsize == 0 || resSendTCPsize == -1) {
-            printf("\t❌ Pi : Arret de la boucle.\n");
-            break;
-        }
-
-        printf("\tNombre d'octets envoyés : %zd\n", resSendTCPsize);
-        printf("\tMessage envoyé : '%d'\n", tailleMessage);
-
-        printf("  -- 💑 Envoi du couple --\n");
-        ssize_t resSendTCP = sendTCP(socketSuivant, &couple, sizeof(couple));
-        if (resSendTCP == 0 || resSendTCP == -1) {
-            printf("\t❌ Pi : Arret de la boucle.\n");
-            break;
-        } 
-        printf("\tCouple envoyé - Numero Pi : %d, Compteur Pi : %d\n", couple.numero_pi, couple.compteur_pi);
-        printf("\tNombre d'octets envoyés : %zd\n", resSendTCP);
-
-        printf("----- 🏆 Fin envoie du couple au suivant ------\n\n");
-
-        // --- Etape 4 : Recevoir le couple du precedent
-        printf("----- 📩 Réception du couple du voisin précédent -----\n");
-        printf("  -- 📏 Réception de la taille du message --\n");
-
-        ssize_t resRecvTCPsize = recvTCP(socketPrecedent, &tailleMessage, sizeof(tailleMessage));
-
-        if (resSendTCPsize == 0 || resSendTCPsize == -1) {
-            printf("\t❌ Pi : Arret de la boucle.\n");
-            break;
-        }
-        printf("\tNombre d'octets reçus : %zd\n", resRecvTCPsize);
-        printf("\tMessage reçu : '%d'\n", tailleMessage);
-
-        printf("  -- 💑 Réception du couple --\n");
-        struct Couple coupleRecu;
-        ssize_t resRecvTCP = recvTCP(socketPrecedent, &coupleRecu, sizeof(coupleRecu));
-
-        if (resRecvTCP == 0 || resRecvTCP == -1) {
-            printf("\t❌ Pi : Arret de la boucle.\n");
-            break;
-        }
-
-        printf("\tNombre d'octets reçus : %zd\n", resRecvTCP);
-        printf("\tCouple reçu - Numero Pi : %d, Compteur Pi : %d\n", coupleRecu.numero_pi, coupleRecu.compteur_pi);
-
-        // Etape 5 : Verifier numero Pi reçu :
-        if (coupleRecu.numero_pi == numero_pi) {
-    
-            printf("🎉🎉 Le couple a effectué un tour complet 🎉🎉\n");
-            printf("----- 🏆 Fin des echanges avec les voisins ------\n\n");
-
-            // --- Etape 6 : Fermeture des socket
-            closeSocket(socketPi);
-            closeSocket(socketSuivant);
-            closeSocket(socketPrecedent);
-
-            return coupleRecu.compteur_pi;
-        }
-        else {
-            couple = coupleRecu;
-            couple.compteur_pi++;
-        }
+        if (i < nombre_voisins-1)
+            printf("\t-----\n");
     }
 
-    return 0;
+    printf("✅ Fin d'affichage des voisins.\n");
+
 }
 
 int main(int argc, char *argv[])
@@ -237,11 +173,12 @@ int main(int argc, char *argv[])
     int port_pi = atoi(argv[3]);
     int numero_pi = atoi(argv[4]);
 
-    struct sockaddr_in socket_suivant = initialisation(adresseIP_pconfig, port_pconfig, port_pi, numero_pi);
+    struct sockaddr_in *tab_voisins = malloc(sizeof(struct sockaddr_in) * NOMBRE_VOISIN_MAX);
+    int nombre_voisins = initialisation(adresseIP_pconfig, port_pconfig, port_pi, numero_pi, tab_voisins);
 
-    int nombre_pi = traitementClassique(port_pi, numero_pi, socket_suivant);
+    traitementClassique(numero_pi, tab_voisins, nombre_voisins);
 
-    printf("🏁 Fin du programme, on sait qu'il y a \033[32m%d Pi\033[0m dans notre cercle !\n", nombre_pi);
+    printf("🏁 Fin du programme !\n");
 
     return 0;
 }

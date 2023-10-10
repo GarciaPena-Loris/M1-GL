@@ -10,7 +10,6 @@
 
 #include "fonctionTPC.h"
 
-
 int main(int argc, char *argv[])
 {
     if (argc != 3)
@@ -55,7 +54,7 @@ int main(int argc, char *argv[])
     }
 
     // Lire les lignes contenant les arêtes et les ajouter à la matrice d'adjacence
-    int i = 0;
+    int nombre_liaisons = 0;
     while (fgets(line, sizeof(line), file) != NULL) {
         int node1, node2;
         if (sscanf(line, "e %d %d", &node1, &node2) == 2) {
@@ -64,9 +63,9 @@ int main(int argc, char *argv[])
             printf("\n");
 
 
-            matriceVoisinage[i][0] = node1;
-            matriceVoisinage[i][1] = node2;
-            i++;
+            matriceVoisinage[nombre_liaisons][0] = node1;
+            matriceVoisinage[nombre_liaisons][1] = node2;
+            nombre_liaisons++;
         }
     }
 
@@ -156,48 +155,83 @@ int main(int argc, char *argv[])
 
     printf("🏁 Tout les Pi on bien été receptionés, maintenant on distribut 🌐 :\n");
 
-    for (int numero_pi = 1; numero_pi < nombrePi; numero_pi++)
+    for (int i = 0; i < nombre_liaisons; i++)
     {
+        // gauche -> droite
+        int numero_pi = matriceVoisinage[i][0];
         printf("----- 📨 Envois des données au Pi n°%d -----\n", numero_pi);
 
-        int indice = 0;
-        // Parcour de la boucle jusqu'a trouver l'emplacement de ce Pi:
-        while (matriceVoisinage[indice][0] != numero_pi && matriceVoisinage[indice][0] < indice) {
-            indice++;
+        int numero_pi_voisin = matriceVoisinage[i][1];
+
+        socklen_t sizeAdr = sizeof(struct sockaddr_in);
+        int resSend = sendto(socket_pconfig, &tab_socket[numero_pi_voisin-1], sizeof(tab_socket[numero_pi_voisin-1]), 0, (struct sockaddr *)&tab_socket[numero_pi-1], sizeAdr);
+
+        if (resSend == -1)
+        {
+            perror("❌ Pconfig : problème avec le send to :");
+            exit(1);
         }
-        
-        printf("----- ⭐ La premiere occurence de ce Pi se trouve a la linge n°%d -----\n", indice);
 
-        while ((matriceVoisinage[indice][0]) == numero_pi) {
-            int numero_pi_voisin = matriceVoisinage[indice][1];
+        char *ip_pi_suivant = inet_ntoa(tab_socket[numero_pi_voisin-1].sin_addr);
+        int port_pi_suivant = ntohs(tab_socket[numero_pi_voisin-1].sin_port);
 
-            struct sockaddr_in socket_pi;
-            socket_pi.sin_family = AF_INET;
-            socket_pi.sin_addr.s_addr = tab_socket[numero_pi - 1].sin_addr.s_addr;
-            socket_pi.sin_port = tab_socket[numero_pi - 1].sin_port;
+        printf("\t🧮 Numéro du Pi suivant : %d\n", numero_pi_voisin);
+        printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
+        printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
+        printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
 
-            socklen_t sizeAdr = sizeof(struct sockaddr_in);
-            int resSend = sendto(socket_pconfig, &tab_socket[numero_pi_voisin-1], sizeof(tab_socket[numero_pi_voisin]), 0, (struct sockaddr *)&socket_pi, sizeAdr);
+        printf("----- 🏆 Fin envois des données au Pi n°%d -----\n\n", numero_pi);
 
-            if (resSend == -1)
-            {
-                perror("❌ Pconfig : problème avec le send to :");
-                exit(1);
-            }
+        // droite -> gauche
+        numero_pi = matriceVoisinage[i][1];
+        printf("----- 📨 Envois des données au Pi n°%d -----\n", numero_pi);
 
-            char *ip_pi_suivant = inet_ntoa(tab_socket[numero_pi_voisin-1].sin_addr);
-            int port_pi_suivant = ntohs(tab_socket[numero_pi_voisin-1].sin_port);
+        numero_pi_voisin = matriceVoisinage[i][0];
 
-            printf("\t🧮 Numéro du Pi suivant : %d\n", numero_pi_voisin + 1);
-            printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
-            printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
-            printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
+        resSend = sendto(socket_pconfig, &tab_socket[numero_pi_voisin-1], sizeof(tab_socket[numero_pi_voisin-1]), 0, (struct sockaddr *)&tab_socket[numero_pi-1], sizeAdr);
 
-            indice++;
+        if (resSend == -1)
+        {
+            perror("❌ Pconfig : problème avec le send to :");
+            exit(1);
         }
+
+        ip_pi_suivant = inet_ntoa(tab_socket[numero_pi_voisin-1].sin_addr);
+        port_pi_suivant = ntohs(tab_socket[numero_pi_voisin-1].sin_port);
+
+        printf("\t🧮 Numéro du Pi suivant : %d\n", numero_pi_voisin);
+        printf("\t📮 Ip du Pi suivant : %s\n", ip_pi_suivant);
+        printf("\t🐖 Port du Pi suivant : %d\n", port_pi_suivant);
+        printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
 
         printf("----- 🏆 Fin envois des données au Pi n°%d -----\n\n", numero_pi);
     }
+
+    printf("✅ Tous les voisins ont été envoyé ! Maintenant on les en informe.\n");
+
+    for (int i = 0; i < nombrePi; i++)
+    {
+        int numero_pi = i;
+        printf("----- 📨 Envois de l'info au Pi n°%d -----\n", numero_pi+1);
+
+        struct sockaddr_in socket_vide;
+        socket_vide.sin_family = AF_INET;
+        socket_vide.sin_addr.s_addr = 0;
+        socket_vide.sin_port = 0;
+
+        socklen_t sizeAdr = sizeof(struct sockaddr_in);
+        int resSend = sendto(socket_pconfig, &socket_vide, sizeof(socket_vide), 0, (struct sockaddr *)&tab_socket[numero_pi], sizeAdr);
+
+        if (resSend == -1)
+        {
+            perror("❌ Pconfig : problème avec le send to :");
+            exit(1);
+        }
+
+        printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
+
+        printf("----- 🏆 Fin envois des données au Pi n°%d -----\n\n", numero_pi);
+    } 
 
     printf("🏁 Toutes les 🧦 on bien été envoyées !\n");
 
