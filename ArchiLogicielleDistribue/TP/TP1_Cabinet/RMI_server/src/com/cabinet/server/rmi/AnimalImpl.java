@@ -89,7 +89,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		Date date = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 		String dateString = formatter.format(date);
-		System.out.println("\033[3m" + dateString + "\033[0m - Un client regarde " + detailAnimal + ".");
+		System.out.println("\033[3m" + dateString + "\033[0m - Un vétérinaire regarde " + detailAnimal + ".");
 		return "- " + detailAnimal;
 	}
 
@@ -108,7 +108,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
 		String dateString = formatter.format(date);
 
-		System.out.println("\033[3m" + dateString + "\033[0m - Un client se renseigne sur l'animal " + detailAnimal);
+		System.out.println("\033[3m" + dateString + "\033[0m - Un vétérinaire se renseigne sur l'animal " + detailAnimal);
 		return "- L'animal " + detailAnimal;
 	}
 

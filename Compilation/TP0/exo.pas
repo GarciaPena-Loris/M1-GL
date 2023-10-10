@@ -1,16 +1,56 @@
 // Écrire une fonction qui teste si un entier est un carré
 var n: integer
-
-f(n: integer): boolean
-var i: integer
-f := false;  // Initialise f à false
-i := 1;      // Initialise i à 1
-while i <= n / 2 do
-    if i * i = n then
-        f := true;  // Si i*i est égal à n, définissez f sur true
+f(n: integer): integer
+    var i: integer
+    if n = 0 then
+        f := 1
     else
-        i := i + 1; // Sinon, incrémente i
+        f := 1;
+        i := 1;
+        while i <= n do
+            f := f * i;
+            i := i + 1
+n := read();
+write(f(n))
 
+var n: integer
+f(n: integer)
+    var i: integer
+    if n = 0 then
+        f := 1
+    else
+        f := 1;
+        i := 1;
+        while i <= n do
+            f := f * i;
+            i := i + 1
+n := read();
+write(f(n))
+
+var n : integer
+f(n : integer)
+var i: integer
+j: integer
+k: integer
+if n = 0 then
+    f := 1
+else
+    f := f(n-1) * n
+n := read();
+write(f(n))
+
+var n : integer
+f(n : integer)
+if n = 0 then
+    f := 1
+else
+    f := f(n-1) * n
+n := read();
+write(f(n))
+
+var n : integer
+f()
+n := n + 1
 n := read();
 write(f(n))
 
@@ -18,15 +58,13 @@ write(f(n))
 
 // Écrire la fonction factorielle de manière récursive
 var n : integer
-
-f (n : integer) : integer
+f(n : integer): integer
 if n = 0 then
-    f : = 1
+    f := 1
 else
-    f : = f(n-1) * n
-        
-n : = read();
-write(f (n))
+    f := f(n-1) * n
+n := read();
+write(f(n))
 
 #############################################################################
 

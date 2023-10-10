@@ -7,15 +7,49 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.cabinet.common.rmi.Espece;
+import com.cabinet.common.rmi.IClientCallback;
 import com.cabinet.common.rmi.IAnimal;
 import com.cabinet.common.rmi.ICabinetMedical;
 
 public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedical {
 
     private ArrayList<IAnimal> patients;
+    // Callback
+    private ArrayList<IClientCallback> listeClients;
 
     public CabinetMedical() throws RemoteException {
         patients = new ArrayList<IAnimal>();
+        listeClients = new ArrayList<IClientCallback>();
+    }
+
+    // Callback
+    public void enregistrerAlertCallback(IClientCallback client) throws RemoteException {
+        if (!listeClients.contains(client)) {
+            listeClients.add(client);
+        }
+    }
+
+    public void supprimerAlertCallback(IClientCallback client) throws RemoteException {
+        if (!listeClients.contains(client)) {
+            listeClients.remove(client);
+        }
+    }
+
+    private void notifierSeuilAtteint(int nombrePatients) throws RemoteException {
+        for (IClientCallback client : listeClients) {
+            try {
+                client.notifierSeuilAtteint(nombrePatients);
+            } catch (RemoteException e) {
+                supprimerAlertCallback(client);
+            }
+        }
+    }
+
+    private void verifierSeuilAtteint() throws RemoteException {
+        int nombrePatients = patients.size();
+        if (nombrePatients == 100 || nombrePatients == 500 || nombrePatients == 1000) {
+            notifierSeuilAtteint(nombrePatients);
+        }
     }
 
     @Override
@@ -28,8 +62,13 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
-        return patients.add(patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
+
+        Boolean result = patients.add(patient);
+        if (result) {
+            verifierSeuilAtteint();
+        }
+        return result;
     }
 
     @Override
@@ -42,8 +81,13 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
-        return patients.add(patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
+
+        Boolean result = patients.add(patient);
+        if (result) {
+            verifierSeuilAtteint();
+        }
+        return result;
     }
 
     @Override
@@ -57,8 +101,13 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
-        return patients.add(patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
+
+        Boolean result = patients.add(patient);
+        if (result) {
+            verifierSeuilAtteint();
+        }
+        return result;
     }
 
     @Override
@@ -72,9 +121,18 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
         String dateString = formatter.format(date);
 
         System.out.println(
-                "\033[3m" + dateString + "\033[0m - Un client ajoute un nouvel animal : " + patient);
+                "\033[3m" + dateString + "\033[0m - Un vétérinaire ajoute un nouvel animal : " + patient);
 
-        return patients.add(patient);
+        Boolean result = patients.add(patient);
+        if (result) {
+            verifierSeuilAtteint();
+        }
+        return result;
+    }
+
+    @Override
+    public int nombreAnimaux() throws RemoteException {
+        return patients.size();
     }
 
     @Override
@@ -96,12 +154,15 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
                 String dateString = formatter.format(date);
 
                 System.out.println(
-                        "\033[3m" + dateString + "\033[0m - Un client retire l'animal " + patient);
+                        "\033[3m" + dateString + "\033[0m - Un vétérinaire retire l'animal " + patient);
 
-                return patients.remove(patient);
+                Boolean result = patients.remove(patient);
+                if (result) {
+                    verifierSeuilAtteint();
+                }
+                return result;
             }
         }
-
         return false;
     }
 
