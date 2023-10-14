@@ -55,7 +55,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
     @Override
     public boolean ajoutAnimal(String nom, String maitre, String race, Espece espece, String cri)
             throws RemoteException {
-        IAnimal patient = new AnimalImpl(nom, maitre, race, espece, cri);
+        IAnimal patient = new Animal(nom, maitre, race, espece, cri);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
@@ -74,7 +74,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
     @Override
     public boolean ajoutAnimal(String nom, String maitre, String race, Espece espece, String cri, String etat)
             throws RemoteException {
-        IAnimal patient = new AnimalImpl(nom, maitre, race, espece, cri, etat);
+        IAnimal patient = new Animal(nom, maitre, race, espece, cri, etat);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
@@ -94,7 +94,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
     public boolean ajoutAnimal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne,
             String cri)
             throws RemoteException {
-        IAnimal patient = new AnimalImpl(nom, maitre, race, nomEspece, dureeDeVieMoyenne, cri);
+        IAnimal patient = new Animal(nom, maitre, race, nomEspece, dureeDeVieMoyenne, cri);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
@@ -114,7 +114,7 @@ public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedic
     public boolean ajoutAnimal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne,
             String cri, String etat)
             throws RemoteException {
-        IAnimal patient = new AnimalImpl(nom, maitre, race, nomEspece, dureeDeVieMoyenne, cri, etat);
+        IAnimal patient = new Animal(nom, maitre, race, nomEspece, dureeDeVieMoyenne, cri, etat);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
