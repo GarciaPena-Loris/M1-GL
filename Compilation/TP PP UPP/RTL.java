@@ -351,7 +351,7 @@ class RTLEq extends RTLBinBranch {
         this.regIn2 = regIn2;
         this.succ1 = succ1;
         this.succ2 = succ2;
-    }// RTLEq
+    }// RTLEqf
 
 }// RTLEq
 
