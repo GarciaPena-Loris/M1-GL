@@ -48,13 +48,7 @@
 
 % Résumé du document
 \begin{abstract}
-    Ce rapport présente notre travail réalisé dans le cadre du TP1 portant sur Java RMI (Remote Method Invocation). Le TP1 avait pour principaux objectifs :
-
-    \begin{itemize}
-        \item Comprendre la notion d'objet distribué.
-        \item Utiliser le passage de stub ou d'objet sérialisé.
-        \item Explorer le téléchargement de code via l'utilisation de la codebase.
-    \end{itemize}
+    Ce rapport présente mon travail réalisé dans le cadre du TP1 portant sur Java RMI (Remote Method Invocation).
 \end{abstract}
 
 % Table des matières (générée automatiquement)
@@ -93,106 +87,152 @@ L'architecture globale de notre système repose sur trois composants principaux 
     \label{fig:schema-rmi}
 \end{figure}
 
-Cette architecture permet la création d'une application distribuée utilisant Java RMI 
-pour la communication à distance. Chaque composant joue un rôle essentiel dans le fonctionnement 
+Cette architecture permet la création d'une application distribuée utilisant Java RMI
+pour la communication à distance. Chaque composant joue un rôle essentiel dans le fonctionnement
 de notre application vétérinaire.
 Dans notre application, chaque composant est implémenté en tant que projet distinct.
 
 \subsection{Partie Serveur}
 
-Le serveur est responsable de la création d'objets, dans notre cas, le cabinet médical, 
-qui sont rendus disponibles pour l'accès distant via Java RMI. 
-Le serveur crée ces objets et les publie dans un registre RMI. 
+Le serveur est responsable de la création d'objets, dans notre cas, le cabinet médical,
+qui sont rendus disponibles pour l'accès distant via Java RMI.
+Le serveur crée ces objets et les publie dans un registre RMI.
 Le registre RMI agit comme un annuaire central permettant aux clients d'accéder aux objets distants.
 
-Ainsi, le serveur joue un rôle essentiel dans la mise en place de l'infrastructure RMI, 
-permettant aux différentes clients (vétérinaire) d'accéder aux différentes fonctions disponibles 
-dans le cabinet médical. Il met en place une communication sécurisée entre les clients 
-et les objets distants (stub). 
-Le serveur gère également la gestion des \nameref{sec:callback} pour alerter les clients lorsque 
+Ainsi, le serveur joue un rôle essentiel dans la mise en place de l'infrastructure RMI,
+permettant aux différentes clients (vétérinaire) d'accéder aux différentes fonctions disponibles
+dans le cabinet médical. Il met en place une communication sécurisée entre les clients
+et les objets distants (stub).
+Le serveur gère également la gestion des \nameref{sec:callback} pour alerter les clients lorsque
 certains seuils sont atteints, améliorant ainsi la réactivité et la gestion du cabinet médical.
 
 \subsection{Partie Clients}
 
-Le composant client de notre projet est destiné aux vétérinaires du cabinet. 
+Le composant client de notre projet est destiné aux vétérinaires du cabinet.
 Chaque vétérinaire utilise un client pour interagir avec le cabinet vétérinaire à distance.
 Lorsqu'un vétérinaire effectue une opération, le client communique avec le serveur en utilisant Java RMI.
 
-Chaque client utilise un objet stub pour représenter l'interface distante de notre cabinet médical. 
+Chaque client utilise un objet stub pour représenter l'interface distante de notre cabinet médical.
 
-L'objet stub agit comme un proxy local pour l'objet distant du serveur. 
+L'objet stub agit comme un proxy local pour l'objet distant du serveur.
 Lorsqu'un client appelle une méthode sur l'objet stub, la requête est automatiquement acheminée vers le serveur.
 
-Les clients utilise une interface en ligne de commande (CLI) pour effectuer diverses actions, 
-telles que la recherche de patients, l'ajout de nouveaux animaux, la consultation des dossiers médicaux, 
+Les clients utilise une interface en ligne de commande (CLI) pour effectuer diverses actions,
+telles que la recherche de patients, l'ajout de nouveaux animaux, la consultation des dossiers médicaux,
 etc.
 
-De plus, les clients utilisent des méthodes qui déclenchent des affichages dans le terminal du serveur, 
+De plus, les clients utilisent des méthodes qui déclenchent des affichages dans le terminal du serveur,
 permettant aux vétérinaires de rester informés en temps réel sur les opérations effectuées sur le cabinet médical.
 
-Enfin, les clients déposent les fichiers de classes (`.class`) dans un répertoire `codebase`, 
+Enfin, les clients déposent les fichiers de classes (`.class`) dans un répertoire `codebase`,
 permettant ainsi au serveur de les télécharger et de les rendre accessibles (voir section \nameref{sec:codebase}).
 
 \subsection{Partie commune (\textit{Common})}
 
-Le module commun, également appelé \textit{Common}, est utilisé en tant que 
-composant partagé entre le serveur et les clients. 
-Il contient les classes et interfaces nécessaires à la communication entre le serveur et les clients. 
-En utilisant ce module, nous garantissons la cohérence des données partagées et 
-simplifions le développement en évitant la duplication de code. 
+Le module commun, également appelé \textit{Common}, est utilisé en tant que
+composant partagé entre le serveur et les clients.
+Il contient les classes et interfaces nécessaires à la communication entre le serveur et les clients.
+En utilisant ce module, nous garantissons la cohérence des données partagées et
+simplifions le développement en évitant la duplication de code.
 
-Le module commun contient des définitions d'objets partagés, telles que les interfaces des différents 
-objets distribués, mais aussi des classes partagées. 
+Le module commun contient des définitions d'objets partagés, telles que les interfaces des différents
+objets distribués, mais aussi des classes partagées.
 
 \bigskip
 \textbf{Conclusion}
 \bigskip
 
-L'architecture de notre projet basé sur Java RMI offre donc une solution robuste 
-pour la gestion d'un cabinet vétérinaire à distance. 
-Elle se compose de trois parties, chacune de ces parties remplit un rôle distinct, 
+L'architecture de notre projet basé sur Java RMI offre donc une solution robuste
+pour la gestion d'un cabinet vétérinaire à distance.
+Elle se compose de trois parties, chacune de ces parties remplit un rôle distinct,
 contribuant ainsi à la création d'une application distribuée fonctionnelle.
 
-Le serveur centralise la création et la gestion des objets distants, 
-tandis que les clients utilisent des objets stub pour interagir avec l'interface distante. 
+Le serveur centralise la création et la gestion des objets distants,
+tandis que les clients utilisent des objets stub pour interagir avec l'interface distante.
 L'architecture garantit une communication à distance fluide et sécurisée.
 
-En résumé, l'architecture globale de notre projet simplifie la gestion des 
+En résumé, l'architecture globale de notre projet simplifie la gestion des
 opérations vétérinaires à distance.
+
+\newpage
+\section{Diagrammes de Conception}
+
+Le diagramme de classes présenté ci-dessous (Figure \ref{fig:diagramme-classe}),
+offre une vue globale des relations entre les composants clés de notre projet,
+notamment les classes, les interfaces, et les flux de données.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{classe}
+    \caption{Diagramme de classes}
+    \label{fig:diagramme-classe}
+\end{figure}
+
+Ce diagramme de classe met en évidence les composants qui interagissent pour fournir une solution distribuée.
+Au cœur de notre système se trouve la classe \texttt{CabinetMedical}, qui joue un rôle central dans la gestion
+des dossiers médicaux des patients. C'est dans cette classe que l'on retrouve notre liste de patients.
+
+Les classes \texttt{CabinetMedical} et \texttt{Animal} implémentent les interfaces définies dans la partie commune.
+Cela permet aux clients de manipuler des objets distants via des objets stub
+générés à partir des interfaces communes.
+
+Le \texttt{Client} s'appuie sur ces interfaces pour interagir avec le serveur et les objets distants (Cf. \nameref{sec:composants}).
+
+De plus, le diagramme de classes met en évidence un élément essentiel de notre architecture Java RMI :
+le registre RMI.
+\newline Le registre RMI joue un rôle crucial en servant de répertoire
+central pour la publication des objets distants :
+\begin{lstlisting}[language=Java]
+    registry.bind("Cabinet", cabinet);
+\end{lstlisting}
+Cela permet aux clients d'accéder facilement aux objets distants
+en utilisant un mécanisme de recherche :
+\begin{lstlisting}[language=Java]
+    ICabinetMedical cabinet = (ICabinetMedical) registry.lookup("Cabinet");
+\end{lstlisting}
+La présence du registre RMI dans notre diagramme souligne son rôle
+fondamental dans la mise en place de la communication à distance au sein de notre application,
+renforçant ainsi la gestion des objets distants et des clients.
+
 
 \newpage
 \section{Communication}
 
-La communication dans notre application Java RMI repose sur le mécanisme de 
-communication à distance offert par RMI. 
-Elle permet aux vétérinaires (clients) d'interagir avec le cabinet médical (serveur) 
+La communication dans notre application Java RMI repose sur le mécanisme de
+communication à distance offert par RMI.
+Elle permet aux vétérinaires (clients) d'interagir avec le cabinet médical (serveur)
 de manière transparente, comme s'ils travaillaient en local.
 
 \subsection{Invocation de Méthodes à Distance}
 
-L'invocation de méthodes à distance est la base de la communication dans notre application. 
-Grâce à Java RMI, les vétérinaires peuvent invoquer des méthodes 
-définies dans l'interface \texttt{ICabinetMedical} sur des objets distants situés côté serveur. 
+L'invocation de méthodes à distance est la base de la communication dans notre application.
+Grâce à Java RMI, les vétérinaires peuvent invoquer des méthodes
+définies dans l'interface \texttt{ICabinetMedical} sur des objets distants situés côté serveur.
 Ces méthodes permettent d'ajouter, chercher, supprimer des animaux, etc.
 
-Lorsqu'un vétérinaire appelle l'une de ces méthodes, 
-RMI utilise automatiquement un objet stub pour gérer la communication à distance. 
-Les paramètres sont sérialisés, les appels sont acheminés vers le serveur, 
-et les résultats sont renvoyés au client. Cette approche rend la communication à distance transparente 
+Lorsqu'un vétérinaire appelle l'une de ces méthodes,
+RMI utilise automatiquement un objet stub pour gérer la communication à distance.
+Les paramètres sont sérialisés, les appels sont acheminés vers le serveur,
+et les résultats sont renvoyés au client :
+\begin{lstlisting}[language=Java]
+ICabinetMedical cabinet = (ICabinetMedical) registry.lookup("Cabinet");
+cabinet.ajoutAnimal(nom, maitre, race, nomEspece, dureeDeVieMoyenne, cri);
+\end{lstlisting}
+Cette approche rend la communication à distance transparente
 et simplifie la gestion des opérations à travers des objets proxy locaux.
 
 \subsection{Sérialisation des objets dans l'application RMI}
 
-L'un des aspects clés de notre application Java RMI réside dans la 
-capacité à transmettre des objets d'une machine virtuelle Java à une autre de 
+L'un des aspects clés de notre application Java RMI réside dans la
+capacité à transmettre des objets d'une machine virtuelle Java à une autre de
 manière transparente. Cela est rendu possible grâce au mécanisme de sérialisation de Java.
 
 \subsection{Mécanisme de sérialisation de Java}
 
-La sérialisation est un processus par lequel un objet Java est converti en un flux d'octets, 
-ce qui permet de le transférer sur un réseau ou de le stocker dans un fichier. 
-La désérialisation est le processus inverse, où un flux d'octets est converti en un objet Java. 
-Java fournit un mécanisme de sérialisation intégré qui facilite grandement la communication entre 
+La sérialisation est un processus par lequel un objet Java est converti en un flux d'octets,
+ce qui permet de le transférer sur un réseau ou de le stocker dans un fichier.
+La désérialisation est le processus inverse, où un flux d'octets est converti en un objet Java.
+Java fournit un mécanisme de sérialisation intégré qui facilite grandement la communication entre
 les machines virtuelles.
 
 \begin{figure}[h]
@@ -202,42 +242,41 @@ les machines virtuelles.
     \label{fig:serialisation}
 \end{figure}
 
-Dans notre applicatio, lorsque nous passons des objets tels que des patients 
-ou des espèces entre le serveur et les clients, 
-Java gère automatiquement la sérialisation et la désérialisation. Cela simplifie considérablement 
-le processus de développement, car les détails de la sérialisation ne nécessitent pas 
+Dans notre application, lorsque nous passons des objets tels que des patients
+ou des espèces entre le serveur et les clients,
+Java gère automatiquement la sérialisation et la désérialisation. Cela simplifie considérablement
+le processus de développement, car les détails de la sérialisation ne nécessitent pas
 d'intervention directe de notre part.
-
-En résumé, la sérialisation est un composant essentiel de notre application RMI, 
-qui permet la transmission des objets entre le serveur et les clients. 
-Grâce à l'héritage de la classe \texttt{UnicastRemoteObject}, 
-les objets de la classe \texttt{CabinetMedical} peuvent être sérialisés et désérialisés, 
-contribuant ainsi à la robustesse de notre système distribué.
 
 \subsection{Sérialisation implicite}
 
-Dans notre application, la classe \texttt{CabinetMedical} est un composant central qui gère 
-les dossiers des patients. Bien que cette classe n'implémente pas directement l'interface \texttt{Serializable}, 
-elle bénéficie de la sérialisation grâce à l'extension de la classe \texttt{UnicastRemoteObject}. 
-Cette extension rend les objets de la classe \texttt{CabinetMedical} sérialisables, 
-ce qui est essentiel pour la communication distante via RMI. 
-Ainsi, lorsqu'un objet \texttt{CabinetMedical} est transmis entre le serveur et les clients, 
+Dans notre application, la classe \texttt{CabinetMedical} est un composant central qui gère
+les dossiers des patients. Bien que cette classe n'implémente pas directement l'interface \texttt{Serializable},
+elle bénéficie de la sérialisation grâce à l'extension de la classe \texttt{UnicastRemoteObject}.
+Cette extension rend les objets de la classe \texttt{CabinetMedical} sérialisables :
+\begin{lstlisting}[language=Java]
+    public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedical {}
+\end{lstlisting}
+Ainsi, lorsqu'un objet \texttt{CabinetMedical} est transmis entre le serveur et les clients,
 il est automatiquement sérialisé et désérialisé.
-Nous avons également implémenté une classe \texttt{Espece} qui étend directement \texttt{Serializable}. 
-Permettant au serveur de sérialiser et de désérialiser les objets de cette classe. 
+Nous avons également implémenté une classe \texttt{Espece} qui étend directement \texttt{Serializable} :
+\begin{lstlisting}[language=Java]
+    public class Espece implements Serializable {}
+\end{lstlisting}
+Permettant au serveur de sérialiser et de désérialiser les objets de cette classe.
 
 \newpage
-\section{Sécurité et codebase}\label{sec:codebase}
+\section{Sécurité et codebase}\label{sec:securite}
 
-La sécurité est un aspect crucial de toute application distribuée, 
-et Java RMI offre des mécanismes intégrés pour la gestion de la sécurité. 
+La sécurité est un aspect crucial de toute application distribuée,
+et Java RMI offre des mécanismes intégrés pour la gestion de la sécurité.
 Dans notre projet, nous avons commencé à mettre en place des mesures de sécurité de base.
 
 \subsection{Politique de Sécurité}
 
 \begin{sloppypar}
-    Nous avons configuré une politique de sécurité en utilisant le fichier \texttt{security.policy}. 
-    Cette politique définit les autorisations et les restrictions qui seront appliquées aux 
+    Nous avons configuré une politique de sécurité en utilisant le fichier \texttt{security.policy}.
+    Cette politique définit les autorisations et les restrictions qui seront appliquées aux
     composants de notre application. La politique de sécurité est chargée via la ligne de code suivante :
 \end{sloppypar}
 
@@ -246,8 +285,8 @@ System.setProperty("java.security.policy", "security/security.policy");
 \end{lstlisting}
 
 
-Dans le fichier de politique de sécurité, situé coté serveur dans un sous dossier security, 
-nous avons actuellement octroyé toutes les autorisations 
+Dans le fichier de politique de sécurité, situé coté serveur dans un sous dossier security,
+nous avons actuellement octroyé toutes les autorisations
 à notre application en utilisant la règle suivante :
 
 \begin{lstlisting}
@@ -256,11 +295,11 @@ grant {
 };
 \end{lstlisting}
 
-Cela signifie que notre application a la permission d'accéder à toutes les ressources 
-et d'effectuer toutes les actions, ce qui est une configuration très permissive et ne 
+Cela signifie que notre application a la permission d'accéder à toutes les ressources
+et d'effectuer toutes les actions, ce qui est une configuration très permissive et ne
 devrait être utilisée que pour des besoins de développement et de test.
 
-Dans un environnement de production, il est fortement recommandé de définir des politiques de sécurité 
+Dans un environnement de production, il est fortement recommandé de définir des politiques de sécurité
 plus restrictives pour protéger les ressources sensibles et garantir l'intégrité de l'application.
 
 \subsection{Gestionnaire de Sécurité}
@@ -271,111 +310,399 @@ Nous avons également mis en place un gestionnaire de sécurité avec la ligne d
 System.setSecurityManager(new SecurityManager());
 \end{lstlisting}
 
-Le gestionnaire de sécurité est responsable de l'application des politiques de sécurité définies. 
-Il veille à ce que les actions de l'application soient conformes aux autorisations spécifiées 
+Le gestionnaire de sécurité est responsable de l'application des politiques de sécurité définies.
+Il veille à ce que les actions de l'application soient conformes aux autorisations spécifiées
 dans la politique de sécurité.
 
-Bien que notre configuration actuelle soit permissive pour faciliter le développement, 
-il est essentiel de noter que dans un environnement de production, des politiques de sécurité 
+Bien que notre configuration actuelle soit permissive pour faciliter le développement,
+il est essentiel de noter que dans un environnement de production, des politiques de sécurité
 appropriées doivent être définies pour protéger l'application contre les menaces potentielles.
 
+\subsection{Codebase en Java RMI}\label{sec:codebase}
+
+La \textit{codebase} en Java RMI est un mécanisme essentiel pour le téléchargement 
+dynamique de classes depuis des emplacements distants. 
+Lorsqu'un serveur RMI souhaite utiliser une classe distante qu'il ne possède pas localement, 
+il peut la télécharger depuis un emplacement spécifié, appelé la \textit{codebase}. 
+
+Dans notre application, nous avons placé nos classes téléchargeables dans un répertoire situé côté client.
+Plus précisément dans le sous-répertoire 
+\newline\texttt{codebase/src/com/cabinet/client/rmi} de notre projet : 
+
+\begin{lstlisting}[language=java]
+    System.setProperty("java.rmi.server.codebase",
+	"file:///chemon_vers_application/TP1_Cabinet/RMI_client/codebase/");
+\end{lstlisting}
+
+Cette structure permet au serveur RMI de télécharger ces classes dynamiquement lorsque les clients en ont besoin.
+Nous avons par exemple utilisé cette fonctionnalité pour télécharger la classe \texttt{Espece}.
+En effet, coté client nous avons une classe \textit{Ours} qui extends \textit{Espece}, 
+cette classe n'est donc pas accessibles coté serveur, nous devons donc la mettre dans notre codebase.
+
+\begin{lstlisting}[language=Java]
+import com.cabinet.common.rmi.Espece;
+
+public class Ours extends Espece {
+    public Ours() {
+        super("Ours", 50);
+    }
+}
+\end{lstlisting}
+
+Lorsque le client émet une requête nécessitant l'utilisation d'une classe distante, 
+le serveur RMI vérifie la \textit{codebase} spécifiée pour cette classe. 
+Si la classe n'est pas présente localement sur le serveur, 
+il la télécharge automatiquement depuis la \textit{codebase} du client. 
+Cela garantit que les classes requises sont accessibles et utilisables, 
+même si elles ne sont pas distribuées avec le serveur RMI lui-même.      
+
 \newpage
-\section{Diagrammes de Conception}
+\section{Composants clés}\label{sec:composants}
 
-Le diagramme de classes présenté ci-dessous (Figure \ref{fig:diagramme-classe}), 
-offre une vue globale des relations entre les composants clés de notre projet, 
-notamment les classes, les interfaces, et les flux de données. 
+Pour comprendre en détail les composants clés de notre application Java RMI, 
+examinons les principales classes et interfaces qui les composent.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1\textwidth]{classe}
-    \caption{Diagramme de classes}
-    \label{fig:diagramme-classe}
-\end{figure}
+\subsection{Composants communs}
 
-Le diagramme de classes met en évidence un élément essentiel de notre architecture Java RMI : 
-le registre RMI. Le registre RMI joue un rôle crucial en servant de répertoire 
-central pour la publication des objets distants. 
-Cela permet aux clients d'accéder facilement aux objets distants 
-en utilisant un mécanisme de recherche. 
-La présence du registre RMI dans notre diagramme souligne son rôle 
-fondamental dans la mise en place de la communication à distance au sein de notre application, 
-renforçant ainsi la gestion des objets distants et des clients.
+Comme sité précédemment, les classes et interfaces communes sont utilisées par le serveur et les clients.
+Elles permettent de définir une structure commune pour les objets distants (stub).
 
-
-\newpage
-\section{Composants clés}
-
-Pour comprendre en détail les composants clés de notre application Java RMI, examinons les principales classes et interfaces qui les composent.
-
-\subsection{Composants communs (Côté Common)}
-
-
+\bigskip
 \textbf{· Interface IAnimal}
 \bigskip
 
-L'interface \texttt{IAnimal} est une interface distante qui définit les méthodes que tout animal doit mettre en œuvre. Elle étend l'interface \texttt{Remote}, ce qui permet aux objets qui la mettent en œuvre d'être distribués via Java RMI. Cette interface définit des méthodes pour obtenir le nom de l'animal, afficher des informations sur l'animal, émettre un cri, consulter le dossier de suivi, obtenir des informations sur l'espèce de l'animal, etc.
+L'interface \texttt{IAnimal} est une interface qui définit les méthodes que tout animal doit mettre en œuvre. 
+Elle étend l'interface \texttt{Remote}, ce qui permet aux objets qui la mettent en œuvre d'être distribués via Java RMI.
+Cette interface définit des méthodes pour obtenir le nom de l'animal, afficher des informations sur l'animal, 
+émettre un cri, consulter le dossier de suivi, obtenir des informations sur l'espèce de l'animal, etc :
 
+\begin{lstlisting}[language=Java]
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface IAnimal extends Remote {
+	/* METHODS */
+	String getNom() throws RemoteException;
+	String afficherAnimal() throws RemoteException;
+	String afficherAnimalComplet() throws RemoteException;
+	void crier() throws RemoteException;
+	String afficherDossierDeSuivi() throws RemoteException;
+	void modifierDossierDeSuivi(String contenue) throws RemoteException;
+	Espece getEspece() throws RemoteException;
+}
+\end{lstlisting}
+
+Chacun des méthodes de nos interfaces étend l'interface \texttt{RemoteException}, 
+qui est une exception qui doit être déclarée par toutes les méthodes distantes
+afin de signaler les problèmes de communication à distance.
+
+\bigskip
 \textbf{· Interface ICabinetMedical}
 \bigskip
 
+De manière similaire, l'interface \texttt{ICabinetMedical} est une interface qui définit les méthodes
+que tout cabinet médical doit mettre en œuvre. Elle étend également l'interface \texttt{Remote}.
+Cette interface définit des méthodes pour ajouter des animaux, chercher des animaux, supprimer des animaux,
+obtenir la liste des patients, etc :
+
+\begin{lstlisting}[language=Java]
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+
+public interface ICabinetMedical extends Remote {
+
+        boolean ajoutAnimal(String nom, String maitre, String race, Espece espece, String cri) throws RemoteException;
+        boolean ajoutAnimal(String nom, String maitre, String race, Espece espece, String cri, String etat) throws RemoteException;
+        boolean ajoutAnimal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri) throws RemoteException;
+        boolean ajoutAnimal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri, String etat) throws RemoteException;
+        int nombreAnimaux() throws RemoteException;
+        IAnimal chercherAnimal(String nom) throws RemoteException;
+        boolean supprimerAnimal(String nom) throws RemoteException;
+        ArrayList<IAnimal> getPatients() throws RemoteException;
+}
+\end{lstlisting}
+
+Nous pouvons voir que cette interface définit plusieur méthodes pour ajouter des animaux,
+en fonction des paramètres fournis. Cela permet de simplifier l'ajout d'animaux en fournissant
+des méthodes surchargées.
+
+\bigskip
 \textbf{· Classe Espece}
 \bigskip
 
-La classe \texttt{Espece} est un composant commun qui définit une espèce d'animal. Elle implémente l'interface \texttt{Serializable} pour permettre la sérialisation des objets lors de la communication à distance. Cette classe contient des propriétés telles que le nom de l'espèce et la durée de vie moyenne. Elle joue un rôle crucial pour définir les caractéristiques des animaux au sein du système.
+La classe \texttt{Espece} est un composant commun qui définit une espèce d'animal. 
+Elle implémente l'interface \texttt{Serializable} pour permettre la sérialisation 
+des objets lors de la communication à distance. Cette classe contient des propriétés telles 
+que le nom de l'espèce et la durée de vie moyenne :
 
-L'interface \texttt{ICabinetMedical} est le pilier central de notre système. Elle définit les services que le cabinet médical offre aux vétérinaires. Cette interface distante expose des méthodes pour ajouter des animaux, chercher des animaux, supprimer des animaux, obtenir la liste des patients, et bien plus encore. Elle permet également d'enregistrer des callbacks pour les alertes.
+\begin{lstlisting}[language=Java]
+public class Espece implements Serializable {
+    private String nom;
+    private int dureeDeVieMoyenne;
+
+    public Espece(String nom, int dureeDeVieMoyenne) {
+        this.nom = nom;
+        this.dureeDeVieMoyenne = dureeDeVieMoyenne;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public int getDureeDeVieMoyenne() {
+        return dureeDeVieMoyenne;
+    }
+}
+\end{lstlisting}
+
+Cette classe nous permet d'aborder un aspect important de notre application, l'envois par copie.
+Lorsqu'un client appelle une méthode sur un animal distant, sont espèce lui est envoyés par copie.
+Cela signifie qu'un client ne peut pas modifier l'espece d'un aniaml directement.
+
+Elle nous permet également d'illustrer le mécanisme de téléchargement de code
+via l'utilisation de la codebase (Cf. \nameref{sec:codebase}), 
+avec l'utilisation de la classe \texttt{Ours}.
+
 
 \subsection{Composants serveur}
+Les classes présentes dans le package \texttt{com.cabinet.server.rmi} sont 
+utilisées par le serveur pour gérer les patients. Elles orbite autour de la classe \texttt{CabinetMedical}.
+Un server est lui représenté par une classe \texttt{Server}. Cette classe s'occupe de générer un registre RMI,
+de créer un cabinet médical et de le publier dans le registre RMI.
+Il est également responsable de l'ajout préliminaire de patients au cabinet médical : 
 
-\textbf{Classe Animal}
+\begin{lstlisting}[language=Java]
+CabinetMedical cabinet = new CabinetMedical();
+ajouterAnimals(cabinet);
+Registry registry = LocateRegistry.createRegistry(1099);
+registry.bind("Cabinet", cabinet);
+\end{lstlisting}
+
+\bigskip
+\textbf{· Classe DossierDeSuivi}
+\bigskip
+
+La classe \texttt{DossierDeSuivi} est une classe qui représente le dossier de suivi 
+d'un animal. Elle contient simplement une chaîne de caractères qui représente le 
+contenu du dossier. Cette classe nous permet de montrer qu'un client peut modifier
+un dossier de suivi d'un animal distant en appelant 
+la méthode \texttt{modifierDossierDeSuivi}.
+
+\bigskip
+\textbf{· Classe Animal}
+\bigskip
+
+La classe \texttt{Animal} est une implémentation de l'interface \texttt{IAnimal}. 
+Elle représente un patient du cabinet vétérinaire et stocke des informations telles que le nom, le maître, 
+l'espèce, la race, le cri et le dossier de suivi de l'animal :
+\begin{lstlisting}[language=Java]
+public class Animal extends UnicastRemoteObject implements IAnimal {
+
+	private String nom;
+	private String maitre;
+	private Espece espece;
+	private String race;
+	private String cri;
+	private DossierDeSuivi dossierDeSuivi;
+    ...
+}
+\end{lstlisting}
+
+
+Cette classe est utilisée côté serveur 
+pour créer et gérer les fiches médicales des animaux.
+Elle possède plusieurs contructeurs paramétrés différents pour permettre la création d'animaux
+selon différents paramètres : 
+
+\begin{lstlisting}[language=Java]
+protected Animal(String nom, String maitre, String race, Espece espece, String cri) {...}
+protected Animal(String nom, String maitre, String race, Espece espece, String cri, String etat) {...}
+protected Animal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri) {...}
+protected Animal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri, String etat) {...}
+\end{lstlisting}
+
+Ansi, un client peut créer un animal utilsant un espece prédéfinis appartenant à la classe \texttt{Espece} ou
+il peut créer un animal avec une espece personnalisé en fournissant le nom de l'espece et sa durée de vie moyenne.
+Il a également la possibilité de fournir un état à l'animal, qui peut être "malade", "blessé" ou autre.
+
+\bigskip
+\textbf{· Classe CabinetMedical}
 \bigskip
 
 
-La classe \texttt{Animal} est une implémentation de l'interface \texttt{IAnimal}. Elle représente un patient du cabinet vétérinaire et stocke des informations telles que le nom, le maître, l'espèce, la race, le cri et le dossier de suivi de l'animal. Cette classe est utilisée côté serveur pour créer et gérer les fiches médicales des animaux.
+La classe \texttt{CabinetMedical} est le cœur du côté serveur. 
+Elle gère une liste d'animaux (patients) (liste d'\textit{Animal}) au sein du cabinet médical. 
+Cette classe expose les méthodes définies dans l'interface \texttt{ICabinetMedical} pour gérer les patients, 
+rechercher des animaux, supprimer des patients, etc : 
 
-\textbf{Classe CabinetMedical}
+\begin{lstlisting}[language=Java]
+public class CabinetMedical extends UnicastRemoteObject implements ICabinetMedical {
+
+    private ArrayList<IAnimal> patients;
+    ...
+}
+\end{lstlisting}
+
+Cette classe est également responsable de la gestion des \nameref{sec:callback}.
+
+
+\bigskip
+\textbf{· Différentes espece}
 \bigskip
 
+Dans le serveur on retrouve également de nombreuses classes qui représentent des espèces d'animaux.
+Ces classe implements toutes la classe commune \texttt{Espece} : 
 
-La classe \texttt{CabinetMedical} est le cœur du côté serveur. Elle gère une liste d'animaux (patients) au sein du cabinet médical. Cette classe expose les méthodes définies dans l'interface \texttt{ICabinetMedical} pour gérer les patients, rechercher des animaux, supprimer des patients, et plus encore.
+\begin{lstlisting}[language=Java]
+public class Oiseau extends Espece {
+    public Oiseau() {
+        super("Oiseau", 5);
+    }
+}
+\end{lstlisting}
+
 
 \subsection{Composants client}
 
-\textbf{Classes Ours et Client}
+Les classes présentes dans le package \texttt{com.cabinet.client.rmi} sont utilisées par les clients
+pour interagir avec le cabinet médical. Elles orbite autour de la classe \texttt{Client}.
+Cette classe est responsable de la gestion des interactions entre les vétérinaires et le cabinet médical.
+Nous utilisons un CLI (Command Line Interface) pour permettre aux vétérinaires (user) d'interagir avec le cabinet médical.
+Un client s'occupe donc de récupérer le cabinet médical depuis le registre RMI de gérer les interactions avec le cabinet médical,
+et d'afficher les résultats dans le terminal :
+
+\begin{lstlisting}[language=Java]
+ICabinetMedical cabinet = (ICabinetMedical) registry.lookup("Cabinet");
+System.out.println("\nChoisir une action : ");
+            System.out.println("1. Afficher tous les animaux (court)");
+            System.out.println("2. Afficher tous les animaux (complet)");
+            System.out.println("3. Chercher un animal");
+            System.out.println("4. Ajouter un animal");
+            System.out.println("5. Supprimer un animal");
+            System.out.println("6. Ajouter un Ours");
+            System.out.println("7. Ajouter beaucoup d'animaux");
+            System.out.println("8. Quitter");
+\end{lstlisting}
+
+\textbf{Classes Ours}
 \bigskip
 
-Côté client, nous trouvons la classe \texttt{Ours} qui hérite de la classe \texttt{Espece}. Elle représente une espèce spécifique (l'ours) et est utilisée pour créer des animaux de cette espèce.
+Côté client, nous trouvons la classe \texttt{Ours} qui hérite de la classe \texttt{Espece}. 
+Elle représente une espèce spécifique (l'ours) et est utilisée pour créer des animaux de cette espèce.
+Cette classe est utilisée pour illustrer le mécanisme de téléchargement de code (codebase).
+En effet, cette classe n'est pas présente côté serveur, elle est donc téléchargée depuis la codebase du client.
 
-La classe \texttt{Client} est responsable de l'interaction des vétérinaires avec le cabinet médical. Elle propose plusieurs fonctions, notamment l'affichage des animaux, la recherche, l'ajout et la suppression d'animaux. Les vétérinaires utilisent cette classe pour gérer les fiches médicales des patients du cabinet vétérinaire.
-
-\subsection{Résumé}
-
-Les composants clés de notre application Java RMI comprennent des classes telles que \texttt{Espece}, \texttt{Animal}, \texttt{CabinetMedical}, des interfaces comme \texttt{IAnimal} et \texttt{ICabinetMedical}, ainsi que des classes spécifiques aux espèces d'animaux comme \texttt{Ours}. Ces éléments interagissent pour permettre la gestion des fiches médicales des patients et la communication à distance entre les vétérinaires et le cabinet médical. Ils jouent un rôle essentiel dans la réalisation des objectifs de notre projet Java RMI.
 
 \section{RMI Callback}\label{sec:callback}
 
-Dans notre application Java RMI, nous utilisons le mécanisme de callback pour informer les clients des seuils atteints en matière de nombre de patients dans le cabinet médical. Cette fonctionnalité est essentielle pour alerter les vétérinaires lorsqu'un certain nombre de patients est atteint.
+Dans notre application Java RMI, nous utilisons le mécanisme de callback pour informer les 
+clients des seuils atteints en matière de nombre de patients dans le cabinet médical. 
+Cette fonctionnalité est utilisé pour alerter les vétérinaires lorsqu'un certain nombre de patients est atteint.
 
 \bigskip
-\textbf{Côté client :}
+\textbf{· Côté client}
+\bigskip
 
-Dans le package \texttt{com.cabinet.common.rmi}, nous avons défini l'interface \texttt{IClientCallback}, qui étend l'interface \texttt{Remote}. Cette interface contient une méthode, \texttt{notifierSeuilAtteint}, qui est appelée par le serveur pour notifier un client de l'atteinte d'un seuil.
+
+Dans le package \texttt{com.cabinet.common.rmi}, nous avons défini l'interface \texttt{IClientCallback}, 
+qui étend l'interface \texttt{Remote}. Cette interface contient une méthode, \texttt{notifierSeuilAtteint}, 
+qui est appelée par le serveur pour notifier un client de l'atteinte d'un seuil : 
+
+\begin{lstlisting}[language=Java]
+public interface IClientCallback extends Remote {
+    void notifierSeuilAtteint(int nombrePatients) throws RemoteException;
+}
+
+\end{lstlisting}
 
 \bigskip
-\textbf{Côté serveur (dans CabinetMedical) :}
+\textbf{· Côté serveur (dans CabinetMedical)}
+\bigskip
 
-Nous avons une liste, \texttt{listeClients}, qui stocke les clients enregistrés pour les notifications de seuil. Le serveur offre une méthode, \texttt{enregistrerAlertCallback}, qui permet d'enregistrer un client pour les alertes. Si un client n'est pas déjà enregistré, il est ajouté à la liste.
+Nous avons une liste, \texttt{listeClients}, qui stocke les clients enregistrés pour les notifications de seuil. 
+Le serveur offre une méthode, \texttt{enregistrerAlertCallback}, qui permet d'enregistrer un client pour les alertes. 
+Si un client n'est pas déjà enregistré, il est ajouté à la liste :
+
+\begin{lstlisting}[language=Java]
+private ArrayList<IClientCallback> listeClients;
+
+public void enregistrerAlertCallback(IClientCallback client) throws RemoteException {
+    if (!listeClients.contains(client)) {
+        listeClients.add(client);
+    }
+}
+
+public void supprimerAlertCallback(IClientCallback client) throws RemoteException {
+    if (!listeClients.contains(client)) {
+        listeClients.remove(client);
+    }
+}
+
+private void notifierSeuilAtteint(int nombrePatients) throws RemoteException {
+    for (IClientCallback client : listeClients) {
+        try {
+            client.notifierSeuilAtteint(nombrePatients);
+        } catch (RemoteException e) {
+            supprimerAlertCallback(client);
+        }
+    }
+}
+
+private void verifierSeuilAtteint() throws RemoteException {
+    int nombrePatients = patients.size();
+    if (nombrePatients == 100 || nombrePatients == 500 || nombrePatients == 1000) {
+        notifierSeuilAtteint(nombrePatients);
+    }
+}
+\end{lstlisting}
+
+C'est également dans cette classe que nous vérifions si un seuil est atteint.
+Si un seuil est atteint, nous appelons la méthode \texttt{notifierSeuilAtteint} pour informer les clients.
+Cela va donc appeller la méthode \texttt{notifierSeuilAtteint} de chaque client enregistré.
 
 \bigskip
-\textbf{Côté client :}
+\textbf{· Côté client}
+\bigskip
 
-Dans le package \texttt{com.cabinet.client.rmi}, nous avons implémenté la classe \texttt{ClientCallbackImpl} qui étend \texttt{UnicastRemoteObject} et implémente l'interface \texttt{IClientCallback}. Cette classe fournit l'implémentation de la méthode \texttt{notifierSeuilAtteint}, qui affiche une alerte sur la console client indiquant le nombre de patients atteint.
+Dans le package \texttt{com.cabinet.client.rmi}, nous avons implémenté la classe \texttt{ClientCallbackImpl} 
+qui étend \texttt{UnicastRemoteObject} et implémente l'interface \texttt{IClientCallback}. 
+Cette classe fournit l'implémentation de la méthode \texttt{notifierSeuilAtteint}, 
+qui affiche une alerte sur la console client indiquant le nombre de patients atteint : 
 
-Dans \texttt{Client.java}, nous créons une instance de \texttt{ClientCallbackImpl} et l'enregistrons auprès du serveur en appelant la méthode \texttt{enregistrerAlertCallback} du cabinet médical.
+\begin{lstlisting}[language=Java]
+public class ClientCallbackImpl extends UnicastRemoteObject implements IClientCallback {
 
+public void notifierSeuilAtteint(int nombrePatients) throws RemoteException {
+    System.out.println("Alerte : Le nombre de patients est de " + nombrePatients);
+}
+}
+\end{lstlisting}
 
-Ce mécanisme de callback permet aux clients d'être informés en temps réel des seuils atteints et d'agir en conséquence.
+Dans \texttt{Client.java}, nous créons une instance de \texttt{ClientCallbackImpl} et 
+l'enregistrons auprès du serveur en appelant la méthode \texttt{enregistrerAlertCallback} du cabinet médical :
+
+\begin{lstlisting}[language=Java]
+ClientCallbackImpl clientCallback = new ClientCallbackImpl();
+cabinet.enregistrerAlertCallback(clientCallback);
+\end{lstlisting}
+
+Ce mécanisme de callback permet aux clients d'être informés en temps réel des seuils atteints.
+
+\newpage
+\section{Read-Me}
+Pour executer et tester le projet, il faut suivre les étapes suivantes (avec l'IDE eclipse) :
+
+\begin{itemize}
+    \item Ouvrir le dossier TP1\_Cabinet dans eclipse.
+    \item Ajouter RMI\_common au build path si ce n'est pas déja fait.
+    \item Modifier le chemin du gestionnaire de sécurité en fonction de sa machine : 
+    System.setProperty("java.rmi.server.codebase", 
+    \newline"file:///chemin\_vers\_projet/TP1\_Cabinet/RMI\_client/codebase/").
+    \item Lancer le serveur (Server.java)
+    \item Lancer autant de client que l'on souhaite (Client.java)
+    \item Utiliser le CLI pour interagir avec le cabinet médical. (La choix 'ajouter beaucoup d'animaux' permet de voir le callback en action).
+\end{itemize}
 
 
 \end{document} % Fin du document

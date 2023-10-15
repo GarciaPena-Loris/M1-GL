@@ -136,10 +136,8 @@ public class Server {
 
 			// Codebase
 			System.setProperty("java.rmi.server.codebase",
-					"file:///F:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/RMI_client/codebase/");
+					"file:///chemin_vers_projet/TP1_Cabinet/RMI_client/codebase/");
 			
-			// System.setProperty("java.rmi.server.codebase",
-			// 		"file:///C:/Users/loloy/Desktop/cours/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/RMI_client/codebase/");
 
 			CabinetMedical cabinet = new CabinetMedical();
 
