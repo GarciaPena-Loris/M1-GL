@@ -11,7 +11,7 @@
 
 #include "fonctionTPC.h"
 
-#define NOMBRE_VOISIN_MAX 10
+#define NOMBRE_VOISIN_MAX 5
 
 struct Couple {
     int numero_pi;
@@ -113,7 +113,7 @@ int initialisation(char *adresseIP_pconfig, char *port_pconfig, int port_pi, int
             nombreVoisin++;
         }
         else {
-            nombre_max_voisins += 10;
+            nombre_max_voisins += NOMBRE_VOISIN_MAX;
             tab_voisins = realloc(tab_voisins, nombre_max_voisins * sizeof(struct sockaddr_in));
             tab_voisins[nombreVoisin] = socket_suivant;
             nombreVoisin++;
@@ -165,7 +165,7 @@ int main(int argc, char *argv[])
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
     if (argc != 5)
     {
-        printf("utilisation : %s IP_pconfig port_pconfig port_pi numero_pi\n", argv[0]);
+        printf("utilisation : %s IP_pconfig port_pconfig port_pi numero_pi \n", argv[0]);
         exit(1);
     }
     char *adresseIP_pconfig = argv[1];

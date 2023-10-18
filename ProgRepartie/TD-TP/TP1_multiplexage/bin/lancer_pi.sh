@@ -17,7 +17,7 @@ do
     port_pi=$((port_pconfig + i)) # Calculez le port Pi en fonction de l'index
     
     # Lancement du processus Pi avec les paramètres
-    ./Pi "$ip_Pconfig" "$port_pconfig" "$port_pi" "$i" &
+    ./Pi "$ip_Pconfig" "$port_pconfig" "$port_pi" "$i" "5" &
 
     # Ajoutez une pause facultative entre les lancements pour éviter la surcharge du système
     # sleep 1

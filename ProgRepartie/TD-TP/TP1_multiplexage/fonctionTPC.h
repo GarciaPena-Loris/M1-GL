@@ -27,7 +27,7 @@ void connectionSocket(int socketClient, struct sockaddr_in socket) {
         close(socketClient);
         exit(1);
     }
-    printf("\tconnectionSocket : Connection réussi.\n"); 
+    printf("\t🛰️ connectionSocket : Connection réussi.\n"); 
 }
 
 void connectionServeur(int socketClient, char* IP, char* port) {
