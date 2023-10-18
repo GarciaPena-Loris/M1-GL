@@ -1,7 +1,0 @@
-\babel@toc {french}{}\relax 
-\contentsline {section}{\numberline {1}Une première version simple}{2}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Introduction}{2}{subsection.1.1}%
-\contentsline {section}{\numberline {2}Classe Cabinet Vétérinaire}{3}{section.2}%
-\contentsline {section}{\numberline {3}Création de Patient}{4}{section.3}%
-\contentsline {section}{\numberline {4}Téléchargement de Code}{5}{section.4}%
-\contentsline {section}{\numberline {5}Alerte}{6}{section.5}%

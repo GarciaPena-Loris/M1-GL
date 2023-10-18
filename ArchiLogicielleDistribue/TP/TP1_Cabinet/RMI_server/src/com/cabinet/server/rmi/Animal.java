@@ -8,7 +8,7 @@ import java.util.Date;
 import com.cabinet.common.rmi.Espece;
 import com.cabinet.common.rmi.IAnimal;
 
-public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
+public class Animal extends UnicastRemoteObject implements IAnimal {
 
 	private String nom;
 	private String maitre;
@@ -20,7 +20,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 	private DossierDeSuivi dossierDeSuivi;
 
 	/* CONSTRUCTOR */
-	protected AnimalImpl(String nom, String maitre, String race, Espece espece, String cri) throws RemoteException {
+	protected Animal(String nom, String maitre, String race, Espece espece, String cri) throws RemoteException {
 		this.nom = nom;
 		this.maitre = maitre;
 		this.race = race;
@@ -33,7 +33,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1mRAS\033[0m \n");
 	}
 
-	protected AnimalImpl(String nom, String maitre, String race, Espece espece, String cri, String etat)
+	protected Animal(String nom, String maitre, String race, Espece espece, String cri, String etat)
 			throws RemoteException {
 		this.nom = nom;
 		this.maitre = maitre;
@@ -47,7 +47,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1m" + etat + "\033[0m\n");
 	}
 
-	protected AnimalImpl(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri)
+	protected Animal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri)
 			throws RemoteException {
 		this.nom = nom;
 		this.maitre = maitre;
@@ -61,7 +61,7 @@ public class AnimalImpl extends UnicastRemoteObject implements IAnimal {
 		this.dossierDeSuivi = new DossierDeSuivi("\n\t\033[3m" + dateString + "\033[0m : \033[1mRAS\033[0m \n");
 	}
 
-	protected AnimalImpl(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri,
+	protected Animal(String nom, String maitre, String race, String nomEspece, int dureeDeVieMoyenne, String cri,
 			String etat)
 			throws RemoteException {
 		this.nom = nom;

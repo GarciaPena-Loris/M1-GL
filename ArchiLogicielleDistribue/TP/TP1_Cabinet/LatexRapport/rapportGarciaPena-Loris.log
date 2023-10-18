@@ -1,10 +1,10 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.8)  8 OCT 2023 14:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.8)  16 OCT 2023 00:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**f:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/rapportGarciaPena-Loris.tex
-(f:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/rapportGarciaPena-Loris.tex
+**f:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/LatexRapport/rapportGarciaPena-Loris.tex
+(f:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP1_Cabinet/LatexRapport/rapportGarciaPena-Loris.tex
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-29>
 (f:/Programme/texlive/2023/texmf-dist/tex/latex/base/article.cls
@@ -294,33 +294,49 @@ File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
 File: listings.cfg 2023/02/27 1.9 listings configuration
 ))
 Package: listings 2023/02/27 1.9 (Carsten Heinz)
- (f:/Programme/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+ (f:/Programme/texlive/2023/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2022/06/12 v2.14 LaTeX color extensions (UK)
+ (f:/Programme/texlive/2023/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 227.
+ (f:/Programme/texlive/2023/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1353.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1357.
+Package xcolor Info: Model `RGB' extended on input line 1369.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1371.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1374.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1375.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1376.
+) (f:/Programme/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2023-04-19 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count300
 \l__pdf_internal_box=\box55
 ) (./rapportGarciaPena-Loris.aux)
 \openout1 = `rapportGarciaPena-Loris.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 18.
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Info: Redefining \degres on input line 18.
-LaTeX Info: Redefining \up on input line 18.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Info: Redefining \degres on input line 45.
+LaTeX Info: Redefining \up on input line 45.
  (f:/Programme/texlive/2023/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count301
@@ -340,17 +356,17 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (f:/Programme/texlive/2023/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring OFF on input line 18.
+Package hyperref Info: Link coloring OFF on input line 45.
  (./rapportGarciaPena-Loris.out) (./rapportGarciaPena-Loris.out)
 \@outlinefile=\write3
 \openout3 = `rapportGarciaPena-Loris.out'.
 
 \c@lstlisting=\count307
-LaTeX Font Info:    Trying to load font information for U+msa on input line 21.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 48.
  (f:/Programme/texlive/2023/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 21.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 48.
  (f:/Programme/texlive/2023/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (./rapportGarciaPena-Loris.toc)
@@ -359,27 +375,69 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
  [1
 
-{f:/Programme/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{f:/Programme/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [2] [3] [4] [5] [6] (./rapportGarciaPena-Loris.aux)
+{f:/Programme/texlive/2023/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{f:/Programme/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}] [2]
+<./images/rmi.png, id=127, 700.6175pt x 398.48875pt>
+File: ./images/rmi.png Graphic file (type png)
+<use ./images/rmi.png>
+Package pdftex.def Info: ./images/rmi.png  used on input line 85.
+(pdftex.def)             Requested size: 276.00105pt x 156.98482pt.
+ [3 <./images/rmi.png>] [4]
+<./images/classe.png, id=143, 1145.27875pt x 794.97pt>
+File: ./images/classe.png Graphic file (type png)
+<use ./images/classe.png>
+Package pdftex.def Info: ./images/classe.png  used on input line 166.
+(pdftex.def)             Requested size: 345.0pt x 239.47539pt.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 172.
+ (f:/Programme/texlive/2023/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
+) (f:/Programme/texlive/2023/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+) [5 <./images/classe.png>] [6]
+<./images/serialisation.png, id=164, 552.0625pt x 234.8775pt>
+File: ./images/serialisation.png Graphic file (type png)
+<use ./images/serialisation.png>
+Package pdftex.def Info: ./images/serialisation.png  used on input line 240.
+(pdftex.def)             Requested size: 345.0pt x 146.78732pt.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[7] [8 <./images/serialisation.png>] [9] [10] [11{f:/Programme/texlive/2023/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}] [12]
+Overfull \hbox (57.06848pt too wide) in paragraph at lines 486--491
+\T1/cmr/m/n/10 fier un dos-sier de suivi d'un ani-mal dis-tant en ap-pe-lant la mé-thode \T1/cmtt/m/n/10 modifierDossierDeSuivi\T1/cmr/m/n/10 . 
+ []
+
+[13] [14]
+Overfull \hbox (4.08917pt too wide) in paragraph at lines 623--626
+\T1/cmr/m/n/10 no-ti-fi-ca-tions de seuil. Le ser-veur offre une mé-thode, \T1/cmtt/m/n/10 enregistrerAlertCallback\T1/cmr/m/n/10 ,
+ []
+
+[15]
+Overfull \hbox (20.43854pt too wide) in paragraph at lines 682--684
+\T1/cmr/m/n/10 l'en-re-gis-trons au-près du ser-veur en ap-pe-lant la mé-thode \T1/cmtt/m/n/10 enregistrerAlertCallback
+ []
+
+[16] [17] [18] (./rapportGarciaPena-Loris.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-29>
  ***********
 Package rerunfilecheck Info: File `rapportGarciaPena-Loris.out' has not changed.
-(rerunfilecheck)             Checksum: 671A2D263C9FDC75C3F70ABEFA09B05E;877.
+(rerunfilecheck)             Checksum: 76B99AEB7CBF0B848DD40BDBB7B41ED8;3392.
  ) 
 Here is how much of TeX's memory you used:
- 13060 strings out of 474928
- 200344 string characters out of 5758532
- 1926785 words of memory out of 5000000
- 34439 multiletter control sequences out of 15000+600000
- 571344 words of font info for 71 fonts, out of 8000000 for 9000
+ 14246 strings out of 474928
+ 215404 string characters out of 5758532
+ 2126785 words of memory out of 5000000
+ 35404 multiletter control sequences out of 15000+600000
+ 575922 words of font info for 79 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,6n,79p,396b,449s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb>
-Output written on rapportGarciaPena-Loris.pdf (6 pages, 136982 bytes).
+ 75i,6n,79p,540b,1983s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbi1200.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx0900.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1000.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfcc1000.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm0500.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm0900.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb><f:/Programme/texlive/2023/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
+Output written on rapportGarciaPena-Loris.pdf (18 pages, 413826 bytes).
 PDF statistics:
- 109 PDF objects out of 1000 (max. 8388607)
- 84 compressed objects within 1 object stream
- 14 named destinations out of 1000 (max. 500000)
- 49 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 497 PDF objects out of 1000 (max. 8388607)
+ 437 compressed objects within 5 object streams
+ 211 named destinations out of 1000 (max. 500000)
+ 184 words of extra memory for PDF output out of 10000 (max. 10000000)
 
