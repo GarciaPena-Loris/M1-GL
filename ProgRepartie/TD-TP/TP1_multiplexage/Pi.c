@@ -75,7 +75,6 @@ int initialisation(char *adresseIP_pconfig, char *port_pconfig, int port_pi, int
 
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
     int resSend = sendto(socket_pi, &info, sizeof(info) + 1, 0, (struct sockaddr *)&strctureSocket_pconfig, sizeAdr);
-
     if (resSend == -1)
     {
         perror("\t❌ Pi : problème avec le send to :"); 
@@ -91,11 +90,6 @@ int initialisation(char *adresseIP_pconfig, char *port_pconfig, int port_pi, int
 
     int nombre_max_voisins = NOMBRE_VOISIN_MAX;
     
-    if (tab_voisins == NULL) {
-         perror("\t❌ Pi : problème avec l'allocation mémoire :"); 
-        exit(1);
-    }
-
     int nombreVoisin = 0;
 
     struct envoiPi envoiPi;
@@ -260,31 +254,33 @@ void traitementClassique(int numero_pi, struct sockaddr_in* tab_voisins, int nom
 int main(int argc, char *argv[])
 {
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
-    if (argc != 6)
+    if (argc != 5)
     {
-        printf("utilisation : %s IP_pconfig port_pconfig port_pi numero_pi intervale_temps\n", argv[0]);
+        printf("utilisation : %s IP_pconfig port_pconfig numero_pi intervale_temps\n", argv[0]);
         exit(1);
     }
     char *adresseIP_pconfig = argv[1];
     char *port_pconfig = argv[2];
-    int port_pi = atoi(argv[3]);
-    int numero_pi = atoi(argv[4]);
-    int intervale_temps = atoi(argv[5]);
+    int numero_pi = atoi(argv[3]);
+    int intervale_temps = atoi(argv[4]);
 
     // --- Etape 1 : Creation et mise en ecoute de la socket
     int socketPi = creerSocket();
 
-    nommerSocket(socketPi, port_pi);
+    struct sockaddr_in structAdresseServeur = nommerSocket(socketPi, 0);
+    char *ip_pi_suivant = inet_ntoa(structAdresseServeur.sin_addr);
+    int port_pi_suivant = ntohs(structAdresseServeur.sin_port);
 
     printf("\t👂 Pi : Mise en écoute de la socket.\n");
 
     ecouterDemande(socketPi);
 
-    struct sockaddr_in *tab_voisins;
-    int nombre_voisins = initialisation(adresseIP_pconfig, port_pconfig, port_pi, numero_pi, tab_voisins);
+    struct sockaddr_in *tabVoisins;
+
+    int nombre_voisins = initialisation(adresseIP_pconfig, port_pconfig, numero_pi, tabVoisins);
 
     //connexionVoisins(port_pi, tab_voisins, nombre_voisins);
-    traitementClassique(numero_pi, tab_voisins, nombre_voisins, intervale_temps);
+    traitementClassique(numero_pi, tabVoisins, nombre_voisins, intervale_temps);
 
     printf("🏁 Fin du programme !\n");
 
