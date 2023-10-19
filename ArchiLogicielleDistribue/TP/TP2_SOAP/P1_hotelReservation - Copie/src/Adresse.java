@@ -3,15 +3,15 @@ public class Adresse {
     private String ville;
     private String rue;
     private int numero;
-    private String lieu_dit;
+    private String lieuDit;
     private String position;
     
-    public Adresse(String pays, String ville, String rue, int numero, String lieu_dit, String position) {
+    public Adresse(String pays, String ville, String rue, int numero, String lieuDit, String position) {
         this.pays = pays;
         this.ville = ville;
         this.rue = rue;
         this.numero = numero;
-        this.lieu_dit = lieu_dit;
+        this.lieuDit = lieuDit;
         this.position = position;
     }
 
@@ -32,7 +32,7 @@ public class Adresse {
     }
 
     public String getLieu_dit() {
-        return this.lieu_dit;
+        return this.lieuDit;
     }
 
     public String getPosition() {
@@ -55,8 +55,8 @@ public class Adresse {
         this.numero = numero;
     }
 
-    public void setLieu_dit(String lieu_dit) {
-        this.lieu_dit = lieu_dit;
+    public void setLieu_dit(String lieuDit) {
+        this.lieuDit = lieuDit;
     }
 
     public void setPosition(String position) {
@@ -69,7 +69,7 @@ public class Adresse {
             ", ville='" + getVille() + "'" +
             ", rue='" + getRue() + "'" +
             ", numero='" + getNumero() + "'" +
-            ", lieu_dit='" + getLieu_dit() + "'" +
+            ", lieuDit='" + getLieu_dit() + "'" +
             ", position='" + getPosition() + "'" +
             "}";
     }

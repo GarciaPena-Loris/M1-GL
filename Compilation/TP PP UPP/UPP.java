@@ -464,7 +464,14 @@ class UPPCond extends UPPInst {
 
     RTLInst toRTL(ArrayList<Pair<String, PRegister>> locals,
             ArrayList<String> globals, RTLInst succ) {
-        // To do
+        PRegister regCond = cond.getPRegister(locals);
+        RTLGtz gtz = new RTLGtz(regCond, null, null);
+        RTLInst ncond = cond.toRTL(locals, globals, regCond, gtz);
+        RTLInst ni1 = i1.toRTL(locals, globals, ncond);
+        RTLInst ni2 = i2.toRTL(locals, globals, ncond);
+        gtz.succ1 = ni1;
+        gtz.succ2 = ni2;
+        return ncond;
     }// toRTL
 
 }// UPPCond
@@ -503,7 +510,14 @@ class UPPProcCall extends UPPInst {
 
     RTLInst toRTL(ArrayList<Pair<String, PRegister>> locals,
             ArrayList<String> globals, RTLInst succ) {
-        // To do
+        ArrayList<PRegister> regs = new ArrayList<PRegister>();
+        for (UPPExpr e : args)
+            regs.add(e.getPRegister(locals));
+        RTLInst proc = new RTLProcCall(callee, regs, succ);
+        RTLInst acc = proc;
+        for (int i = args.size() - 1; i >= 0; i--)
+            acc = args.get(i).toRTL(locals, globals, regs.get(i), acc);
+        return acc;
     }// toRTL
 
 }// UPPProcCall
@@ -528,7 +542,9 @@ class UPPSeq extends UPPInst {
 
     RTLInst toRTL(ArrayList<Pair<String, PRegister>> locals,
             ArrayList<String> globals, RTLInst succ) {
-        // To do
+        RTLInst rtl1 = i1.toRTL(locals, globals, succ);
+        RTLInst rtl2 = i2.toRTL(locals, globals, rtl1);
+        return rtl2;
     }// toRTL
 
 }// UPPSeq
@@ -594,7 +610,24 @@ class UPPProc extends UPPDef {
     }// UPPProc
 
     RTLDef toRTL(ArrayList<String> globals) {
-        // To do
+        ArrayList<PRegister> regArgs = new ArrayList<PRegister>();
+        ArrayList<PRegister> regLocals = new ArrayList<PRegister>();
+        ArrayList<Pair<String, PRegister>> regTrans = new ArrayList<Pair<String, PRegister>>();
+        for (String e : args) {
+            PRegister reg = new PRegister();
+            Pair<String, PRegister> p = new Pair<String, PRegister>(e, reg);
+            regArgs.add(reg);
+            regLocals.add(reg);
+            regTrans.add(p);
+        } // for
+        for (String e : locals) {
+            PRegister reg = new PRegister();
+            Pair<String, PRegister> p = new Pair<String, PRegister>(e, reg);
+            regLocals.add(reg);
+            regTrans.add(p);
+        } // for
+        RTLInst body = code.toRTL(regTrans, globals, new RTLEnd());
+        return new RTLProc(name, regArgs, regLocals, body);
     }// toRTL
 
 }// UPPProc
