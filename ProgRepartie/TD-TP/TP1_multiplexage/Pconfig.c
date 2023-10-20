@@ -244,6 +244,8 @@ int main(int argc, char *argv[])
             printf("\t🌐 Pi n°%d (%s:%d) à le Pi n°%d (%s:%d) comme voisin.\n",
                    numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
 
+            printf("\tLe pi n°%d dois faire %d connect :\n", numPiClient, tabConnect[numPiClient - 1]);
+
             if (tabConnect[numPiClient - 1] == compteur)
             {
                 printf("\t⏳ Attente conformation du Pi n°%d\n", numPiClient);
