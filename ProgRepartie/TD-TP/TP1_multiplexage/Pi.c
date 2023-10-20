@@ -182,12 +182,7 @@ int* initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_i
     printf("\033[0;%dm[%d] 🥳🎉🎉🎉 Tous les voisins sont connectée !! 🎉🎉🎉🥳\033[0m\n\033[0m\n", (30 + numeroPi), numeroPi);
 
     close(socketPiTCP);
-
-    for (int i = 0; i < *nombreVoisins; i++)
-    {
-        printf("\033[0;%dm[%d] \t🌐 %d : %d\033[0m\n", (30 + numeroPi), numeroPi, i, tabSocketsVoisins[i]);
-    }
-
+    
     return tabSocketsVoisins;
 }
 
