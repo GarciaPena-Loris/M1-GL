@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 
     char conf;
     struct sockaddr_in structSocketExpediteurUDP;
-    int compteur = 1;
+    int compteur = 0;
     int numPiClient, numPiServeur;
 
     while (fgets(line, sizeof(line), file) != NULL)
@@ -257,7 +257,9 @@ int main(int argc, char *argv[])
                 printf("\t✅ Le Pi n°%d a finis ses connects.\n", numPiClient);
                 compteur = 0;
             }
-            compteur++;
+            else {
+                compteur++;
+            }
         }
     }
 
