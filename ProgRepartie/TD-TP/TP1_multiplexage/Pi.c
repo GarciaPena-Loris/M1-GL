@@ -206,7 +206,7 @@ void *diffusion_message(void *params)
     if (resSendTCP == 0 || resSendTCP == -1) {
         printf("❌ Pi : Probleme lors du sendTCP.\n");
     }
-        printf("\tMessage envoyé : '%d'\n", message);
+        printf("\tMessage envoyé : '%s'\n", message);
 
     printf("--- 🏆 Fin envoie du message au voisin n°%d ---\n", idThread);
 }
@@ -228,7 +228,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             int socketVoisin = tabSocketsVoisins[i];
             struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
             params->idThread = i;
-            params->voisin = socketVoisin;
+            params->socketVoisin = socketVoisin;
 
             if (pthread_create(&threads[i], NULL,
                                diffusion_message, params) != 0)
