@@ -201,7 +201,6 @@ int main(int argc, char *argv[])
             exit(1);
         }
         // printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
-        printf("\t---\n");
     }
 
     printf("✅ Fin d'envoi du nombre de voisin au Pi\n");
@@ -218,11 +217,11 @@ int main(int argc, char *argv[])
 
     char conf;
     struct sockaddr_in structSocketExpediteurUDP;
+    int compteur = 1;
+    int numPiClient, numPiServeur;
 
     while (fgets(line, sizeof(line), file) != NULL)
     {
-        int numPiClient, numPiServeur;
-
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
         {
 
@@ -245,16 +244,21 @@ int main(int argc, char *argv[])
             printf("\t🌐 Pi n°%d (%s:%d) à le Pi n°%d (%s:%d) comme voisin.\n",
                    numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
 
-            printf("\t⏳ Attente conformation du Pi n°%d\n", numPiClient);
-
-            int resRecv = recvfrom(socketPconfig, &conf, sizeof(conf),
-                                0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
-            if (resRecv == -1)
+            if (tabConnect[numPiClient - 1] == compteur)
             {
-                perror("\t❌ Pi : problème avec le recvFrom :");
-                exit(1);
+                printf("\t⏳ Attente conformation du Pi n°%d\n", numPiClient);
+
+                int resRecv = recvfrom(socketPconfig, &conf, sizeof(conf),
+                                       0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
+                if (resRecv == -1)
+                {
+                    perror("\t❌ Pi : problème avec le recvFrom :");
+                    exit(1);
+                }
+                printf("\t✅ Le Pi n°%d a finis ses connects.\n", numPiClient);
+                compteur = 1;
             }
-            printf("---\n");
+            compteur++;
         }
     }
 
