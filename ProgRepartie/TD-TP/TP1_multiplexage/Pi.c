@@ -24,7 +24,7 @@ struct compteurVoisins
     int nombreConnect;
 };
 
-int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in structAdresseServeurTCP, int numeroPi, int socketPiTCP, int *tabSocketsVoisins)
+int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in structAdresseServeurTCP, int numeroPi, int socketPiTCP, int **tabSocketsVoisins)
 {
     // -- Etape 1 : Creation socker Pi UDP
     int socketPiUDP = socket(PF_INET, SOCK_DGRAM, 0);
