@@ -250,10 +250,10 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 printf("\033[0;%dm[%d] -----\033[0m\n", (30 + numeroPi), numeroPi);
         }
 
-        for (int i = 0; i < nombreVoisins; i++)
-        {
-            pthread_join(threads[i], NULL);
-        }
+        // for (int i = 0; i < nombreVoisins; i++)
+        // {
+        //     pthread_join(threads[i], NULL);
+        // }
         free(threads);
     }
 
