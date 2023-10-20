@@ -183,6 +183,11 @@ int* initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_i
 
     close(socketPiTCP);
 
+    for (int i = 0; i < *nombreVoisins; i++)
+    {
+        printf("\033[0;%dm[%d] \t🌐 %d : %d\033[0m\n", (30 + numeroPi), numeroPi, i, tabSocketsVoisins[i]);
+    }
+
     return tabSocketsVoisins;
 }
 
@@ -244,7 +249,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         for (int i = 0; i < nombreVoisins; i++)
         {
             int socketVoisin = tabSocketsVoisins[i];
-            printf("\033[0;%dm[%d] \t📨 %d socket : %d\033[0m\n", (30 + numeroPi), numeroPi, i, tabSocketsVoisins[i]);
             params->idThread = i+1;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
