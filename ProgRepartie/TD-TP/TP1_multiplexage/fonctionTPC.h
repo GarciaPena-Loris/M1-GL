@@ -16,7 +16,6 @@ int creerSocket() {
         perror("creerSocket : ERROR : probleme de creation socket ");
         exit(1); 
     }
-    printf("\t🪛  creerSocket : Création de la socket réussie.\n");
     return ds;
 }
 
@@ -27,7 +26,6 @@ void connectionSocket(int socketClient, struct sockaddr_in socket) {
         close(socketClient);
         exit(1);
     }
-    printf("\t🛰️ connectionSocket : Connection réussi.\n"); 
 }
 
 void connectionServeur(int socketClient, char* IP, char* port) {
@@ -42,7 +40,6 @@ void connectionServeur(int socketClient, char* IP, char* port) {
         close(socketClient);
         exit(1);
     }
-    printf("\t🛰️ connectionServeur : Connection réussi.\n"); 
 }
 
 void closeSocket(int socket) {
@@ -53,8 +50,8 @@ void closeSocket(int socket) {
 }
 
 struct sockaddr_in nommerSocket(int socketServeur, int port) {
-    if (port < 1024) {
-        printf("\tnommerSocket : ERROR : le port est inférrieur à 1024.");
+    if (port < 1024 && port != 0) {
+        printf("nommerSocket : ERROR : le port est inférrieur à 1024.");
         exit(1);
     } 
     
@@ -72,20 +69,16 @@ struct sockaddr_in nommerSocket(int socketServeur, int port) {
         perror("nommerSocket : ERROR : probleme le nommage de la socket ");
         exit(1);
     }
-
-    printf("\t🏷️  nommerSocket : Socket nommée avec succès.\n");
     
     return adresseServeur;
 }
 
-void ecouterDemande(int socketServeur) {
-    if (listen(socketServeur, 5) == -1) {
+void ecouterDemande(int socketServeur, int nombreMaxDemande) {
+    if (listen(socketServeur, nombreMaxDemande) == -1) {
         perror("ecouterDemande : ERROR : Formatage de la boite reseau impossible ");
         close(socketServeur);
         exit(1);
     }
-
-    printf("\t👂 ecouterDemande : Socket en écoute...\n");
 }
 
 int accepterDemande(int socketServeur, struct sockaddr_in *adresseClient) {
@@ -112,7 +105,7 @@ void afficherIPMachine() {
         if (ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET) {
             sa = (struct sockaddr_in *) ifa->ifa_addr;
             addr = inet_ntoa(sa->sin_addr);
-            printf("\tAddress IP : %s\n", addr);
+            printf("Address IP : %s\n", addr);
         }
     }
     freeifaddrs(ifap);
@@ -143,11 +136,11 @@ int sendTCP(int sock, void* msg, int sizeMsg) {
         res = send(sock, msg + sent, sizeMsg - sent, 0);
         sent += res;
         if (res == -1) {
-            perror("\tsendTCP : ERROR : problème lors de l'envoi du message ");
+            perror("sendTCP : ERROR : problème lors de l'envoi du message ");
             return -1;
         }
         else if (res == 0) {
-            perror("\tsendTCP : ERROR : socket fermée par la couche transport ");
+            perror("sendTCP : ERROR : socket fermée par la couche transport ");
             return 0;
         }
     }
@@ -163,11 +156,11 @@ int recvTCP(int sock, void* msg, int sizeMsg) {
         res = recv(sock, msg + received, sizeMsg-received, 0);
         received += res;
         if (res == -1) {
-            perror("\trecvTCP : ERROR : problème lors de la reception du message ");
+            perror("recvTCP : ERROR : problème lors de la reception du message ");
             return -1;
         }
         else if (res == 0) {
-            perror("\trecvTCP : ERROR : socket fermée par la couche transport ");
+            perror("recvTCP : ERROR : socket fermée par la couche transport ");
             return 0;
         }
     }
