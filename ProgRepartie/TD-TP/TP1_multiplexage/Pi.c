@@ -128,6 +128,8 @@ int* initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_i
         connectionSocket(socketClientTCP, tabStuctureSocketVoisins[i]);
 
         printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%d réussi.\033[0m\n", (30 + numeroPi), numeroPi, i);
+
+        tabSocketsVoisins[i] = socketClientTCP;
     }
 
     if (compteurVoisins.nombreConnect > 0)
