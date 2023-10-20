@@ -14,10 +14,9 @@ fi
 # Boucle pour lancer les processus Pi en utilisant les paramètres
 for ((i=1; i<=$nombre_de_Pi; i++))
 do
-    port_pi=$((port_pconfig + i)) # Calculez le port Pi en fonction de l'index
     
     # Lancement du processus Pi avec les paramètres
-    ./Pi "$ip_Pconfig" "$port_pconfig" "5" "$port_pi" "$i" &
+    ./Pi "$ip_Pconfig" "$port_pconfig" "5" "$i" &
 
     # Ajoutez une pause facultative entre les lancements pour éviter la surcharge du système
     # sleep 1

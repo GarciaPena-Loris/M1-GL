@@ -59,13 +59,13 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     printf("\t✅ Pi : Désignation de la 🧦 Pconfig réussie.\n"); 
 
     // -- Etape 2 : Envois de la structure
-    printf("\t -- 📨 Envois info Pi --\n");
+    printf(" -- 📨 Envois info Pi --\n");
 
     struct infosPi info;
     info.numeroPi = numeroPi;
     info.structSocketPi = structAdresseServeurTCP;
 
-    printf("\t\t📨 Envois du numéro au serveur %s:%s\n", adresseIPPconfig, portPconfig);
+    printf("\t📨 Envois du numéro au serveur %s:%s\n", adresseIPPconfig, portPconfig);
 
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
 
@@ -76,12 +76,12 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         perror("\t❌ Pi : problème avec le send to :"); 
         exit(1);
     }
-    printf("\t\t✅ Nombre d'octets envoyés : %d\n", resSend);
+    printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
 
-    printf("\t-- Fin envoie numero Pi --\n\n");
+    printf("-- Fin envoie numero Pi --\n\n");
 
     // -- Etape 3 : Recevoir nombre Accept et Connect
-    printf("\t-- 📩 Recevoir nombre Accept et de Connect --\n");
+    printf("-- 📩 Recevoir nombre Accept et de Connect --\n");
     struct compteurVoisins compteurVoisins;
 
     struct sockaddr_in structSocketExpediteurUDP;
@@ -93,13 +93,13 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         exit(1);
     }
 
-    printf("\t\t 🔗 Nombre de Connect a faire : %d\n", compteurVoisins.nombreConnect);
-    printf("\t\t 📥 Nombre d'Accept a faire : %d\n", compteurVoisins.nombreAccept);
+    printf(" 🔗 Nombre de Connect a faire : %d\n", compteurVoisins.nombreConnect);
+    printf(" 📥 Nombre d'Accept a faire : %d\n", compteurVoisins.nombreAccept);
 
-    printf("\t-- 🏆 Fin reception nombre Accept et de Connect --\n\n");
+    printf("-- 🏆 Fin reception nombre Accept et de Connect --\n\n");
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
-    printf("\t-- 🔗 Recevoir 🧦 des voisins pour se connecter --\n");
+    printf("-- 🔗 Recevoir 🧦 des voisins pour se connecter --\n");
 
     tabVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
@@ -115,27 +115,27 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
             perror("\t❌ Pi : problème avec le recvFrom :");
             exit(1);
         }
-        printf("\t\t✅ Nombre d'octets recu : %d\n", resRecv);
+        printf("\t✅ Nombre d'octets recu : %d\n", resRecv);
 
         // Créer une socket TCP
         int socketClientTCP = creerSocket();
-        printf("\t\t🪛  Création de la socket réussie.\n");
+        printf("\t🪛  Création de la socket réussie.\n");
 
 
         char *ipVoisin = inet_ntoa(structSocketVoisinTCP.sin_addr);
         int portVoisin = ntohs(structSocketVoisinTCP.sin_port);
 
-        printf("\t\t🌐 Adresse voisin : %s:%d\n", ipVoisin, portVoisin);
+        printf("\t🌐 Adresse voisin : %s:%d\n", ipVoisin, portVoisin);
 
         // Connect a cette adresse
         connectionSocket(socketClientTCP, structSocketVoisinTCP);
-        printf("\t\t🛰️  Connection réussi.\n"); 
-        printf("\t\t---\n");
+        printf("\t🛰️  Connection réussi.\n"); 
+        printf("---\n");
 
         tabVoisins[i] = socketClientTCP;
     }
 
-    printf("\t-- 🏆 Fin reception des 🧦 voisins --\n");
+    printf("-- 🏆 Fin reception des 🧦 voisins --\n");
 
     // -- Etape 4 : Envois confirmation a  Pconfig
     printf("\t⏲️ Envois confirmation...\n");
@@ -147,7 +147,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         perror("\t❌ Pi : problème avec le send to :"); 
         exit(1);
     }
-    printf("\t\t✅ Nombre d'octets envoyés : %d\n", resSend);
+    printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
 
 
     // -- Etape 4 : Attente reception confirmation
@@ -159,8 +159,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         perror("\t❌ Pi : problème avec le recvFrom :");
         exit(1);
     }
-    printf("\t\t✅ Nombre d'octets recu : %zd\n", resRecv);
-
+    printf("\t✅ Nombre d'octets recu : %zd\n", resRecv);
 
     int cls = close(socketPiUDP);
     if (cls == -1)
@@ -253,7 +252,7 @@ void traitementClassique(int numeroPi, struct sockaddr_in* tabVoisins, int nombr
             }
 
             if (i < nombreVoisins-1)
-                printf("\t-----\n");
+                printf("-----\n");
         }
 
         for (int i = 0; i < nombreVoisins; i++) {
@@ -268,21 +267,28 @@ void traitementClassique(int numeroPi, struct sockaddr_in* tabVoisins, int nombr
 int main(int argc, char *argv[])
 {
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
-    if (argc != 6)
+    if (argc != 5)
     {
-        printf("utilisation : %s IPPconfig portPconfig intervaleTemps portPi numeroPi\n", argv[0]);
+        printf("utilisation : %s IPPconfig portPconfig intervaleTemps numeroPi\n", argv[0]);
         exit(1);
     }
     char *adresseIPPconfig = argv[1];
     char *portPconfig = argv[2];
     int intervaleTemps = atoi(argv[3]);
-    int portPi = atoi(argv[4]);
-    int numeroPi = atoi(argv[5]);
+    int numeroPi = atoi(argv[4]);
 
     // --- Etape 1 : Creation et mise en ecoute de la socket
     int socketPiTCP = creerSocket();
 
-    struct sockaddr_in structAdresseServeurTCP = nommerSocket(socketPiTCP, portPi);
+    nommerSocket(socketPiTCP, 0);
+
+    struct sockaddr_in structAdresseServeurTCP;
+    socklen_t size = sizeof(structAdresseServeurTCP);
+
+    if (getsockname(socketPiTCP, (struct sockaddr *) &structAdresseServeurTCP, &size) == -1) {
+        perror("❌ Pi : Erreur lors de la récupération de l'adresse de la socket");
+        exit(EXIT_FAILURE);
+    }
 
     ecouterDemande(socketPiTCP, NOMBRE_MAX_DEMANDE);
 

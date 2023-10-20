@@ -63,7 +63,7 @@ struct sockaddr_in nommerSocket(int socketServeur, int port) {
         perror("nommerSocket : ERROR : le port est invalide ");
         exit(1);
     }
-    adresseServeur.sin_port = htons(port);
+    adresseServeur.sin_port = htons((short) port);
 
     if (bind(socketServeur, (struct sockaddr*) &adresseServeur, sizeof(adresseServeur)) == -1) {
         perror("nommerSocket : ERROR : probleme le nommage de la socket ");
