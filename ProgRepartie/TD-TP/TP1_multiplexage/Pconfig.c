@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 printf("\t✅ Le Pi n°%d a finis ses connects.\n", numPiClient);
-                compteur = 1;
+                compteur = 0;
             }
             compteur++;
         }
