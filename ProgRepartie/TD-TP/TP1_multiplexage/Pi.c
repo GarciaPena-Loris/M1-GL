@@ -94,7 +94,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         printf("\033[0;%dm[%d] 🔗 Reception et connexion des %d voisins\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
 
     tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
-    tabStuctureSocketVoisins = malloc(sizeof(struct sockaddr_in) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
+    struct sockaddr_in* tabStuctureSocketVoisins = malloc(sizeof(struct sockaddr_in) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
     // Pour chaque voisins auxquels je dois me connecter
     for (int i = 0; i < compteurVoisins.nombreConnect; i++)
