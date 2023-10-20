@@ -24,7 +24,7 @@ struct compteurVoisins
     int nombreConnect;
 };
 
-int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in structAdresseServeurTCP, int numeroPi, int socketPiTCP, int **tabSocketsVoisins)
+int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in structAdresseServeurTCP, int numeroPi, int socketPiTCP, int *nombreVoisins)
 {
     // -- Etape 1 : Creation socker Pi UDP
     int socketPiUDP = socket(PF_INET, SOCK_DGRAM, 0);
@@ -88,6 +88,8 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
     printf("\033[0;%dm[%d] \t 🔗 Nombre de Connect a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
     printf("\033[0;%dm[%d] \t 📥 Nombre d'Accept a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreAccept);
+
+    nombreVoisins = compteurVoisins.nombreAccept + compteurVoisins.nombreConnect;
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
     if (compteurVoisins.nombreConnect > 0)
@@ -177,7 +179,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
     printf("\033[0;%dm[%d] 🥳🎉🎉🎉 Tous les voisins sont connectée !! 🎉🎉🎉🥳\033[0m\n\033[0m\n", (30 + numeroPi), numeroPi);
 
-    return compteurVoisins.nombreConnect + compteurVoisins.nombreAccept;
+    return tabSocketsVoisins;
 }
 
 struct paramsFonctionThread
@@ -296,8 +298,10 @@ int main(int argc, char *argv[])
     // -- Etape 4 : Mettre la socket en ecoute
     ecouterDemande(socketPiTCP, 1000);
 
-    int *tabSocketsVoisins = NULL;
-    int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, &tabSocketsVoisins);
+    int *tabSocketsVoisins;
+    int nombreVoisins; 
+
+    tabSocketsVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, &nombreVoisins);
 
     messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
 
