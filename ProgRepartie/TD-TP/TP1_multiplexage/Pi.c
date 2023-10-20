@@ -110,9 +110,9 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
             exit(1);
         }
 
-        char *ipVoisin = inet_ntoa(structSocketVoisinTCP.sin_addr);
-        int portVoisin = ntohs(structSocketVoisinTCP.sin_port);
-        printf("\033[0;%dm[%d] \t🌐  Reception de la stuct du voisin n°%d (%s:%d) réussi.\033[0m\n", (30 + numeroPi), numeroPi, i, ipVoisin, portVoisin);
+        // char *ipVoisin = inet_ntoa(structSocketVoisinTCP.sin_addr);
+        // int portVoisin = ntohs(structSocketVoisinTCP.sin_port);
+        // printf("\033[0;%dm[%d] \t🌐  Reception de la stuct du voisin n°%d (%s:%d) réussi.\033[0m\n", (30 + numeroPi), numeroPi, i, ipVoisin, portVoisin);
 
         tabStuctureSocketVoisins[i] = structSocketVoisinTCP;
     }
