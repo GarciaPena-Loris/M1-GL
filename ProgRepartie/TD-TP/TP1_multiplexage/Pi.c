@@ -238,22 +238,22 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
 
-            // if (pthread_create(&threads[i], NULL,
-            //                    diffusion_message, params) != 0)
-            // {
-            //     perror("❌ Pi : problème à la creation du thread");
-            //     free(params);
-            //     exit(1);
-            // }
+            if (pthread_create(&threads[i], NULL,
+                               diffusion_message, params) != 0)
+            {
+                perror("❌ Pi : problème à la creation du thread");
+                free(params);
+                exit(1);
+            }
 
             if (i < nombreVoisins - 1)
                 printf("\033[0;%dm[%d] -----\033[0m\n", (30 + numeroPi), numeroPi);
         }
 
-        // for (int i = 0; i < nombreVoisins; i++)
-        // {
-        //     pthread_join(threads[i], NULL);
-        // }
+        for (int i = 0; i < nombreVoisins; i++)
+        {
+            pthread_join(threads[i], NULL);
+        }
         free(threads);
     }
 
@@ -293,7 +293,7 @@ int main(int argc, char *argv[])
     int *tabSocketsVoisins = NULL;
     int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, tabSocketsVoisins);
 
-    messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
+   // messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
 
     printf("\033[0;%dm[%d] 🏁 Fin du Pi n°%d !\033[0m\n", (30 + numeroPi), numeroPi, numeroPi);
 
