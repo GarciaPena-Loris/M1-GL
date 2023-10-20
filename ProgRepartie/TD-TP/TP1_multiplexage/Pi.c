@@ -89,14 +89,14 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     printf("\033[0;%dm[%d] \t 🔗 Nombre de Connect a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
     printf("\033[0;%dm[%d] \t 📥 Nombre d'Accept a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreAccept);
 
-    *nombreVoisins = (int) compteurVoisins.nombreAccept + compteurVoisins.nombreConnect;
+    *nombreVoisins = (int)compteurVoisins.nombreAccept + compteurVoisins.nombreConnect;
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
     if (compteurVoisins.nombreConnect > 0)
         printf("\033[0;%dm[%d] 🔗 Reception et connexion des %d voisins\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
 
-    int* tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
-    struct sockaddr_in* tabStuctureSocketVoisins = malloc(sizeof(struct sockaddr_in) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
+    int *tabSocketsVoisins = (int *)malloc(*nombreVoisins * sizeof(int));
+    struct sockaddr_in *tabStuctureSocketVoisins = malloc(sizeof(struct sockaddr_in) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
     // Pour chaque voisins auxquels je dois me connecter
     for (int i = 0; i < compteurVoisins.nombreConnect; i++)
@@ -234,7 +234,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         // ---- Envois du message a tout les voisins
         pthread_t *threads = malloc(sizeof(pthread_t) * nombreVoisins);
         struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
-            printf("\033[0;%dm[%d] Alo 0 : %d \033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
+        printf("\033[0;%dm[%d] Alo 0 : %d \033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
 
         for (int i = 0; i < nombreVoisins; i++)
         {
@@ -306,7 +306,7 @@ int main(int argc, char *argv[])
     ecouterDemande(socketPiTCP, 1000);
 
     int *tabSocketsVoisins;
-    int nombreVoisins; 
+    int nombreVoisins;
 
     tabSocketsVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, &nombreVoisins);
 
