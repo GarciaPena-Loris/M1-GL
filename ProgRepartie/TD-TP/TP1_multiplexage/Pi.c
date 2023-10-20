@@ -171,7 +171,7 @@ int* initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_i
     {
         struct sockaddr_in structSocketVoisinTCP;
         int socketClientTCP = accepterDemande(socketPiTCP, &structSocketVoisinTCP);
-        tabSocketsVoisins[compteurVoisins.nombreConnect + (i + 1)] = socketClientTCP;
+        tabSocketsVoisins[compteurVoisins.nombreConnect + i] = socketClientTCP;
 
         printf("\033[0;%dm[%d] \t👋 Voisin n°%d du Pi %d accepté.\033[0m\n", (30 + numeroPi), numeroPi, numeroPi, i);
     }
