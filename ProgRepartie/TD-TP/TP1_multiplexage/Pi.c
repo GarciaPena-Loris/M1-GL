@@ -223,7 +223,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         sleep(intervaleTemps);
 
         // ---- Envois du message a tout les voisins
-        pthread_t threads[nombreVoisins];
+        pthread_t* threads = malloc(sizeof(pthread_t) * nombreVoisins);
         for (int i = 0; i < nombreVoisins; i++)
         {
 
