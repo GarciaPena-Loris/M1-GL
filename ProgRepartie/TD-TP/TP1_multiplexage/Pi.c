@@ -240,6 +240,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         for (int i = 0; i < nombreVoisins; i++)
         {
             int socketVoisin = tabSocketsVoisins[i];
+            printf("\033[0;%dm[%d] \t📨 socket : %d\033[0m\n", (30 + numeroPi), numeroPi, tabSocketsVoisins[i]);
             params->idThread = i+1;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
