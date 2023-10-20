@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
     ecouterDemande(socketPiTCP, 1000);
 
     int *tabSocketsVoisins = NULL;
-    int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, tabSocketsVoisins);
+    int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, &tabSocketsVoisins);
 
     messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
 
