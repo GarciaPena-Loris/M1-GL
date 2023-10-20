@@ -235,6 +235,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         pthread_t *threads = malloc(sizeof(pthread_t) * nombreVoisins);
         struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
         printf("\033[0;%dm[%d] Alo 0 : %d \033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
+        printf("\033[0;%dm[%d] taille %d \033[0m\n", (30 + numeroPi), numeroPi, sizeof(tabSocketsVoisins));
 
         for (int i = 0; i < nombreVoisins; i++)
         {
