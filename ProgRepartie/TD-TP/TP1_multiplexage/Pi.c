@@ -206,6 +206,7 @@ void *diffusion_message(void *params)
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
         printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
+        exit(1);
     }
 
     printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, idThread, tailleMessage);
@@ -215,6 +216,7 @@ void *diffusion_message(void *params)
     if (resSendTCP == 0 || resSendTCP == -1)
     {
         printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
+        exit(1);
     }
     printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%s'\033[0m\n", (30 + numeroPi), numeroPi, idThread, message);
 
