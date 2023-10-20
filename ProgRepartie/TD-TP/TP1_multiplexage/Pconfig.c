@@ -173,8 +173,8 @@ int main(int argc, char *argv[])
 
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
         {
-            tabAccept[numPiServeur - 1]++;
             tabConnect[numPiClient - 1]++;
+            tabAccept[numPiServeur - 1]++;
         }
     }
 

@@ -89,12 +89,12 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     printf("\033[0;%dm[%d] \t 🔗 Nombre de Connect a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
     printf("\033[0;%dm[%d] \t 📥 Nombre d'Accept a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreAccept);
 
-
     // -- Etape 4 : Recevoir adresse de sockets des voisins
     if (compteurVoisins.nombreConnect > 0)
         printf("\033[0;%dm[%d] 🔗 Reception et connexion des %d voisins\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
 
     tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
+    tabStuctureSocketVoisins = malloc(sizeof(struct sockaddr_in) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
     // Pour chaque voisins auxquels je dois me connecter
     for (int i = 0; i < compteurVoisins.nombreConnect; i++)
@@ -110,21 +110,25 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
             exit(1);
         }
 
-        // Créer une socket TCP
-        int socketClientTCP = creerSocket();
-
         char *ipVoisin = inet_ntoa(structSocketVoisinTCP.sin_addr);
         int portVoisin = ntohs(structSocketVoisinTCP.sin_port);
+        printf("\033[0;%dm[%d] \t🌐  Reception de la stuct du voisin n°%d (%s:%d) réussi.\033[0m\n", (30 + numeroPi), numeroPi, i, ipVoisin, portVoisin);
+
+        tabStuctureSocketVoisins[i] = structSocketVoisinTCP;
+    }
+
+    // Envois les connects pour chaque voisins
+    for (int i = 0; i < compteurVoisins.nombreConnect; i++)
+    {
+        int socketClientTCP = creerSocket();
 
         // Connect a cette adresse
-        connectionSocket(socketClientTCP, structSocketVoisinTCP);
-        printf("\033[0;%dm[%d] \t🛰️  Connection du voisin n°%d (%s:%d) réussi.\033[0m\n", (30 + numeroPi), numeroPi, i, ipVoisin, portVoisin);
-
-        tabSocketsVoisins[i] = socketClientTCP;
+        connectionSocket(socketClientTCP, tabStuctureSocketVoisins[i]);
+        printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%dréussi.\033[0m\n", (30 + numeroPi), numeroPi, i);
     }
 
     if (compteurVoisins.nombreConnect > 0)
-        printf("\033[0;%dm[%d] 🏆 Fin reception des 🧦 voisins --\033[0m\n", (30 + numeroPi), numeroPi);
+        printf("\033[0;%dm[%d] 🏆 Fin reception des 🧦 voisins\033[0m\n", (30 + numeroPi), numeroPi);
 
     // -- Etape 4 : Envois confirmation a Pconfig
     printf("\033[0;%dm[%d] ⏲️ Envois confirmation à Pconfig.\033[0m\n", (30 + numeroPi), numeroPi);
