@@ -89,13 +89,13 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     printf("\033[0;%dm[%d] \t 🔗 Nombre de Connect a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
     printf("\033[0;%dm[%d] \t 📥 Nombre d'Accept a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreAccept);
 
-    nombreVoisins = compteurVoisins.nombreAccept + compteurVoisins.nombreConnect;
+    nombreVoisins = (int) compteurVoisins.nombreAccept + compteurVoisins.nombreConnect;
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
     if (compteurVoisins.nombreConnect > 0)
         printf("\033[0;%dm[%d] 🔗 Reception et connexion des %d voisins\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
 
-    tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
+    int* tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
     struct sockaddr_in* tabStuctureSocketVoisins = malloc(sizeof(struct sockaddr_in) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
     // Pour chaque voisins auxquels je dois me connecter
