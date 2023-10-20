@@ -14,9 +14,11 @@ fi
 # Boucle pour lancer les processus Pi en utilisant les paramètres
 for ((i=1; i<=$nombre_de_Pi; i++))
 do
-    
+    # Générez un nombre aléatoire entre 1 et 10 et affectez-le à une variable
+    random_number=$(shuf -i 1-10 -n 1)
+
     # Lancement du processus Pi avec les paramètres
-    ./Pi "$ip_Pconfig" "$port_pconfig" "5" "$i" &
+    ./Pi "$ip_Pconfig" "$port_pconfig" "$random_number" "$i" &
 
     # Ajoutez une pause facultative entre les lancements pour éviter la surcharge du système
     # sleep 1
