@@ -186,8 +186,6 @@ struct paramsFonctionThread
 
 void *diffusion_message(void *params)
 {
-            printf("\033[0;%dm[%d] oui ? \033[0m\n", (30 + numeroPi), numeroPi);
-
     struct paramsFonctionThread *args = (struct paramsFonctionThread *)params;
     int idThread = args->idThread;
     int numeroPi = args->numeroPi;
@@ -272,6 +270,8 @@ int main(int argc, char *argv[])
     char *portPconfig = argv[2];
     int intervaleTemps = atoi(argv[3]);
     int numeroPi = atoi(argv[4]);
+
+                printf("\033[0;%dm[%d]intervaleTemps %d\033[0m\n", (30 + numeroPi), numeroPi, intervaleTemps);
 
     // --- Etape 1 : Creation et mise en ecoute de la socket
     int socketPiTCP = creerSocket();
