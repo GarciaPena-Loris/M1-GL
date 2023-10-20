@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
     {
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
         {
-            if (tabConnect[numPiClient - 1] == compteur)
+            if (compteur == 1)
                 printf("-- 📨 Envois des %d voisin du Pi n°%d --\n", tabConnect[numPiClient - 1], numPiClient);
 
             int resSend = sendto(socketPconfig, &tabSocketAdressTCP[numPiServeur - 1], sizeof(tabSocketAdressTCP[numPiServeur - 1]),
@@ -255,7 +255,7 @@ int main(int argc, char *argv[])
                     exit(1);
                 }
                 printf("\t✅ Le Pi n°%d a finis ses connects.\n", numPiClient);
-                compteur = 0;
+                compteur = 1;
             }
             else {
                 compteur++;
