@@ -224,8 +224,8 @@ int main(int argc, char *argv[])
     {
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
         {
-
-            printf("-- 📨 Envois des données au Pi n°%d --\n", numPiClient);
+            if (tabConnect[numPiClient - 1] == compteur)
+                printf("-- 📨 Envois des données au Pi n°%d --\n", numPiClient);
 
             int resSend = sendto(socketPconfig, &tabSocketAdressTCP[numPiServeur - 1], sizeof(tabSocketAdressTCP[numPiServeur - 1]),
                                  0, (struct sockaddr *)&tabSocketAdressUDP[numPiClient - 1], sizeAdr);
@@ -249,7 +249,6 @@ int main(int argc, char *argv[])
             if (tabConnect[numPiClient - 1] == compteur)
             {
                 printf("\t⏳ Attente conformation du Pi n°%d\n", numPiClient);
-
                 int resRecv = recvfrom(socketPconfig, &conf, sizeof(conf),
                                        0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
                 if (resRecv == -1)
@@ -282,7 +281,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("\t✅ Fin d'envois de la confirmation. Le reseau est opérationnel 🌐\n");
+    printf("\t✅ Fin d'envois de la confirmation. Le reseau est opérationnel 🌐 !\n");
 
     // -- Etape 7 : Fermer la socket (lorsqu'elle n'est plus utilisée)
     int cls = close(socketPconfig);
