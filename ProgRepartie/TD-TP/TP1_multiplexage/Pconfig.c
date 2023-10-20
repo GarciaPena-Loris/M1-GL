@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
 
     printf("✅ Tous les voisins ont été envoyé ! Maintenant j'attends la confirmation de tous les Pi\n");
 
-    int conf;
+    char conf;
     struct sockaddr_in structSocketExpediteurUDP;
 
     for (int i = 0; i < nombrePi; i++)

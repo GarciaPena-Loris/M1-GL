@@ -130,7 +130,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
     // -- Etape 4 : Envois confirmation a Pconfig
     printf("\033[0;%dm[%d] ⏲️ Envois confirmation à Pconfig.\033[0m\n", (30 + numeroPi), numeroPi);
-    int conf = 1;
+    char conf = 'c';
     resSend = sendto(socketPiUDP, &conf, sizeof(conf),
                      0, (struct sockaddr *)&structureSocketPconfigUDP, sizeAdr);
     if (resSend == -1)
@@ -270,8 +270,6 @@ int main(int argc, char *argv[])
     char *portPconfig = argv[2];
     int intervaleTemps = atoi(argv[3]);
     int numeroPi = atoi(argv[4]);
-
-                printf("\033[0;%dm[%d]intervaleTemps %d\033[0m\n", (30 + numeroPi), numeroPi, intervaleTemps);
 
     // --- Etape 1 : Creation et mise en ecoute de la socket
     int socketPiTCP = creerSocket();
