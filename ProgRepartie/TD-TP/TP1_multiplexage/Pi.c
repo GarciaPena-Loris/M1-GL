@@ -124,7 +124,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
         // Connect a cette adresse
         connectionSocket(socketClientTCP, tabStuctureSocketVoisins[i]);
-        printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%d réussi.\033[0m\n", (30 + numeroPi), numeroPi, i);
+        printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%d (%s:%d) réussi.\033[0m\n", (30 + numeroPi), numeroPi, i, ipVoisin, portVoisin);
     }
 
     if (compteurVoisins.nombreConnect > 0)
@@ -232,11 +232,13 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
         for (int i = 0; i < nombreVoisins; i++)
         {
-            printf("\033[0;%dm[%d] %d \033[0m\n", (30 + numeroPi), numeroPi, i);
+            printf("\033[0;%dm[%d] Alo 1 : %d \033[0m\n", (30 + numeroPi), numeroPi, i);
             int socketVoisin = tabSocketsVoisins[i];
             params->idThread = i;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
+
+            printf("\033[0;%dm[%d] Alo 2 : %d \033[0m\n", (30 + numeroPi), numeroPi, i);
 
             if (pthread_create(&threads[i], NULL,
                                diffusion_message, params) != 0)
@@ -245,10 +247,12 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 free(params);
                 exit(1);
             }
+            printf("\033[0;%dm[%d] Alo 3 : %d \033[0m\n", (30 + numeroPi), numeroPi, i);
 
             if (i < nombreVoisins - 1)
                 printf("\033[0;%dm[%d] -----\033[0m\n", (30 + numeroPi), numeroPi);
         }
+            printf("\033[0;%dm[%d] Alo 4 \033[0m\n", (30 + numeroPi), numeroPi);
 
         for (int i = 0; i < nombreVoisins; i++)
         {
@@ -293,7 +297,7 @@ int main(int argc, char *argv[])
     int *tabSocketsVoisins = NULL;
     int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, tabSocketsVoisins);
 
-   // messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
+    messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
 
     printf("\033[0;%dm[%d] 🏁 Fin du Pi n°%d !\033[0m\n", (30 + numeroPi), numeroPi, numeroPi);
 
