@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     int nombrePi, nombreArretes;
 
     // Ouvrir le fichier en mode lecture
-    file = fopen("reseautest.col", "r");
+    file = fopen(nomFichier, "r");
     if (file == NULL)
     {
         perror("❌ Pconfig : erreur lors de l'ouverture du fichier");
