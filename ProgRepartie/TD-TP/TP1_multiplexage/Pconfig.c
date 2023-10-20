@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    printf("🗒️  Premiere lecture réussi, il y a %d Pi dans notre réseau.\n\n", nombrePi);
+    printf("🧮 Il y a %d Pi dans notre réseau.\n\n", nombrePi);
 
 
     // -- Etape 2 : Preparation recuperation socketAdresse de tous les Pi.
@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
 
 
         printf("\t🌐 Adresse UDP Pi n°%d : %s:%d\n", info.numeroPi, ipPiUDP, portPiUDP);
-        printf("\t🌐 Adresse TCP Pi n°%d : %s:%d\n", info.numeroPi, ipPiTCP, portPiTCP);
+        printf("\t🌏 Adresse TCP Pi n°%d : %s:%d\n", info.numeroPi, ipPiTCP, portPiTCP);
         printf("\t---\n");
 
         // Affectation dans les tableaux
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
         nombrePiRecu++;
     }
 
-    printf("🏁 Tout les Pi on bien été receptionés, maintenant on distribut 🌐 :\n");
+    printf("🏁 Tout les Pi on bien été receptionés, maintenant on distribut 🛰️ :\n");
 
     // -- Etape 4 : Recupere nombre d'Accept et de Connect.
 
@@ -176,8 +176,6 @@ int main(int argc, char *argv[])
     // Fermer le fichier
     fclose(file);
 
-    printf("📖 Suite et fin de lecture du fichier terminée !\n");
-
     // -- Etape 5 : Envois de ces nombre a chaque Pi.
     printf("👋 Début d'envoi du nombre de voisin au Pi\n");
 
@@ -196,7 +194,7 @@ int main(int argc, char *argv[])
             perror("\t❌ Pi : problème avec le premier send to :"); 
             exit(1);
         }
-        printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
+        // printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
         printf("\t---\n");
     }
 
@@ -216,9 +214,7 @@ int main(int argc, char *argv[])
 
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2) {
                        
-            printf("----- 📨 Envois des données au Pi n°%d -----\n", numPiClient);
-
-            
+            printf("-- 📨 Envois des données au Pi n°%d --\n", numPiClient);
 
             int resSend = sendto(socketPconfig, &tabSocketAdressTCP[numPiServeur - 1], sizeof(tabSocketAdressTCP[numPiServeur - 1]),
              0, (struct sockaddr *) &tabSocketAdressUDP[numPiClient - 1], sizeAdr);
@@ -234,17 +230,12 @@ int main(int argc, char *argv[])
             char *ipPi_voisin = inet_ntoa(tabSocketAdressTCP[numPiServeur - 1].sin_addr);
             int portPi_voisin = ntohs(tabSocketAdressTCP[numPiServeur - 1].sin_port);
 
-            printf("\t🧮 Numéro du Pi actuel : %d\n", numPiClient);
-            printf("\t🌐 Pi actuel : %s:%d\n", ipPi_actuel, portPi_actuel);
-            printf("\t---\n");
-            printf("\t🧮 Numéro du Pi suivant : %d\n", numPiServeur);            
-            printf("\t🌐 Pi voisin : %s:%d\n", ipPi_voisin, portPi_voisin);
-            printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
+            printf("\t🌐 Pi n°%d (%s:%d) à le Pi n°%d (%s:%d) comme voisin.\n",
+            numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
 
-            printf("----- 🏆 Fin envois des données au Pi n°%d -----\n\n", numPiClient);
+            printf("---\n");
         }
     }
-    printf("📖 Lecture du fichier terminée !\n");
 
     // Fermer le fichier
     fclose(file);
@@ -264,8 +255,6 @@ int main(int argc, char *argv[])
             perror("\t❌ Pi : problème avec le recvFrom :");
             exit(1);
         }
-        printf("\t\t✅ Nombre d'octets recu : %d\n", resRecv);
-        printf("\t---\n");
     }
 
     for(int i = 0; i < nombrePi; i++) {
@@ -278,13 +267,9 @@ int main(int argc, char *argv[])
             perror("\t❌ Pi : problème avec le premier send to :"); 
             exit(1);
         }
-        printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
-        printf("\t---\n");
-
     }
 
-    printf("\t✅ Fin d'envois de la confirmation. \n");
-
+    printf("\t✅ Fin d'envois de la confirmation. Le reseau est opérationnel 🌐\n");
 
     // -- Etape 7 : Fermer la socket (lorsqu'elle n'est plus utilisée)
     int cls = close(socketPconfig);
@@ -293,6 +278,9 @@ int main(int argc, char *argv[])
         perror("❌ Pconfig : problème avec le close :");
         exit(1);
     }
+    free(tabAccept);
+    free(tabConnect);
+
     printf("🚪 Pconfig : Fermture de la socket réussi.\n");
 
     printf("🙅 Pconfig : je termine.\n");
