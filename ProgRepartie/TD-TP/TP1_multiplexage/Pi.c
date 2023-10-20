@@ -186,6 +186,7 @@ struct paramsFonctionThread
 
 void *diffusion_message(void *params)
 {
+            printf("\033[0;%dm[%d] oui ? \033[0m\n", (30 + numeroPi), numeroPi);
 
     struct paramsFonctionThread *args = (struct paramsFonctionThread *)params;
     int idThread = args->idThread;
@@ -220,7 +221,7 @@ void *diffusion_message(void *params)
 void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, int intervaleTemps)
 {
 
-    printf("\033[0;%dm[%d] ----- 📨 Envois d'un message aux %d voisins toutes les %d sec -----\033[0m\n", (30 + numeroPi), numeroPi, intervaleTemps);
+    printf("\033[0;%dm[%d] ----- 📨 Envois d'un message aux %d voisins toutes les %d sec -----\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins, intervaleTemps);
 
     while (1)
     {
