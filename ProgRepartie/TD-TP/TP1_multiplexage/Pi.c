@@ -172,6 +172,8 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     if (compteurVoisins.nombreAccept > 0)
         printf("🏆 Fin d'acceptation des voisins\n\n");
 
+    printf("🥳🎉🎉🎉 Fin Pi, tous les voisins sont connectée !! 🎉🎉🎉🥳\n\n");
+
     return compteurVoisins.nombreConnect + compteurVoisins.nombreAccept;
 }
 
