@@ -226,6 +226,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
 
     printf("\033[0;%dm[%d] ----- 📨 Envois d'un message aux %d voisins toutes les %d sec -----\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins, intervaleTemps);
 
+    int compteur = 0;
     while (1)
     {
         sleep(intervaleTemps);
@@ -265,6 +266,10 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             pthread_join(threads[i], NULL);
         }
         free(threads);
+
+        compteur++;
+        if (compteur == 3)
+            break;
     }
 
     printf("\033[0;%dm[%d] ✅ Fin d'affichage des voisins.\033[0m\n", (30 + numeroPi), numeroPi);
