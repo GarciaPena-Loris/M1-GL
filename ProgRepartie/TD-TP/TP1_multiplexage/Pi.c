@@ -233,6 +233,8 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         // ---- Envois du message a tout les voisins
         pthread_t *threads = malloc(sizeof(pthread_t) * nombreVoisins);
         struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
+            printf("\033[0;%dm[%d] Alo 0 : %d \033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
+
         for (int i = 0; i < nombreVoisins; i++)
         {
             printf("\033[0;%dm[%d] Alo 1 : %d \033[0m\n", (30 + numeroPi), numeroPi, i);
@@ -256,7 +258,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             if (i < nombreVoisins - 1)
                 printf("\033[0;%dm[%d] -----\033[0m\n", (30 + numeroPi), numeroPi);
         }
-            printf("\033[0;%dm[%d] Alo 4 \033[0m\n", (30 + numeroPi), numeroPi);
+        printf("\033[0;%dm[%d] Alo 4 \033[0m\n", (30 + numeroPi), numeroPi);
 
         for (int i = 0; i < nombreVoisins; i++)
         {
