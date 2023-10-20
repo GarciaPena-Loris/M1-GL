@@ -207,7 +207,7 @@ void *diffusion_message(void *params)
     printf("\033[0;%dm[%d] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, tailleMessage);
 
     printf("\033[0;%dm[%d] -- 💬 Envois du message  --\033[0m\n", (30 + numeroPi), numeroPi);
-    ssize_t resSendTCP = sendTCP(socketVoisin, message, sizeof(message));
+    ssize_t resSendTCP = sendTCP(socketVoisin, message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
         printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
@@ -220,7 +220,7 @@ void *diffusion_message(void *params)
 void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, int intervaleTemps)
 {
 
-    printf("\033[0;%dm[%d] ----- 📨 Envois d'un message aux %d voisins toutes les %d sec -----\033[0m\n", nombreVoisins, numeroPi, intervaleTemps);
+    printf("\033[0;%dm[%d] ----- 📨 Envois d'un message aux %d voisins toutes les %d sec -----\033[0m\n", (30 + numeroPi), numeroPi, intervaleTemps);
 
     while (1)
     {
@@ -228,11 +228,11 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
 
         // ---- Envois du message a tout les voisins
         pthread_t *threads = malloc(sizeof(pthread_t) * nombreVoisins);
+        struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
         for (int i = 0; i < nombreVoisins; i++)
         {
-            printf("\033[0;%dm[%d] %d \033[0m\n", nombreVoisins, numeroPi, i);
+            printf("\033[0;%dm[%d] %d \033[0m\n", (30 + numeroPi), numeroPi, i);
             int socketVoisin = tabSocketsVoisins[i];
-            struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
             params->idThread = i;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
@@ -241,6 +241,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                                diffusion_message, params) != 0)
             {
                 perror("❌ Pi : problème à la creation du thread");
+                free(params);
                 exit(1);
             }
 
@@ -252,6 +253,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         {
             pthread_join(threads[i], NULL);
         }
+        free(threads);
     }
 
     printf("\033[0;%dm[%d] ✅ Fin d'affichage des voisins.\033[0m\n", (30 + numeroPi), numeroPi);
