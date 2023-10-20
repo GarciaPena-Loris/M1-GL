@@ -89,8 +89,6 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     printf("\033[0;%dm[%d] \t 🔗 Nombre de Connect a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreConnect);
     printf("\033[0;%dm[%d] \t 📥 Nombre d'Accept a faire : %d\033[0m\n", (30 + numeroPi), numeroPi, compteurVoisins.nombreAccept);
 
-    // -- Etape 4 : Mettre la socket en ecoute
-    ecouterDemande(socketPiTCP, compteurVoisins.nombreAccept);
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
     if (compteurVoisins.nombreConnect > 0)
@@ -284,6 +282,9 @@ int main(int argc, char *argv[])
         perror("❌ Pi : Erreur lors de la récupération de l'adresse de la socket");
         exit(EXIT_FAILURE);
     }
+
+    // -- Etape 4 : Mettre la socket en ecoute
+    ecouterDemande(socketPiTCP, 1000);
 
     int *tabSocketsVoisins = NULL;
     int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, tabSocketsVoisins);
