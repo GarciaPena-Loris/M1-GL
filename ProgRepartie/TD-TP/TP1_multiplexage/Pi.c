@@ -124,6 +124,9 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
         // Connect a cette adresse
         connectionSocket(socketClientTCP, tabStuctureSocketVoisins[i]);
+
+        char *ipVoisin = inet_ntoa(structSocketVoisinTCP.sin_addr);
+        int portVoisin = ntohs(structSocketVoisinTCP.sin_port);
         printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%d (%s:%d) réussi.\033[0m\n", (30 + numeroPi), numeroPi, i, ipVoisin, portVoisin);
     }
 
