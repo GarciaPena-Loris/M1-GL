@@ -238,7 +238,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         for (int i = 0; i < nombreVoisins; i++)
         {
             int socketVoisin = tabSocketsVoisins[i];
-            params->idThread = i;
+            params->idThread = i+1;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
 
