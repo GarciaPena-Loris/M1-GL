@@ -198,27 +198,27 @@ void *diffusion_message(void *params)
 
     char *message = "Bonjour je suis un message super sympa ! 💭";
 
-    printf("\033[0;%dm[%d] --- 💬 Envois du message au voisin n°%d ---\033[0m\n", (30 + numeroPi), numeroPi, idThread);
-    printf("\033[0;%dm[%d] -- 📏 Envoi de la taille du message --\033[0m\n", (30 + numeroPi), numeroPi);
+    printf("\033[0;%dm[%d][%d] --- 💬 Envois du message au voisin n°%d ---\033[0m\n", (30 + numeroPi), numeroPi, idThread, idThread);
+    printf("\033[0;%dm[%d][%d] -- 📏 Envoi de la taille du message --\033[0m\n", (30 + numeroPi), numeroPi, idThread);
 
     int tailleMessage = strlen(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
-        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
+        printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
     }
 
-    printf("\033[0;%dm[%d] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, tailleMessage);
+    printf("\033[0;%dm[%d[%d]] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, tailleMessage, idThread);
 
-    printf("\033[0;%dm[%d] -- 💬 Envois du message  --\033[0m\n", (30 + numeroPi), numeroPi);
+    printf("\033[0;%dm[%d][%d] -- 💬 Envois du message  --\033[0m\n", (30 + numeroPi), numeroPi, idThread);
     ssize_t resSendTCP = sendTCP(socketVoisin, message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
-        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
+        printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
     }
-    printf("\033[0;%dm[%d] \tMessage envoyé : '%s'\033[0m\n", (30 + numeroPi), numeroPi, message);
+    printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%s'\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
 
-    printf("\033[0;%dm[%d] --- 🏆 Fin envoie du message au voisin n°%d ---\033[0m\n", (30 + numeroPi), numeroPi, idThread);
+    printf("\033[0;%dm[%d][%d] --- 🏆 Fin envoie du message au voisin n°%d ---\033[0m\n", (30 + numeroPi), numeroPi, idThread, idThread);
 }
 
 void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, int intervaleTemps)
@@ -238,7 +238,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         for (int i = 0; i < nombreVoisins; i++)
         {
             int socketVoisin = tabSocketsVoisins[i];
-            params->idThread = i;
+            params->idThread = i+1;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
 
