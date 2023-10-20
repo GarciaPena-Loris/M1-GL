@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
     {
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
         {
-            if (tabConnect[numPiClient - 1] == compteur - 1)
+            if (tabConnect[numPiClient - 1] == compteur)
                 printf("-- 📨 Envois des %d voisin du Pi n°%d --\n", tabConnect[numPiClient - 1], numPiClient);
 
             int resSend = sendto(socketPconfig, &tabSocketAdressTCP[numPiServeur - 1], sizeof(tabSocketAdressTCP[numPiServeur - 1]),
