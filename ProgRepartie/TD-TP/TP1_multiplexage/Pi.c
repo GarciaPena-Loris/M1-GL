@@ -33,7 +33,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         perror("❌ Pi : problème creation 🧦 :");
         exit(1);
     }
-    printf("✅ Pi : Creation de la 🧦 Pi réussie.\n");
+    printf("\033[0;%dm[%d]✅ Pi : Creation de la 🧦 Pi réussie.\n\033[0;30m", numeroPi, (30+numeroPi));
 
     // -- Etape 2 : Nommer la socket UDP
     struct sockaddr_in strctureSocketPiUDP;
@@ -47,7 +47,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         perror("❌ Pi : probleme du bind :");
         exit(1);
     }
-    printf("🏷️  Nommage de la socket réussi.\n");
+    printf("\033[0;%dm[%d]🏷️  Nommage de la socket réussi.\n\033[0;30m", numeroPi, (30+numeroPi));
 
     // -- Etape 1 : Designation de la socket pconfig
     struct sockaddr_in structureSocketPconfigUDP;
@@ -61,7 +61,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     info.numeroPi = numeroPi;
     info.structSocketPi = structAdresseServeurTCP;
 
-    printf("📨 Envois de son numéro (%d) au serveur %s:%s\n", numeroPi, adresseIPPconfig, portPconfig);
+    printf("\033[0;%dm[%d]📨 Envois de son numéro (%d) au serveur %s:%s\n\033[0;30m", numeroPi, (30+numeroPi), numeroPi, adresseIPPconfig, portPconfig);
 
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
 
@@ -74,7 +74,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     }
 
     // -- Etape 3 : Recevoir nombre Accept et Connect
-    printf("-- 📩 Recevoir nombre Accept et de Connect --\n");
+    printf("\033[0;%dm[%d]-- 📩 Recevoir nombre Accept et de Connect --\n\033[0;30m", numeroPi, (30+numeroPi));
     struct compteurVoisins compteurVoisins;
 
     struct sockaddr_in structSocketExpediteurUDP;
@@ -86,15 +86,15 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         exit(1);
     }
 
-    printf("\t 🔗 Nombre de Connect a faire : %d\n", compteurVoisins.nombreConnect);
-    printf("\t 📥 Nombre d'Accept a faire : %d\n", compteurVoisins.nombreAccept);
+    printf("\033[0;%dm[%d]\t 🔗 Nombre de Connect a faire : %d\n\033[0;30m", numeroPi, (30+numeroPi), compteurVoisins.nombreConnect);
+    printf("\033[0;%dm[%d]\t 📥 Nombre d'Accept a faire : %d\n\033[0;30m", numeroPi, (30+numeroPi), compteurVoisins.nombreAccept);
 
     // -- Etape 4 : Mettre la socket en ecoute
     ecouterDemande(socketPiTCP, compteurVoisins.nombreAccept);
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
     if (compteurVoisins.nombreConnect > 0)
-        printf("-- 🔗 Reception et connexion des %d voisins --\n", compteurVoisins.nombreConnect);
+        printf("\033[0;%dm[%d]🔗 Reception et connexion des %d voisins\n\033[0;30m", numeroPi, (30+numeroPi), compteurVoisins.nombreConnect);
 
     tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
@@ -120,16 +120,16 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
         // Connect a cette adresse
         connectionSocket(socketClientTCP, structSocketVoisinTCP);
-        printf("🛰️  Connection du voisin %s:%d réussi.\n", ipVoisin, portVoisin);
+        printf("\033[0;%dm[%d]\t🛰️  Connection du voisin %s:%d réussi.\n\033[0;30m", numeroPi, (30+numeroPi), ipVoisin, portVoisin);
 
         tabSocketsVoisins[i] = socketClientTCP;
     }
 
     if (compteurVoisins.nombreConnect > 0)
-        printf("-- 🏆 Fin reception des 🧦 voisins --\n");
+        printf("\033[0;%dm[%d]🏆 Fin reception des 🧦 voisins --\n\033[0;30m", numeroPi, (30+numeroPi));
 
     // -- Etape 4 : Envois confirmation a Pconfig
-    printf("⏲️ Envois confirmation à Pconfig.\n");
+    printf("\033[0;%dm[%d]⏲️ Envois confirmation à Pconfig.\n\033[0;30m", numeroPi, (30+numeroPi));
     int conf = 1;
     resSend = sendto(socketPiUDP, &conf, sizeof(conf),
                      0, (struct sockaddr *)&structureSocketPconfigUDP, sizeAdr);
@@ -140,7 +140,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     }
 
     // -- Etape 4 : Attente reception confirmation
-    printf("⏳ Attente reception confirmation...\n");
+    printf("\033[0;%dm[%d]⏳ Attente reception confirmation...\n\033[0;30m", numeroPi, (30+numeroPi));
     resRecv = recvfrom(socketPiUDP, &conf, sizeof(conf),
                        0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
     if (resRecv == -1)
@@ -158,7 +158,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
     // -- Etape 5 : Accepter demande des voisins
     if (compteurVoisins.nombreAccept > 0)
-        printf("📥 Accepter les demandes des %d voisins\n", compteurVoisins.nombreAccept);
+        printf("\033[0;%dm[%d]📥 Accepter les demandes des %d voisins\n\033[0;30m", numeroPi, (30+numeroPi), compteurVoisins.nombreAccept);
 
     for (int i = 0; i < compteurVoisins.nombreAccept; i++)
     {
@@ -166,13 +166,13 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
         int socketClientTCP = accepterDemande(socketPiTCP, &structSocketVoisinTCP);
         tabSocketsVoisins[compteurVoisins.nombreConnect + (i + 1)] = socketClientTCP;
 
-        printf("\t👋 Voisin n°%d du Pi %d accepté.\n", numeroPi, i);
+        printf("\033[0;%dm[%d]\t👋 Voisin n°%d du Pi %d accepté.\n\033[0;30m", numeroPi, (30+numeroPi), numeroPi, i);
     }
 
     if (compteurVoisins.nombreAccept > 0)
-        printf("🏆 Fin d'acceptation des voisins\n\n");
+        printf("\033[0;%dm[%d]🏆 Fin d'acceptation des voisins\n\033[0;30m\n\033[0;30m", numeroPi, (30+numeroPi));
 
-    printf("🥳🎉🎉🎉 Fin Pi, tous les voisins sont connectée !! 🎉🎉🎉🥳\n\n");
+    printf("\033[0;%dm[%d]🥳🎉🎉🎉 Fin Pi, tous les voisins sont connectée !! 🎉🎉🎉🥳\n\033[0;30m\n\033[0;30m", numeroPi, (30+numeroPi));
 
     return compteurVoisins.nombreConnect + compteurVoisins.nombreAccept;
 }
@@ -180,6 +180,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 struct paramsFonctionThread
 {
     int idThread;
+    int numeroPi;
     int socketVoisin;
 };
 
@@ -188,35 +189,36 @@ void *diffusion_message(void *params)
 
     struct paramsFonctionThread *args = (struct paramsFonctionThread *)params;
     int idThread = args->idThread;
+    int numeroPi = args->numeroPi;
     int socketVoisin = args->socketVoisin;
 
     char *message = "Bonjour je suis un message super sympa ! 💭";
 
-    printf("--- 💬 Envois du message au voisin n°%d ---\n", idThread);
-    printf("-- 📏 Envoi de la taille du message --\n");
+    printf("\033[0;%dm[%d]--- 💬 Envois du message au voisin n°%d ---\n\033[0;30m", numeroPi, (30+numeroPi), idThread);
+    printf("\033[0;%dm[%d]-- 📏 Envoi de la taille du message --\n\033[0;30m", numeroPi, (30+numeroPi));
 
     int tailleMessage = strlen(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1) {
-        printf("❌ Pi : Probleme lors du sendTCP.\n");
+        printf("\033[0;%dm[%d]❌ Pi : Probleme lors du sendTCP.\n\033[0;30m", numeroPi, (30+numeroPi));
     }
 
-    printf("\tMessage envoyé : '%d'\n", tailleMessage);
+    printf("\033[0;%dm[%d]\tMessage envoyé : '%d'\n\033[0;30m", numeroPi, (30+numeroPi), tailleMessage);
 
-    printf("-- 💬 Envois du message  --\n");
+    printf("\033[0;%dm[%d]-- 💬 Envois du message  --\n\033[0;30m", numeroPi, (30+numeroPi));
     ssize_t resSendTCP = sendTCP(socketVoisin, message, sizeof(message));
     if (resSendTCP == 0 || resSendTCP == -1) {
-        printf("❌ Pi : Probleme lors du sendTCP.\n");
+        printf("\033[0;%dm[%d]❌ Pi : Probleme lors du sendTCP.\n\033[0;30m", numeroPi, (30+numeroPi));
     }
-        printf("\tMessage envoyé : '%s'\n", message);
+        printf("\033[0;%dm[%d]\tMessage envoyé : '%s'\n\033[0;30m", numeroPi, (30+numeroPi), message);
 
-    printf("--- 🏆 Fin envoie du message au voisin n°%d ---\n", idThread);
+    printf("\033[0;%dm[%d]--- 🏆 Fin envoie du message au voisin n°%d ---\n\033[0;30m", numeroPi, (30+numeroPi), idThread);
 }
 
 void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, int intervaleTemps)
 {
 
-    printf("----- 📨 Envois d'un message aux %d voisins du Pi n°%d toutes les %d sec-----\n", nombreVoisins, numeroPi, intervaleTemps);
+    printf("\033[0;%dm[%d]----- 📨 Envois d'un message aux %d voisins du Pi n°%d toutes les %d sec-----\n\033[0;30m", numeroPi, (30+numeroPi), nombreVoisins, numeroPi, intervaleTemps);
 
     while (1)
     {
@@ -230,6 +232,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             int socketVoisin = tabSocketsVoisins[i];
             struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
             params->idThread = i;
+            params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
 
             if (pthread_create(&threads[i], NULL,
@@ -240,7 +243,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             }
 
             if (i < nombreVoisins - 1)
-                printf("-----\n");
+                printf("\033[0;%dm[%d]-----\n\033[0;30m", numeroPi, (30+numeroPi));
         }
 
         for (int i = 0; i < nombreVoisins; i++)
@@ -249,7 +252,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         }
     }
 
-    printf("✅ Fin d'affichage des voisins.\n");
+    printf("\033[0;%dm[%d]✅ Fin d'affichage des voisins.\n\033[0;30m", numeroPi, (30+numeroPi));
 }
 
 int main(int argc, char *argv[])
@@ -257,7 +260,7 @@ int main(int argc, char *argv[])
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
     if (argc != 5)
     {
-        printf("utilisation : %s IPPconfig portPconfig intervaleTemps numeroPi\n", argv[0]);
+        printf("utilisation : %s IPPconfig portPconfig intervaleTemps numeroPi", argv[0]);
         exit(1);
     }
     char *adresseIPPconfig = argv[1];
@@ -284,7 +287,7 @@ int main(int argc, char *argv[])
 
     messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
 
-    printf("🏁 Fin du Pi n°%d !\n", numeroPi);
+    printf("\033[0;%dm[%d]🏁 Fin du Pi n°%d !\n\033[0;30m", numeroPi, (30+numeroPi), numeroPi);
 
     return 0;
 }
