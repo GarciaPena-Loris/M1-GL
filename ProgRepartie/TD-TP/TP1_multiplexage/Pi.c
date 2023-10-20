@@ -238,13 +238,13 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
 
-            if (pthread_create(&threads[i], NULL,
-                               diffusion_message, params) != 0)
-            {
-                perror("❌ Pi : problème à la creation du thread");
-                free(params);
-                exit(1);
-            }
+            // if (pthread_create(&threads[i], NULL,
+            //                    diffusion_message, params) != 0)
+            // {
+            //     perror("❌ Pi : problème à la creation du thread");
+            //     free(params);
+            //     exit(1);
+            // }
 
             if (i < nombreVoisins - 1)
                 printf("\033[0;%dm[%d] -----\033[0m\n", (30 + numeroPi), numeroPi);
