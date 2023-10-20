@@ -208,7 +208,7 @@ void *diffusion_message(void *params)
         printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
     }
 
-    printf("\033[0;%dm[%d[%d]] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, tailleMessage, idThread);
+    printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, idThread, tailleMessage);
 
     printf("\033[0;%dm[%d][%d] -- 💬 Envois du message  --\033[0m\n", (30 + numeroPi), numeroPi, idThread);
     ssize_t resSendTCP = sendTCP(socketVoisin, message, tailleMessage);
@@ -216,7 +216,7 @@ void *diffusion_message(void *params)
     {
         printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
     }
-    printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%s'\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
+    printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%s'\033[0m\n", (30 + numeroPi), numeroPi, idThread, message);
 
     printf("\033[0;%dm[%d][%d] --- 🏆 Fin envoie du message au voisin n°%d ---\033[0m\n", (30 + numeroPi), numeroPi, idThread, idThread);
 }
@@ -238,7 +238,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         for (int i = 0; i < nombreVoisins; i++)
         {
             int socketVoisin = tabSocketsVoisins[i];
-            params->idThread = i+1;
+            params->idThread = i;
             params->numeroPi = numeroPi;
             params->socketVoisin = socketVoisin;
 
