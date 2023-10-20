@@ -12,17 +12,19 @@
 
 #include "fonctionTPC.h"
 
-struct infosPi {
+struct infosPi
+{
     int numeroPi;
     struct sockaddr_in structSocketPi;
 };
 
-struct compteurVoisins {
+struct compteurVoisins
+{
     int nombreAccept;
     int nombreConnect;
 };
 
-int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in structAdresseServeurTCP, int numeroPi, int socketPiTCP, int* tabVoisins)
+int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in structAdresseServeurTCP, int numeroPi, int socketPiTCP, int *tabSocketsVoisins)
 {
     // -- Etape 1 : Creation socker Pi UDP
     int socketPiUDP = socket(PF_INET, SOCK_DGRAM, 0);
@@ -39,8 +41,9 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     strctureSocketPiUDP.sin_addr.s_addr = INADDR_ANY;
     strctureSocketPiUDP.sin_port = htons(0);
 
-    int res = bind(socketPiUDP, (struct sockaddr*) &strctureSocketPiUDP, sizeof(strctureSocketPiUDP));
-    if (res == -1) {
+    int res = bind(socketPiUDP, (struct sockaddr *)&strctureSocketPiUDP, sizeof(strctureSocketPiUDP));
+    if (res == -1)
+    {
         perror("❌ Pi : probleme du bind :");
         exit(1);
     }
@@ -63,10 +66,10 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
 
     int resSend = sendto(socketPiUDP, &info, sizeof(info),
-     0, (struct sockaddr *)&structureSocketPconfigUDP, sizeAdr);
+                         0, (struct sockaddr *)&structureSocketPconfigUDP, sizeAdr);
     if (resSend == -1)
     {
-        perror("❌ Pi : problème avec le send to :"); 
+        perror("❌ Pi : problème avec le send to :");
         exit(1);
     }
 
@@ -75,8 +78,8 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     struct compteurVoisins compteurVoisins;
 
     struct sockaddr_in structSocketExpediteurUDP;
-    ssize_t resRecv = recvfrom(socketPiUDP, &compteurVoisins, sizeof(compteurVoisins), 
-        0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
+    ssize_t resRecv = recvfrom(socketPiUDP, &compteurVoisins, sizeof(compteurVoisins),
+                               0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
     if (resRecv == -1)
     {
         perror("❌ Pi : problème avec le recvFrom :");
@@ -90,18 +93,19 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     ecouterDemande(socketPiTCP, compteurVoisins.nombreAccept);
 
     // -- Etape 4 : Recevoir adresse de sockets des voisins
-    if (compteurVoisins.nombreConnect > 0) 
+    if (compteurVoisins.nombreConnect > 0)
         printf("-- 🔗 Reception et connexion des %d voisins --\n", compteurVoisins.nombreConnect);
 
-    tabVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
+    tabSocketsVoisins = malloc(sizeof(int) * (compteurVoisins.nombreConnect + compteurVoisins.nombreAccept));
 
     // Pour chaque voisins auxquels je dois me connecter
-    for (int i = 0; i < compteurVoisins.nombreConnect; i++) {
+    for (int i = 0; i < compteurVoisins.nombreConnect; i++)
+    {
         struct sockaddr_in structSocketExpediteurUDP;
         struct sockaddr_in structSocketVoisinTCP;
 
-        int resRecv = recvfrom(socketPiUDP, &structSocketVoisinTCP, sizeof(structSocketVoisinTCP), 
-            0, (struct sockaddr *) &structSocketExpediteurUDP, &sizeAdr);
+        int resRecv = recvfrom(socketPiUDP, &structSocketVoisinTCP, sizeof(structSocketVoisinTCP),
+                               0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
         if (resRecv == -1)
         {
             perror("❌ Pi : problème avec le recvFrom :");
@@ -116,29 +120,29 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
         // Connect a cette adresse
         connectionSocket(socketClientTCP, structSocketVoisinTCP);
-        printf("🛰️  Connection du voisin %s:%d réussi.\n", ipVoisin, portVoisin); 
+        printf("🛰️  Connection du voisin %s:%d réussi.\n", ipVoisin, portVoisin);
 
-        tabVoisins[i] = socketClientTCP;
+        tabSocketsVoisins[i] = socketClientTCP;
     }
 
-    if (compteurVoisins.nombreConnect > 0) 
+    if (compteurVoisins.nombreConnect > 0)
         printf("-- 🏆 Fin reception des 🧦 voisins --\n");
 
     // -- Etape 4 : Envois confirmation a Pconfig
     printf("⏲️ Envois confirmation à Pconfig.\n");
     int conf = 1;
     resSend = sendto(socketPiUDP, &conf, sizeof(conf),
-     0, (struct sockaddr *) &structureSocketPconfigUDP, sizeAdr);
+                     0, (struct sockaddr *)&structureSocketPconfigUDP, sizeAdr);
     if (resSend == -1)
     {
-        perror("❌ Pi : problème avec le send to :"); 
+        perror("❌ Pi : problème avec le send to :");
         exit(1);
     }
 
     // -- Etape 4 : Attente reception confirmation
     printf("⏳ Attente reception confirmation...\n");
-    resRecv = recvfrom(socketPiUDP, &conf, sizeof(conf), 
-        0, (struct sockaddr *) &structSocketExpediteurUDP, &sizeAdr);
+    resRecv = recvfrom(socketPiUDP, &conf, sizeof(conf),
+                       0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
     if (resRecv == -1)
     {
         perror("❌ Pi : problème avec le recvFrom :");
@@ -156,12 +160,13 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     if (compteurVoisins.nombreAccept > 0)
         printf("📥 Accepter les demandes des %d voisins\n", compteurVoisins.nombreAccept);
 
-    for (int i = 0; i < compteurVoisins.nombreAccept; i++) {
+    for (int i = 0; i < compteurVoisins.nombreAccept; i++)
+    {
         struct sockaddr_in structSocketVoisinTCP;
         int socketClientTCP = accepterDemande(socketPiTCP, &structSocketVoisinTCP);
-        tabVoisins[compteurVoisins.nombreConnect + (i+1)] = socketClientTCP;
+        tabSocketsVoisins[compteurVoisins.nombreConnect + (i + 1)] = socketClientTCP;
 
-        printf("\t👋 Voisin n°%d du Pi %d accepté.\n", numeroPi, i);        
+        printf("\t👋 Voisin n°%d du Pi %d accepté.\n", numeroPi, i);
     }
 
     if (compteurVoisins.nombreAccept > 0)
@@ -170,80 +175,79 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
     return compteurVoisins.nombreConnect + compteurVoisins.nombreAccept;
 }
 
-
-struct paramsFonctionThread {
-  int idThread;
-  struct sockaddr_in voisin;
+struct paramsFonctionThread
+{
+    int idThread;
+    int socketVoisin;
 };
 
-void* diffusion_message(void* params) {
+void *diffusion_message(void *params)
+{
 
-    struct paramsFonctionThread* args = (struct paramsFonctionThread *) params;
+    struct paramsFonctionThread *args = (struct paramsFonctionThread *)params;
     int idThread = args->idThread;
-    struct sockaddr_in voisin = args->voisin;
+    int socketVoisin = args->socketVoisin;
 
-    char* message = "Bonjour je suis un message super sympa ! 💭";
+    char *message = "Bonjour je suis un message super sympa ! 💭";
 
     printf("--- 💬 Envois du message au voisin n°%d ---\n", idThread);
     printf("-- 📏 Envoi de la taille du message --\n");
 
-    /*
     int tailleMessage = strlen(message);
-    ssize_t resSendTCPsize = sendTCP(voisin, &tailleMessage, sizeof(tailleMessage));
+    ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1) {
-        printf("❌ Pi : Arret de la boucle.\n");
+        printf("❌ Pi : Probleme lors du sendTCP.\n");
     }
 
-    printf("Nombre d'octets envoyés : %zd\n", resSendTCPsize);
-    printf("Message envoyé : '%d'\n", tailleMessage);
+    printf("\tMessage envoyé : '%d'\n", tailleMessage);
 
-    printf("  -- 💑 Envoi du couple --\n");
-    ssize_t resSendTCP = sendTCP(socketSuivant, &couple, sizeof(couple));
+    printf("-- 💬 Envois du message  --\n");
+    ssize_t resSendTCP = sendTCP(socketVoisin, message, sizeof(message));
     if (resSendTCP == 0 || resSendTCP == -1) {
-        printf("❌ Pi : Arret de la boucle.\n");
-    } 
-    printf("Couple envoyé - Numero Pi : %d, Compteur Pi : %d\n", couple.numeroPi, couple.compteur_pi);
-    printf("Nombre d'octets envoyés : %zd\n", resSendTCP);
-    */
+        printf("❌ Pi : Probleme lors du sendTCP.\n");
+    }
+        printf("\tMessage envoyé : '%d'\n", message);
 
-    printf("----- 🏆 Fin envoie du couple au suivant ------\n\n");
-
+    printf("--- 🏆 Fin envoie du message au voisin n°%d ---\n", idThread);
 }
 
-void traitementClassique(int numeroPi, struct sockaddr_in* tabVoisins, int nombreVoisins, int intervaleTemps)
+void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, int intervaleTemps)
 {
-    
+
     printf("----- 📨 Envois d'un message aux %d voisins du Pi n°%d toutes les %d sec-----\n", nombreVoisins, numeroPi, intervaleTemps);
 
-    while(1) {
+    while (1)
+    {
         sleep(intervaleTemps);
 
         // ---- Envois du message a tout les voisins
         pthread_t threads[nombreVoisins];
-        for (int i = 0; i < nombreVoisins; i++) {
+        for (int i = 0; i < nombreVoisins; i++)
+        {
 
-            struct sockaddr_in voisin = tabVoisins[i];
+            int socketVoisin = tabSocketsVoisins[i];
             struct paramsFonctionThread *params = malloc(sizeof(struct paramsFonctionThread));
             params->idThread = i;
-            params->voisin = voisin;
+            params->voisin = socketVoisin;
 
-            if (pthread_create(&threads[i], NULL, 
-                diffusion_message, params) != 0){
+            if (pthread_create(&threads[i], NULL,
+                               diffusion_message, params) != 0)
+            {
                 perror("❌ Pi : problème à la creation du thread");
                 exit(1);
             }
 
-            if (i < nombreVoisins-1)
+            if (i < nombreVoisins - 1)
                 printf("-----\n");
         }
 
-        for (int i = 0; i < nombreVoisins; i++) {
+        for (int i = 0; i < nombreVoisins; i++)
+        {
             pthread_join(threads[i], NULL);
         }
     }
 
     printf("✅ Fin d'affichage des voisins.\n");
-
 }
 
 int main(int argc, char *argv[])
@@ -267,15 +271,16 @@ int main(int argc, char *argv[])
     struct sockaddr_in structAdresseServeurTCP;
     socklen_t size = sizeof(structAdresseServeurTCP);
 
-    if (getsockname(socketPiTCP, (struct sockaddr *) &structAdresseServeurTCP, &size) == -1) {
+    if (getsockname(socketPiTCP, (struct sockaddr *)&structAdresseServeurTCP, &size) == -1)
+    {
         perror("❌ Pi : Erreur lors de la récupération de l'adresse de la socket");
         exit(EXIT_FAILURE);
     }
 
-    int* tabVoisins = NULL;
-    int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, tabVoisins);
+    int *tabSocketsVoisins = NULL;
+    int nombreVoisins = initialisation(adresseIPPconfig, portPconfig, structAdresseServeurTCP, numeroPi, socketPiTCP, tabSocketsVoisins);
 
-    //traitementClassique(numeroPi, tabVoisins, nombreVoisins, intervaleTemps);
+    messageMultiplexe(numeroPi, tabSocketsVoisins, nombreVoisins, intervaleTemps);
 
     printf("🏁 Fin du Pi n°%d !\n", numeroPi);
 

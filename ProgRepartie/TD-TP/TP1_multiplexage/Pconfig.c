@@ -11,16 +11,17 @@
 
 #include "fonctionTPC.h"
 
-struct infosPi {
+struct infosPi
+{
     int numeroPi;
     struct sockaddr_in structSocketPi;
 };
 
-struct compteurVoisins {
+struct compteurVoisins
+{
     int nombreAccept;
     int nombreConnect;
 };
-
 
 int main(int argc, char *argv[])
 {
@@ -31,7 +32,7 @@ int main(int argc, char *argv[])
     }
 
     char *port_pconfig = argv[1];
-    char* nomFichier = argv[2];
+    char *nomFichier = argv[2];
 
     printf("📖 Debut premiere lecture du ficier.\n");
 
@@ -42,25 +43,28 @@ int main(int argc, char *argv[])
 
     // Ouvrir le fichier en mode lecture
     file = fopen(nomFichier, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("❌ Pconfig : erreur lors de l'ouverture du fichier");
         return 1;
     }
 
     // Lire les lignes jusqu'à atteindre la ligne "p edge X Y"
-    while (fgets(line, sizeof(line), file) != NULL) {
-        if (sscanf(line, "p edge %d %d", &nombrePi, &nombreArretes) == 2) {
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
+        if (sscanf(line, "p edge %d %d", &nombrePi, &nombreArretes) == 2)
+        {
             break;
         }
     }
 
-    if (nombrePi <= 0) {
+    if (nombrePi <= 0)
+    {
         perror("❌ Pconfig : nombrePi n'a pas de valeur terminer.");
         return 1;
     }
 
     printf("🧮 Il y a %d Pi dans notre réseau.\n\n", nombrePi);
-
 
     // -- Etape 2 : Preparation recuperation socketAdresse de tous les Pi.
     struct sockaddr_in *tabSocketAdressTCP = malloc(sizeof(struct sockaddr_in) * nombrePi);
@@ -108,7 +112,6 @@ int main(int argc, char *argv[])
     freeifaddrs(ifap);
     printf("🐖 Port du Pconfig : %d\n", atoi(port_pconfig));
 
-
     // -- Etape 3 : Recuperation socketAdresse de tous les Pi.
     int nombrePiRecu = 0;
     while (nombrePiRecu < nombrePi)
@@ -119,26 +122,25 @@ int main(int argc, char *argv[])
         socklen_t lgAdr = sizeof(struct sockaddr_in);
 
         struct infosPi info;
-        
+
         ssize_t resRecv = recvfrom(socketPconfig, &info, sizeof(info), 0,
-         (struct sockaddr *) &socketAdressPi, &lgAdr);
+                                   (struct sockaddr *)&socketAdressPi, &lgAdr);
         if (resRecv == -1)
         {
             perror("❌ Pconfig : problème avec le recvFrom :");
             exit(1);
         }
 
-        tabSocketAdressUDP[info.numeroPi-1] = socketAdressPi;
+        tabSocketAdressUDP[info.numeroPi - 1] = socketAdressPi;
 
         printf("\t📧 Information Pi reçus : \n");
 
         struct sockaddr_in structSocketPi = info.structSocketPi;
-        char* ipPiUDP = inet_ntoa(socketAdressPi.sin_addr);
+        char *ipPiUDP = inet_ntoa(socketAdressPi.sin_addr);
         int portPiUDP = ntohs(socketAdressPi.sin_port);
 
-        char* ipPiTCP = inet_ntoa(info.structSocketPi.sin_addr);
+        char *ipPiTCP = inet_ntoa(info.structSocketPi.sin_addr);
         int portPiTCP = ntohs(info.structSocketPi.sin_port);
-
 
         printf("\t🌐 Adresse UDP Pi n°%d : %s:%d\n", info.numeroPi, ipPiUDP, portPiUDP);
         printf("\t🌏 Adresse TCP Pi n°%d : %s:%d\n", info.numeroPi, ipPiTCP, portPiTCP);
@@ -154,22 +156,25 @@ int main(int argc, char *argv[])
 
     // -- Etape 4 : Recupere nombre d'Accept et de Connect.
 
-    int* tabAccept = malloc(sizeof(int) * nombrePi);
-    int* tabConnect = malloc(sizeof(int) * nombrePi);
+    int *tabAccept = malloc(sizeof(int) * nombrePi);
+    int *tabConnect = malloc(sizeof(int) * nombrePi);
 
     // On initiaise les tableaux a 0
-    for (int i = 0; i < nombrePi; i++) {
+    for (int i = 0; i < nombrePi; i++)
+    {
         tabAccept[i] = 0;
         tabConnect[i] = 0;
     }
 
     // On lie le fichier une premiere fois
-    while (fgets(line, sizeof(line), file) != NULL) {
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
         int numPiClient, numPiServeur;
 
-        if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2) {
-            tabAccept[numPiServeur-1]++;
-            tabConnect[numPiClient-1]++;            
+        if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
+        {
+            tabAccept[numPiServeur - 1]++;
+            tabConnect[numPiClient - 1]++;
         }
     }
 
@@ -181,17 +186,18 @@ int main(int argc, char *argv[])
 
     socklen_t sizeAdr = sizeof(struct sockaddr_in);
 
-    for(int i = 0; i < nombrePi; i++) {
+    for (int i = 0; i < nombrePi; i++)
+    {
         struct compteurVoisins compteurVoisins;
         compteurVoisins.nombreAccept = tabAccept[i];
         compteurVoisins.nombreConnect = tabConnect[i];
 
         printf("\t📨 Envois nombre voisins au Pi n°%d\n", i);
         int resSend = sendto(socketPconfig, &compteurVoisins, sizeof(struct compteurVoisins),
-         0, (struct sockaddr *) &tabSocketAdressUDP[i], sizeAdr);
+                             0, (struct sockaddr *)&tabSocketAdressUDP[i], sizeAdr);
         if (resSend == -1)
         {
-            perror("\t❌ Pi : problème avec le premier send to :"); 
+            perror("\t❌ Pi : problème avec le premier send to :");
             exit(1);
         }
         // printf("\t✅ Nombre d'octets envoyés : %d\n", resSend);
@@ -204,23 +210,26 @@ int main(int argc, char *argv[])
 
     // -- Etape 6 : Envoyer les voisins a chaque Pi
     file = fopen(nomFichier, "r");
-    if (file == NULL) {
+    if (file == NULL)
+    {
         perror("❌ Pconfig : erreur lors de la réouverture du fichier");
         return 1;
     }
 
-    while (fgets(line, sizeof(line), file) != NULL) {
+    while (fgets(line, sizeof(line), file) != NULL)
+    {
         int numPiClient, numPiServeur;
 
-        if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2) {
-                       
+        if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
+        {
+
             printf("-- 📨 Envois des données au Pi n°%d --\n", numPiClient);
 
             int resSend = sendto(socketPconfig, &tabSocketAdressTCP[numPiServeur - 1], sizeof(tabSocketAdressTCP[numPiServeur - 1]),
-             0, (struct sockaddr *) &tabSocketAdressUDP[numPiClient - 1], sizeAdr);
+                                 0, (struct sockaddr *)&tabSocketAdressUDP[numPiClient - 1], sizeAdr);
             if (resSend == -1)
             {
-                perror("\t❌ Pi : problème avec le send to :"); 
+                perror("\t❌ Pi : problème avec le send to :");
                 exit(1);
             }
 
@@ -231,7 +240,7 @@ int main(int argc, char *argv[])
             int portPi_voisin = ntohs(tabSocketAdressTCP[numPiServeur - 1].sin_port);
 
             printf("\t🌐 Pi n°%d (%s:%d) à le Pi n°%d (%s:%d) comme voisin.\n",
-            numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
+                   numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
 
             printf("---\n");
         }
@@ -245,11 +254,12 @@ int main(int argc, char *argv[])
     int conf;
     struct sockaddr_in structSocketExpediteurUDP;
 
-    for(int i = 0; i < nombrePi; i++) {
-        printf("\t⏳ Attente conformation du Pi n°%d\n", i+1);
+    for (int i = 0; i < nombrePi; i++)
+    {
+        printf("\t⏳ Attente conformation du Pi n°%d\n", i + 1);
 
-        int resRecv = recvfrom(socketPconfig, &conf, sizeof(conf), 
-        0, (struct sockaddr *) &structSocketExpediteurUDP, &sizeAdr);
+        int resRecv = recvfrom(socketPconfig, &conf, sizeof(conf),
+                               0, (struct sockaddr *)&structSocketExpediteurUDP, &sizeAdr);
         if (resRecv == -1)
         {
             perror("\t❌ Pi : problème avec le recvFrom :");
@@ -257,14 +267,15 @@ int main(int argc, char *argv[])
         }
     }
 
-    for(int i = 0; i < nombrePi; i++) {
+    for (int i = 0; i < nombrePi; i++)
+    {
 
-        printf("\t📨 Envois confirmation au Pi n°%d\n", i+1);
+        printf("\t📨 Envois confirmation au Pi n°%d\n", i + 1);
         int resSend = sendto(socketPconfig, &conf, sizeof(conf),
-         0, (struct sockaddr *) &tabSocketAdressUDP[i], sizeAdr);
+                             0, (struct sockaddr *)&tabSocketAdressUDP[i], sizeAdr);
         if (resSend == -1)
         {
-            perror("\t❌ Pi : problème avec le premier send to :"); 
+            perror("\t❌ Pi : problème avec le premier send to :");
             exit(1);
         }
     }
