@@ -224,8 +224,8 @@ int main(int argc, char *argv[])
     {
         if (sscanf(line, "e %d %d", &numPiClient, &numPiServeur) == 2)
         {
-            if (tabConnect[numPiClient - 1] == compteur)
-                printf("-- 📨 Envois des données %d voisin du Pi n°%d --\n", tabConnect[numPiClient - 1], numPiClient);
+            if (tabConnect[numPiClient - 1] == compteur + 1)
+                printf("-- 📨 Envois des %d voisin du Pi n°%d --\n", tabConnect[numPiClient - 1], numPiClient);
 
             int resSend = sendto(socketPconfig, &tabSocketAdressTCP[numPiServeur - 1], sizeof(tabSocketAdressTCP[numPiServeur - 1]),
                                  0, (struct sockaddr *)&tabSocketAdressUDP[numPiClient - 1], sizeAdr);
@@ -241,8 +241,8 @@ int main(int argc, char *argv[])
             char *ipPi_voisin = inet_ntoa(tabSocketAdressTCP[numPiServeur - 1].sin_addr);
             int portPi_voisin = ntohs(tabSocketAdressTCP[numPiServeur - 1].sin_port);
 
-            printf("\t🌐 Pi n°%d (%s:%d) à le Pi n°%d (%s:%d) comme voisin.\n",
-                   numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
+            printf("\t[%d] 🌐 Pi n°%d (%s:%d) à le Pi n°%d (%s:%d) comme voisin.\n",
+                   compteur, numPiClient, ipPi_actuel, portPi_actuel, numPiServeur, ipPi_voisin, portPi_voisin);
 
             if (tabConnect[numPiClient - 1] == compteur)
             {
