@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 
     char conf;
     struct sockaddr_in structSocketExpediteurUDP;
-    int compteur = 0;
+    int compteur = 1;
     int numPiClient, numPiServeur;
 
     while (fgets(line, sizeof(line), file) != NULL)
