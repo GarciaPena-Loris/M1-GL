@@ -124,7 +124,7 @@ int initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_in
 
         // Connect a cette adresse
         connectionSocket(socketClientTCP, tabStuctureSocketVoisins[i]);
-        printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%dréussi.\033[0m\n", (30 + numeroPi), numeroPi, i);
+        printf("\033[0;%dm[%d] \t🛰️  Connection au voisin n°%d réussi.\033[0m\n", (30 + numeroPi), numeroPi, i);
     }
 
     if (compteurVoisins.nombreConnect > 0)
