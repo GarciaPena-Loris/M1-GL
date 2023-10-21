@@ -270,7 +270,7 @@ void *envoisPeriodique(void *params)
         for (int i = 0; i < nombreVoisins; i++)
         {
             void *retourThread;
-            if (pthread_join(threads[i], &retourThread) == 0)
+            if (pthread_join(threads[i], &retourThread) == 1)
             {
                 int *ptrValeurRetour = (int *)retourThread;
                 int valeurRetour = *ptrValeurRetour;
