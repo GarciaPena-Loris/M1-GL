@@ -201,29 +201,27 @@ void *diffusionMessage(void *params)
     int typeEnvois = args->typeEnvois;
 
     if (typeEnvois == 0)
-        printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' sur la 🧦 [%d] du voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
+        printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' au voisin (🧦 n°%d) n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
     else
-        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' sur la 🧦 [%d] du voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
+        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' au voisin (🧦 n°%d) n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
         if (typeEnvois == 0)
-            printf("\033[0;%dm[%d][🔄] ❌ Pi : Probleme lors de l'envois de la taille.\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté..\033[0m\n", (30 + numeroPi), numeroPi);
         else
-            printf("\033[0;%dm[%d][➡️] ❌ Pi : Probleme lors de l'envois de la taille.\033[0m\n", (30 + numeroPi), numeroPi);
-        exit(1);
+            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi);
     }
 
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
         if (typeEnvois == 0)
-            printf("\033[0;%dm[%d][🔄] ❌ Pi : Probleme lors de l'envois du message.\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi);
         else
-            printf("\033[0;%dm[%d][➡️] ❌ Pi : Probleme lors de l'envois du message.\033[0m\n", (30 + numeroPi), numeroPi);
-        exit(1);
+            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi);
     }
 
     return 0;
@@ -333,8 +331,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
     }
 
     // -- Boucle de reception des messages
-    int message;
-    int tailleMessage;
     int compteur;
     while (1)
     {
