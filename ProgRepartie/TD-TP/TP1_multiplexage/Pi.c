@@ -223,7 +223,7 @@ void *diffusionMessage(void *params)
         printf("\033[0;%dm[%d][%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
         exit(1);
     }
-    printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%s'\033[0m\n", (30 + numeroPi), numeroPi, idThread, message);
+    printf("\033[0;%dm[%d][%d] \tMessage envoyé : '%d'\033[0m\n", (30 + numeroPi), numeroPi, idThread, message);
 
     printf("\033[0;%dm[%d][%d] --- 🏆 Fin envoie du message au voisin n°%d ---\033[0m\n", (30 + numeroPi), numeroPi, idThread, idThread);
 }
@@ -332,8 +332,17 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             {
                 if (FD_ISSET(df, &settmp)) // la socket df a recu un message
                 {
-                    int recvTCP(df, &taillemessage, sizeof(taillemessage)); // on recoit le message
-                    recvTCP(df, message, taillemessage);
+                    printf("  --Recevoir la taille du message--\n");
+
+                    int tailleMessage;
+                    ssize_t resRecvTCPsize = recvTCP(df, &tailleMessage, sizeof(tailleMessage));
+
+                    printf("\tMessage: '%d'\n", tailleMessage);
+
+                    printf("  --Recevoir le message de taille %d--\n", tailleMessage);
+                    ssize_t resRecvTCP = recvTCP(df, message, tailleMessage);
+
+                    printf("\tMessage : '%s'\n", message);
                     setthr = settmp; // on copie encore le tableau de multiplexage pour traiter ce message car on va mettre a 0 les socket qui n'ont pas recu ce message
                                      // mais on doit garder en mémoire les autres socket qui ont recu un autre message
                     for (int z = df + 1; z <= max; z++)
