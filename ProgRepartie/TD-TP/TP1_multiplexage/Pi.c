@@ -169,12 +169,13 @@ int *initialisation(char *adresseIPPconfig, char *portPconfig, struct sockaddr_i
         int socketClientTCP = accepterDemande(socketPiTCP, &structSocketVoisinTCP);
         tabSocketsVoisins[compteurVoisins.nombreConnect + i] = socketClientTCP;
 
-        printf("\033[0;%dm[%d] \t👋 Voisin n°%d du Pi %d accepté.\033[0m\n", (30 + numeroPi), numeroPi, (i + 1), numeroPi);
+        printf("\033[0;%dm[%d] \t👋 Voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, (i + 1));
     }
 
-    printf("\033[0;%dm[%d] 🥳 Tous les voisins sont connectée 🥳\033[0m\n\033[0m\n", (30 + numeroPi), numeroPi);
+    printf("\033[0;%dm[%d] 🏘️ Tous les voisins sont connectée !\033[0m\n\033[0m\n", (30 + numeroPi), numeroPi);
 
     close(socketPiTCP);
+    free(tabStuctureSocketVoisins);
 
     return tabSocketsVoisins;
 }
@@ -195,7 +196,7 @@ void *diffusionMessage(void *params)
     int socketVoisin = args->socketVoisin;
     int message = args->message;
 
-    printf("\t\033[0;%dm[%d] 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
+    printf("\033[0;%dm[%d]\t 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
@@ -240,9 +241,9 @@ void *envoisPeriodique(void *params)
         sleep(intervaleTemps);
 
         if (compteur == 0)
-            printf("\033[0;%dm[%d] 🎯 Premier envois du message au %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
+            printf("\033[0;%dm[%d] 🎯 Premier envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
         else
-            printf("\033[0;%dm[%d] 🎯 %deme Envois du message au %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, compteur, nombreVoisins);
+            printf("\033[0;%dm[%d] 🎯 %deme envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, compteur, nombreVoisins);
 
         for (int i = 0; i < nombreVoisins; i++)
         {
@@ -272,7 +273,7 @@ void *envoisPeriodique(void *params)
 
 void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, int intervaleTemps)
 {
-    printf("\033[0;%dm[%d] --- 🦑 Debut de la partie Multiplexage. --- \033[0m\n\n", (30 + numeroPi), numeroPi);
+    printf("\033[0;%dm[%d] --- 🦑 Debut de la partie Multiplexage. --- \033[0m\n", (30 + numeroPi), numeroPi);
 
     // --- Etape 1 : Mise en place de l'envois periodique
     struct paramsEnvoisThread *paramsEnvois = malloc(sizeof(struct paramsEnvoisThread));
@@ -288,7 +289,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         free(paramsEnvois);
         exit(1);
     }
-    pthread_join(thread, NULL);
 
     // --- Etape 2 : Mise en place de la reception des messages
 
