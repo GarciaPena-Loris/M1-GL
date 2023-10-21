@@ -186,6 +186,7 @@ struct paramsDiffusionThread
     int numeroPi;
     int socketVoisin;
     int message;
+    int typeEnvois;
 };
 
 void *diffusionMessage(void *params)
@@ -195,21 +196,31 @@ void *diffusionMessage(void *params)
     int numeroPi = args->numeroPi;
     int socketVoisin = args->socketVoisin;
     int message = args->message;
+    int typeEnvois = args->typeEnvois;
 
-    printf("\033[0;%dm[%d]\t 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
+    if (typeEnvois == 0)
+        printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
+    else
+        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
-        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
+        if (typeEnvois == 0)
+            printf("\033[0;%dm[%d][🔄] ❌ Pi : Probleme lors de l'envois de la taille.\033[0m\n", (30 + numeroPi), numeroPi);
+        else
+            printf("\033[0;%dm[%d][➡️] ❌ Pi : Probleme lors de l'envois de la taille.\033[0m\n", (30 + numeroPi), numeroPi);
         exit(1);
     }
 
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
-        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
+        if (typeEnvois == 0)
+            printf("\033[0;%dm[%d][🔄] ❌ Pi : Probleme lors de l'envois du message.\033[0m\n", (30 + numeroPi), numeroPi);
+        else
+            printf("\033[0;%dm[%d][➡️] ❌ Pi : Probleme lors de l'envois du message.\033[0m\n", (30 + numeroPi), numeroPi);
         exit(1);
     }
 
@@ -232,7 +243,7 @@ void *envoisPeriodique(void *params)
     int *tabSocketsVoisins = args->tabSocketsVoisins;
     int numeroPi = args->numeroPi;
 
-    printf("\033[0;%dm[%d] 📨 Envois d'un message aux %d voisins toutes les %d sec \033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins, intervaleTemps);
+    printf("\033[0;%dm[%d][🔄] 📨 Envois d'un message aux %d voisins toutes les %d sec \033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins, intervaleTemps);
 
     pthread_t *threads = malloc(sizeof(pthread_t) * nombreVoisins);
     int compteur = 0;
@@ -241,9 +252,9 @@ void *envoisPeriodique(void *params)
         sleep(intervaleTemps);
 
         if (compteur == 0)
-            printf("\033[0;%dm[%d] 🎯 Premier envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
+            printf("\033[0;%dm[%d][🔄] 🎯 Premier envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
         else
-            printf("\033[0;%dm[%d] 🎯 %deme envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, compteur, nombreVoisins);
+            printf("\033[0;%dm[%d][🔄] 🎯 %deme envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, compteur, nombreVoisins);
 
         for (int i = 0; i < nombreVoisins; i++)
         {
@@ -252,6 +263,7 @@ void *envoisPeriodique(void *params)
             paramsDiffusion->numeroPi = numeroPi;
             paramsDiffusion->socketVoisin = tabSocketsVoisins[i];
             paramsDiffusion->message = numeroPi; // Temporaire
+            paramsDiffusion->typeEnvois = 0;
 
             if (pthread_create(&threads[i], NULL, diffusionMessage, paramsDiffusion) != 0)
             {
@@ -338,8 +350,18 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             {
                 printf("\033[0;%dm[%d] 📥 Reception d'un message de la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
 
-                recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
-                recvTCP(descripteurSocket, &message, tailleMessage);
+                ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
+                if (resRecvTCPsize == 0 || resRecvTCPsize == -1)
+                {
+                        printf("\033[0;%dm[%d]❌ Pi : Probleme lors de la reception de la taille.\033[0m\n", (30 + numeroPi), numeroPi);
+                        exit(1);
+                }
+                ssize_t resRecvTCP = recvTCP(descripteurSocket, &message, tailleMessage);
+                if (resRecvTCP == 0 || resRecvTCP == -1)
+                {
+                        printf("\033[0;%dm[%d]❌ Pi : Probleme lors de la reception du message.\033[0m\n", (30 + numeroPi), numeroPi);
+                        exit(1);
+                }
 
                 printf("\033[0;%dm[%d] 💬 Message reçus : { %d }.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
@@ -364,11 +386,13 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     if (!FD_ISSET(socketRenvoie, &setThr))
                     {
                         params->idThread = numThread + 1;
-                        int socketVoisin = tabSocketsVoisins[numThread];
-
                         params->numeroPi = numeroPi;
+                        int socketVoisin = tabSocketsVoisins[numThread];
                         params->socketVoisin = socketVoisin;
                         params->message = message;
+                        params->typeEnvois = 1;
+
+                        printf("\033[0;%dm[%d] 📤 Envois d'un message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
 
                         if (pthread_create(&threads[numThread], NULL, diffusionMessage, params) != 0)
                         {
@@ -378,11 +402,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                         }
                         numThread++;
                     }
-                }
-
-                for (int i = 0; i < nombreVoisins; i++)
-                {
-                    pthread_join(threads[i], NULL);
                 }
 
                 compteur++;
