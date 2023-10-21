@@ -321,7 +321,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         while (1)
         {
             settmp = set;
-            int slct = select(max + 1, &settmp, NULL, NULL, &timeval); // on attend un événement sur une socket
+            int slct = select(max + 1, &settmp, NULL, NULL, &tempsMax); // on attend un événement sur une socket
             if (slct == 0)
             {
                 printf("Aucun message n'a été reçu\n");
