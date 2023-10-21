@@ -219,10 +219,10 @@ void *diffusionMessage(void *params)
     {
         if (typeEnvois == 1)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
-        return 1;
+        return (void *)1;
     }
 
-    return 0;
+    return (void *)0;
 }
 
 struct paramsEnvoisThread
