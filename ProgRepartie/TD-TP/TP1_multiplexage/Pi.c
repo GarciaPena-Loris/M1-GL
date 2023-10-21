@@ -335,14 +335,14 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     printf("  --Recevoir la taille du message--\n");
 
                     int tailleMessage;
-                    ssize_t resRecvTCPsize = recvTCP(df, &tailleMessage, sizeof(tailleMessage));
+                    recvTCP(df, &tailleMessage, sizeof(tailleMessage));
 
                     printf("\tMessage: '%d'\n", tailleMessage);
 
                     printf("  --Recevoir le message de taille %d--\n", tailleMessage);
-                    ssize_t resRecvTCP = recvTCP(df, message, tailleMessage);
+                    recvTCP(df, message, tailleMessage);
 
-                    printf("\tMessage : '%s'\n", message);
+                    printf("\tMessage : '%d'\n", message);
                     setthr = settmp; // on copie encore le tableau de multiplexage pour traiter ce message car on va mettre a 0 les socket qui n'ont pas recu ce message
                                      // mais on doit garder en mémoire les autres socket qui ont recu un autre message
                     for (int z = df + 1; z <= max; z++)
