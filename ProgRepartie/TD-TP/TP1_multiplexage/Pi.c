@@ -279,7 +279,7 @@ void *envoisPeriodique(void *params)
         }
 
         compteur++;
-        printf("\033[0;%dm[%d] ⏳ Attente de %d secondes...\033[0m\n\n", (30 + numeroPi), numeroPi, intervaleTemps);
+        printf("\033[0;%dm[%d][🔄] ⏳ Attente de %d secondes...\033[0m\n", (30 + numeroPi), numeroPi, intervaleTemps);
     }
 }
 
@@ -330,7 +330,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         // --- On copie le tableau de multiplexage pour ne pas perdre les sockets qui ont recu un message
         setTemp = set;
         // --- On attend qu'un message (ou plusieur) soit recu
-        printf("\033[0;%dm[%d] ⏳ Attente de reception d'un message sur une des sockets...\033[0m\n\n", (30 + numeroPi), numeroPi);
+        printf("\033[0;%dm[%d] ⏳ Attente de reception d'un message sur une des sockets...\033[0m\n", (30 + numeroPi), numeroPi);
 
         int resSelect = select(max + 1, &setTemp, NULL, NULL, NULL);
         if (resSelect == -1)
@@ -339,9 +339,9 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             exit(1);
         }
         if (resSelect == 1)
-            printf("\033[0;%dm[%d] 📬 1 socket à reçue un message.\033[0m\n\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d] 📬 1 socket à reçue un message.\033[0m\n", (30 + numeroPi), numeroPi);
         else
-            printf("\033[0;%dm[%d] 📬 %d sockets ont reçue un message;\033[0m\n\n", (30 + numeroPi), numeroPi, resSelect);
+            printf("\033[0;%dm[%d] 📬 %d sockets ont reçue un message;\033[0m\n", (30 + numeroPi), numeroPi, resSelect);
 
         // --- On parcours le tableau de multiplexage pour savoir quelle socket a recu un message
         for (int descripteurSocket = 2; descripteurSocket <= max; descripteurSocket++)
@@ -387,12 +387,11 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     {
                         params->idThread = numThread + 1;
                         params->numeroPi = numeroPi;
-                        int socketVoisin = tabSocketsVoisins[numThread];
-                        params->socketVoisin = socketVoisin;
+                        params->socketVoisin = socketRenvoie;
                         params->message = message;
                         params->typeEnvois = 1;
 
-                        printf("\033[0;%dm[%d] 📤 Envois d'un message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
+                        printf("\033[0;%dm[%d] 📤 Envois d'un message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socketRenvoie);
 
                         if (pthread_create(&threads[numThread], NULL, diffusionMessage, params) != 0)
                         {
