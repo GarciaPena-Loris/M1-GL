@@ -382,16 +382,19 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 }
 
                 printf("\033[0;%dm[%d]\t 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
-                tabMessagesRecus[nombreMessagesRecus] = message;
-                nombreMessagesRecus++;
-
-                if (nombreMessagesRecus % nombreVoisins == 0)
-                {
-                    tabMessagesRecus = realloc(tabMessagesRecus, sizeof(int) * (nombreMessagesRecus + nombreVoisins));
-                }
 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message si on avait pas deja recu ce message
-                if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0) {
+                if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0)
+                {
+
+                    tabMessagesRecus[nombreMessagesRecus] = message;
+                    nombreMessagesRecus++;
+
+                    if (nombreMessagesRecus % nombreVoisins == 0)
+                    {
+                        tabMessagesRecus = realloc(tabMessagesRecus, sizeof(int) * (nombreMessagesRecus + nombreVoisins));
+                    }
+
                     if (nombreMessagesRecus == 1)
                         printf("\033[0;%dm[%d] 📢 1er message reçus, on le diffuse aux voisins :\033[0m\n", (30 + numeroPi), numeroPi);
                     else
@@ -418,21 +421,29 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                         }
                     }
                 }
-                else {
+                else
+                {
                     printf("\033[0;%dm[%d] 🚫 Message déjà reçus, on ne le diffuse pas.\033[0m\n", (30 + numeroPi), numeroPi);
                 }
                 // Afficher le tableau de message recus
-                char *messageRecus = malloc(sizeof(char) * nombreMessagesRecus * 3);
-                messageRecus[0] = '[';
-                for (int i = 0; i < nombreMessagesRecus; i++)
-                {
-                    char *message = malloc(sizeof(char) * 2);
-                    sprintf(message, "%d", tabMessagesRecus[i]);
-                    strcat(messageRecus, message);
-                    if (i != nombreMessagesRecus - 1)
-                        strcat(messageRecus, ", ");
+                int tailleTotale = 1;
+                for (int i = 0; i < nombreMessagesRecus; i++) {
+                    int message = tabMessagesRecus[i];
+                    tailleTotale += snprintf(NULL, 0, "%d, ", message);
                 }
-                strcat(messageRecus, "]");
+                
+                char *messageRecus = malloc(tailleTotale);
+                int offset = 0;
+                messageRecus[offset++] = '[';
+                for (int i = 0; i < nombreMessagesRecus; i++) {
+                    int message = tabMessagesRecus[i];
+                    offset += snprintf(messageRecus + offset, tailleTotale - offset, "%d", message);
+                    if (i != nombreMessagesRecus - 1) {
+                        messageRecus[offset++] = ',';
+                        messageRecus[offset++] = ' ';
+                    }
+                }
+                messageRecus[offset] = ']';
                 printf("\033[0;%dm[%d] \t📜 Tableau des messages reçus : %s.\033[0m\n", (30 + numeroPi), numeroPi, messageRecus);
             }
             compteur++;
