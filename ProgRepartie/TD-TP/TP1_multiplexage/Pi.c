@@ -12,7 +12,7 @@
 
 #include "fonctionTPC.h"
 
-#declare MAX_RANDOM 10
+#define MAX_RANDOM 10
 
 struct infosPi
 {
