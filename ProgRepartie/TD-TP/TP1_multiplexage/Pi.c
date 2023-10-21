@@ -218,6 +218,8 @@ void *diffusionMessage(void *params)
         printf("\033[0;%dm[%d][ℹ️ %d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
         exit(1);
     }
+
+    return 0;
 }
 
 struct paramsEnvoisThread
@@ -297,7 +299,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
     // --- Etape 2 : Mise en place de la reception des messages
     int compteur = 0;
     int message;
-    int taillemessage;
+    int tailleMessage;
 
     while (1)
     {
@@ -324,10 +326,11 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             // --- On copie le tableau de multiplexage pour ne pas perdre les sockets qui ont recu un message
             setTemp = set;
             // --- On attend qu'un message (ou plusieur) soit recu
-            int resSelect = select(max + 1, &setTemp, NULL, NULL);
-            else if (resSelect == -1)
+            int resSelect = select(max + 1, &setTemp, NULL, NULL, NULL);
+            if (resSelect == -1)
             {
                 perror("❌ Pi : problème avec le select :");
+                exit(1);
             }
             if (resSelect == 1)
                 printf("\033[0;%dm[%d] 📬 1 socket à reçue un message.\033[0m\n\n", (30 + numeroPi), numeroPi);
@@ -342,7 +345,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     printf("\033[0;%dm[%d] 📥 Reception d'un message de la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
 
                     recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
-                    recvTCP(descripteurSocket, message, tailleMessage);
+                    recvTCP(descripteurSocket, &message, tailleMessage);
 
                     printf("\033[0;%dm[%d] 💬 Message reçus : { %d }.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
