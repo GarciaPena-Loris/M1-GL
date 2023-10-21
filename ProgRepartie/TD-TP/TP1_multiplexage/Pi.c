@@ -314,10 +314,14 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         }
         int message;
         int taillemessage;
+        struct timeval tempsMax;
+        tempsMax.tv_sec = 11;
+        tempsMax.tv_usec = 0;
+
         while (1)
         {
             settmp = set;
-            int slct = select(max + 1, &settmp, NULL, NULL, NULL); // on attend un événement sur une socket
+            int slct = select(max + 1, &settmp, NULL, NULL, tempsMax); // on attend un événement sur une socket
             if (slct == 0)
             {
                 printf("Aucun message n'a été reçu\n");
@@ -400,7 +404,7 @@ int main(int argc, char *argv[])
     /* Je passe en paramètre le numéro de port et le numero du processus.*/
     if (argc != 5)
     {
-        printf("utilisation : %s IPPconfig portPconfig intervaleTemps numeroPi", argv[0]);
+        printf("utilisation : %s IPPconfig portPconfig intervaleTemps numeroPi\n", argv[0]);
         exit(1);
     }
     char *adresseIPPconfig = argv[1];
