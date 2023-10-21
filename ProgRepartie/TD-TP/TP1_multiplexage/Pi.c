@@ -359,7 +359,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
 
         // --- On parcours le tableau de multiplexage pour savoir quelle socket a recu un message
         compteur = 0;
-        for (int descripteurSocket = 2; descripteurSocket <= max && compteur < resSelect; descripteurSocket++)
+        for (int descripteurSocket = 2; descripteurSocket <= max || compteur < resSelect; descripteurSocket++)
         {
             if (FD_ISSET(descripteurSocket, &setCopie))
             {
