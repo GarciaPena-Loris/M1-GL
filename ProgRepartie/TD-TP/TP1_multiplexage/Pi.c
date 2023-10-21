@@ -210,18 +210,18 @@ void *diffusionMessage(void *params)
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
         if (typeEnvois == 0)
-            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté..\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté..\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         else
-            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
     }
 
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
         if (typeEnvois == 0)
-            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         else
-            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
     }
 
     return 0;
