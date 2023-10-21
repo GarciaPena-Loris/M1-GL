@@ -406,8 +406,8 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 compteur++;
             }
         }
-        free(threads);
     }
+    free(threads);
 
     printf("\033[0;%dm[%d] ✅ Fin d'affichage des voisins.\033[0m\n", (30 + numeroPi), numeroPi);
 }
