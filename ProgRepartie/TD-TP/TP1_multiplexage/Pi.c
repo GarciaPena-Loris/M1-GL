@@ -251,7 +251,7 @@ void *envoisPeriodique(void *params)
     int compteur = 0;
     while (1)
     {
-        printf("\033[0;%dm[%d][🔄 %d] ⏳ Attente de %d secondes...\033[0m\n", (30 + numeroPi), numeroPi, compteur, intervaleTemps);
+        printf("\033[0;%dm[%d][%d 🔄] ⏳ Attente de %d secondes...\033[0m\n", (30 + numeroPi), numeroPi, compteur, intervaleTemps);
         sleep(intervaleTemps);
 
         for (int i = 0; i < nombreVoisins; i++)
@@ -363,14 +363,16 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
                 if (resRecvTCPsize == 0 || resRecvTCPsize == -1)
                 {
-                    printf("\033[0;%dm[%d]❌ Pi : Probleme lors de la reception de la taille.\033[0m\n", (30 + numeroPi), numeroPi);
-                    exit(1);
+                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
+                    close(descripteurSocket);
+                    FD_CLR(descripteurSocket, &set);
                 }
                 ssize_t resRecvTCP = recvTCP(descripteurSocket, &message, tailleMessage);
                 if (resRecvTCP == 0 || resRecvTCP == -1)
                 {
-                    printf("\033[0;%dm[%d]❌ Pi : Probleme lors de la reception du message.\033[0m\n", (30 + numeroPi), numeroPi);
-                    exit(1);
+                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
+                    close(descripteurSocket);
+                    FD_CLR(descripteurSocket, &set);                    
                 }
 
                 if (resSelect > 1)
@@ -381,7 +383,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message si on avait pas deja recu ce message
                 if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0)
                 {
-
                     tabMessagesRecus[nombreMessagesRecus] = message;
                     nombreMessagesRecus++;
 
@@ -437,7 +438,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                         }
                     }
                     messageRecus[offset] = ']';
-                    printf("\033[0;%dm[%d] \t📜 Tableau des messages reçus : %s.\033[0m\n", (30 + numeroPi), numeroPi, messageRecus);
+                    printf("\033[0;%dm[%d] \t 📜 Tableau des messages reçus : %s.\033[0m\n", (30 + numeroPi), numeroPi, messageRecus);
 
                     if (nombreMessagesRecus == MAX_RANDOM)
                     {
