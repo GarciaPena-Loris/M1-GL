@@ -136,11 +136,11 @@ int sendTCP(int sock, void* msg, int sizeMsg) {
         res = send(sock, msg + sent, sizeMsg - sent, 0);
         sent += res;
         if (res == -1) {
-            perror("sendTCP : ERROR : problème lors de l'envoi du message ");
+            //perror("sendTCP : ERROR : problème lors de l'envoi du message ");
             return -1;
         }
         else if (res == 0) {
-            perror("sendTCP : ERROR : socket fermée par la couche transport ");
+            //perror("sendTCP : ERROR : socket fermée par la couche transport ");
             return 0;
         }
     }
@@ -156,11 +156,11 @@ int recvTCP(int sock, void* msg, int sizeMsg) {
         res = recv(sock, msg + received, sizeMsg-received, 0);
         received += res;
         if (res == -1) {
-            perror("recvTCP : ERROR : problème lors de la reception du message ");
+            //perror("recvTCP : ERROR : problème lors de la reception du message ");
             return -1;
         }
         else if (res == 0) {
-            perror("recvTCP : ERROR : socket fermée par la couche transport ");
+            //perror("recvTCP : ERROR : socket fermée par la couche transport ");
             return 0;
         }
     }

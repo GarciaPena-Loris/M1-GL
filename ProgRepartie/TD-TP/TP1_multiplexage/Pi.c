@@ -358,6 +358,9 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         compteur = 0;
         for (int descripteurSocket = 2; descripteurSocket <= max || compteur < resSelect; descripteurSocket++)
         {
+            int message;
+            int tailleMessage;
+
             if (FD_ISSET(descripteurSocket, &setCopie))
             {
                 ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
@@ -372,7 +375,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 {
                     printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
                     close(descripteurSocket);
-                    FD_CLR(descripteurSocket, &set);                    
+                    FD_CLR(descripteurSocket, &set);               
                 }
 
                 if (resSelect > 1)
@@ -396,24 +399,25 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     else
                         printf("\033[0;%dm[%d] 📢 %deme nouveau message reçus, on le diffuse :\033[0m\n", (30 + numeroPi), numeroPi, nombreMessagesRecus);
 
-                    for (int i = 0; i < nombreVoisins; i++)
-                    {
-                        if (tabSocketsVoisins[i] != descripteurSocket)
+                    int idThread = 0;
+                    for (int socket = 2; socket <= max; socket++) {
+                        if (FD_ISSET(socket, &set) && socket != descripteurSocket)
                         {
-                            params->idThread = i + 1;
+                            params->idThread = idThread + 1;
                             params->numeroPi = numeroPi;
-                            params->socketVoisin = tabSocketsVoisins[i];
+                            params->socketVoisin = socket;
                             params->message = message;
                             params->typeEnvois = 1;
 
-                            printf("\033[0;%dm[%d]\t 📡 Rediffusion du message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, tabSocketsVoisins[i]);
+                            printf("\033[0;%dm[%d]\t 📡 Rediffusion du message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socket);
 
-                            if (pthread_create(&threads[i], NULL, diffusionMessage, params) != 0)
+                            if (pthread_create(&threads[idThread], NULL, diffusionMessage, params) != 0)
                             {
                                 perror("❌ Pi : problème à la creation du thread");
                                 free(params);
                                 exit(1);
                             }
+                            idThread++;
                         }
                     }
                     // Afficher le tableau de message recus
