@@ -200,6 +200,9 @@ void *diffusionMessage(void *params)
     int message = args->message;
     int typeEnvois = args->typeEnvois;
 
+    int *valeurDeRetour = (int *)malloc(sizeof(int));
+    *valeurDeRetour = 0;
+
     if (typeEnvois == 0)
         printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' au voisin (🧦 n°%d) n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
     else
@@ -211,7 +214,7 @@ void *diffusionMessage(void *params)
     {
         if (typeEnvois == 1)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
-        return (void *)1;
+        *valeurDeRetour = 1;
     }
 
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
@@ -219,10 +222,10 @@ void *diffusionMessage(void *params)
     {
         if (typeEnvois == 1)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
-        return (void *)1;
+        *valeurDeRetour = 1;
     }
 
-    return (void *)0;
+    return (void *)valeurDeRetour;
 }
 
 struct paramsEnvoisThread
@@ -397,7 +400,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     printf("\033[0;%dm[%d]\t 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message si on avait pas deja recu ce message
-                char *messageRecus;
+                char *messageRecus = NULL;
                 if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0)
                 {
                     tabMessagesRecus[nombreMessagesRecus] = message;
