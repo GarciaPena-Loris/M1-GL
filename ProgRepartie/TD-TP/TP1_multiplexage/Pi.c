@@ -309,7 +309,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
     struct paramsDiffusionThread *params = malloc(sizeof(struct paramsDiffusionThread));
 
     // --- Mise en place du multiplexage
-    fd_set set, setTemp, setThr;
+    fd_set set, setCopie, setRenvois;
     FD_ZERO(&set);
 
     // --- On ajoute les sockets des voisins dans le tableau de multiplexage
@@ -328,11 +328,11 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
     while (1)
     {
         // --- On copie le tableau de multiplexage pour ne pas perdre les sockets qui ont recu un message
-        setTemp = set;
+        setCopie = set;
         // --- On attend qu'un message (ou plusieur) soit recu
         printf("\033[0;%dm[%d] ⏳ Attente de reception d'un message sur une des sockets...\033[0m\n", (30 + numeroPi), numeroPi);
 
-        int resSelect = select(max + 1, &setTemp, NULL, NULL, NULL);
+        int resSelect = select(max + 1, &setCopie, NULL, NULL, NULL);
         if (resSelect == -1)
         {
             perror("❌ Pi : problème avec le select :");
@@ -346,9 +346,9 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         // --- On parcours le tableau de multiplexage pour savoir quelle socket a recu un message
         for (int descripteurSocket = 2; descripteurSocket <= max; descripteurSocket++)
         {
-            if (FD_ISSET(descripteurSocket, &setTemp))
+            if (FD_ISSET(descripteurSocket, &setCopie))
             {
-                printf("\033[0;%dm[%d] 📥 Reception d'un message de la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
+                printf("\033[0;%dm[%d] 📭 Reception d'un message de la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
 
                 ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
                 if (resRecvTCPsize == 0 || resRecvTCPsize == -1)
@@ -366,15 +366,15 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 printf("\033[0;%dm[%d] 💬 Message reçus : { %d }.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
                 // --- On copie le tableau de multiplexage pour ne pas perdre les sockets qui ont recu un message
-                setThr = setTemp;
+                setRenvois = setCopie;
                 // --- On met a 0 toutes les socket sauf celle qui a recu le message
                 for (int i = 0; i <= max; i++)
                 {
                     if (i != descripteurSocket)
                     {
-                        if (FD_ISSET(i, &setTemp))
+                        if (FD_ISSET(i, &setCopie))
                         {
-                            FD_CLR(i, &setThr);
+                            FD_CLR(i, &setRenvois);
                         }
                     }
                 }
@@ -383,7 +383,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message
                 for (int socketRenvoie = 2; socketRenvoie < max; socketRenvoie++)
                 {
-                    if (!FD_ISSET(socketRenvoie, &setThr))
+                    if (FD_ISSET(socketRenvoie, &set) && !FD_ISSET(socketRenvoie, &setRenvois))
                     {
                         params->idThread = numThread + 1;
                         params->numeroPi = numeroPi;
@@ -391,7 +391,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                         params->message = message;
                         params->typeEnvois = 1;
 
-                        printf("\033[0;%dm[%d] 📤 Envois d'un message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socketRenvoie);
+                        printf("\033[0;%dm[%d] 📡 Envois d'un message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socketRenvoie);
 
                         if (pthread_create(&threads[numThread], NULL, diffusionMessage, params) != 0)
                         {
