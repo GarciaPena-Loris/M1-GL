@@ -195,20 +195,20 @@ void *diffusionMessage(void *params)
     int socketVoisin = args->socketVoisin;
     int message = args->message;
 
-    printf("\t\033[0;%dm[%d] 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, idThread, message, idThread);
+    printf("\t\033[0;%dm[%d] 💬 Envois du message '%d' au voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, idThread);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
-        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
+        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
         exit(1);
     }
 
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
-        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi, idThread);
+        printf("\033[0;%dm[%d] ❌ Pi : Probleme lors du sendTCP.\033[0m\n", (30 + numeroPi), numeroPi);
         exit(1);
     }
 
@@ -281,19 +281,16 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
     paramsEnvois->tabSocketsVoisins = tabSocketsVoisins;
     paramsEnvois->numeroPi = numeroPi;
 
-    pthread_t threads;
-    if (pthread_create(&threads, NULL, envoisPeriodique, paramsEnvois) != 0)
+    pthread_t thread;
+    if (pthread_create(&thread, NULL, envoisPeriodique, paramsEnvois) != 0)
     {
         perror("❌ Pi : problème à la creation du thread");
         free(paramsEnvois);
         exit(1);
     }
-    pthread_join(threads, NULL);
+    pthread_join(thread, NULL);
 
     // --- Etape 2 : Mise en place de la reception des messages
-    int compteur = 0;
-    int message;
-    int tailleMessage;
 
     // --- Creation thread pour chaque voisin pour renvoyer les messages
     pthread_t *threads = malloc(sizeof(pthread_t) * nombreVoisins);
@@ -302,9 +299,9 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
     // --- Mise en place du multiplexage
     fd_set set, setTemp, setThr;
     FD_ZERO(&set);
-    int max = 0;
 
     // --- On ajoute les sockets des voisins dans le tableau de multiplexage
+    int max = 0;
     for (int i = 0; i < nombreVoisins; i++)
     {
         FD_SET(tabSocketsVoisins[i], &set);
@@ -312,6 +309,10 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             max = tabSocketsVoisins[i];
     }
 
+    // -- Boucle de reception des messages
+    int compteur = 0;
+    int message;
+    int tailleMessage;
     while (1)
     {
         // --- On copie le tableau de multiplexage pour ne pas perdre les sockets qui ont recu un message
