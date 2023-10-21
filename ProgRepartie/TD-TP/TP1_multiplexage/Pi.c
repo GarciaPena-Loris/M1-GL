@@ -375,7 +375,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         compteur = 0;
         for (int descripteurSocket = 2; descripteurSocket <= max || compteur < resSelect; descripteurSocket++)
         {
-            int message = NULL;
+            int message = -1;
             int tailleMessage;
 
             if (FD_ISSET(descripteurSocket, &setCopie))
