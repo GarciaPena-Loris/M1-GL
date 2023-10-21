@@ -250,6 +250,7 @@ void *envoisPeriodique(void *params)
     int compteur = 0;
     while (1)
     {
+        printf("\033[0;%dm[%d][%d 🔄] ⏳ Attente de %d secondes...\033[0m\n", (30 + numeroPi), numeroPi, compteur, intervaleTemps);
         sleep(intervaleTemps);
 
         for (int i = 0; i < nombreVoisins; i++)
@@ -370,12 +371,16 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             perror("❌ Pi : problème avec le select :");
             exit(1);
         }
+        if (resSelect == 1)
+            printf("\033[0;%dm[%d] 📬 1 socket à reçue un message :\033[0m\n", (30 + numeroPi), numeroPi);
+        else
+            printf("\033[0;%dm[%d] 📬 %d sockets ont reçue un message :\033[0m\n", (30 + numeroPi), numeroPi, resSelect);
 
         // --- On parcours le tableau de multiplexage pour savoir quelle socket a recu un message
         compteur = 0;
         for (int descripteurSocket = 2; descripteurSocket <= max || compteur < resSelect; descripteurSocket++)
         {
-            int message = NULL;
+            int message;
             int tailleMessage;
 
             if (FD_ISSET(descripteurSocket, &setCopie))
@@ -387,20 +392,18 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     close(descripteurSocket);
                     FD_CLR(descripteurSocket, &set);
                 }
-                else {
-                    ssize_t resRecvTCP = recvTCP(descripteurSocket, &message, tailleMessage);
-                    if (resRecvTCP == 0 || resRecvTCP == -1)
-                    {
-                        printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté lors du rcv.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
-                        close(descripteurSocket);
-                        FD_CLR(descripteurSocket, &set);
-                    }
+                ssize_t resRecvTCP = recvTCP(descripteurSocket, &message, tailleMessage);
+                if (resRecvTCP == 0 || resRecvTCP == -1)
+                {
+                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté lors du rcv.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
+                    close(descripteurSocket);
+                    FD_CLR(descripteurSocket, &set);
                 }
 
                 if (resSelect > 1)
-                    printf("\033[0;%dm[%d]\t [%d] 📃 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, compteur, message);
+                    printf("\033[0;%dm[%d]\t [%d] 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, compteur, message);
                 else
-                    printf("\033[0;%dm[%d]\t 📃 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
+                    printf("\033[0;%dm[%d]\t 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message si on avait pas deja recu ce message
                 if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0)
