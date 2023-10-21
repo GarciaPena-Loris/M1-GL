@@ -451,7 +451,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                         tailleTotale += snprintf(NULL, 0, "%d, ", message);
                     }
 
-                    char *messageRecus = malloc(tailleTotale);
+                    messageRecus = malloc(tailleTotale);
                     int offset = 0;
                     messageRecus[offset++] = '[';
                     for (int i = 0; i < nombreMessagesRecus; i++)
