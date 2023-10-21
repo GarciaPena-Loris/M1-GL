@@ -294,6 +294,11 @@ void *envoisPeriodique(void *params)
                 }
             }
         }
+
+        if (nombreVoisins <= 0) {
+            printf("\033[0;%dm[%d][🔄] 😭 Tous les voisins se sont déconnectés, fin de la partie Multiplexage.\033[0m\n", (30 + numeroPi), numeroPi);
+            exit(0);
+        }
         compteur++;
     }
 }
@@ -352,6 +357,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
 
     // -- Boucle de reception des messages
     int compteur;
+    char *messageRecus = NULL;
     while (1)
     {
         // --- On copie le tableau de multiplexage pour ne pas perdre les sockets qui ont recu un message
@@ -400,7 +406,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     printf("\033[0;%dm[%d]\t 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message si on avait pas deja recu ce message
-                char *messageRecus = NULL;
                 if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0)
                 {
                     tabMessagesRecus[nombreMessagesRecus] = message;
