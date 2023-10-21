@@ -210,7 +210,7 @@ void *diffusionMessage(void *params)
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
         if (typeEnvois == 1)
-            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
+            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         return (void *)1;
     }
 
@@ -218,7 +218,7 @@ void *diffusionMessage(void *params)
     if (resSendTCP == 0 || resSendTCP == -1)
     {
         if (typeEnvois == 1)
-            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
+            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         return (void *)1;
     }
 
@@ -278,7 +278,7 @@ void *envoisPeriodique(void *params)
                 free(ptrValeurRetour);
                 if (valeurRetour == 1)
                 {
-                    printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) s'est déconnecté.\033[0m\n", (30 + numeroPi), numeroPi, tabSocketsVoisins[i]);
+                    printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) s'est déconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, tabSocketsVoisins[i]);
                     close(tabSocketsVoisins[i]);
 
                     // Retirez la socket du tableau et réduisez le nombre de voisins
@@ -291,6 +291,7 @@ void *envoisPeriodique(void *params)
                 }
             }
         }
+        compteur++;
     }
 }
 
@@ -378,14 +379,14 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
                 if (resRecvTCPsize == 0 || resRecvTCPsize == -1)
                 {
-                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
+                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté lors du rcv.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
                     close(descripteurSocket);
                     FD_CLR(descripteurSocket, &set);
                 }
                 ssize_t resRecvTCP = recvTCP(descripteurSocket, &message, tailleMessage);
                 if (resRecvTCP == 0 || resRecvTCP == -1)
                 {
-                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
+                    printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté lors du rcv.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
                     close(descripteurSocket);
                     FD_CLR(descripteurSocket, &set);
                 }
