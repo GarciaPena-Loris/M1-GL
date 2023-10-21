@@ -209,19 +209,17 @@ void *diffusionMessage(void *params)
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
-        if (typeEnvois == 0)
-            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté..\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
-        else
+        if (typeEnvois == 1)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
+        return 1;
     }
 
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
-        if (typeEnvois == 0)
-            printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
-        else
+        if (typeEnvois == 1)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
+        return 1;
     }
 
     return 0;
@@ -271,10 +269,28 @@ void *envoisPeriodique(void *params)
 
         for (int i = 0; i < nombreVoisins; i++)
         {
-            pthread_join(threads[i], NULL);
-        }
+            void *retourThread;
+            if (pthread_join(threads[i], &retourThread) == 0)
+            {
+                int *ptrValeurRetour = (int *)retourThread;
+                int valeurRetour = *ptrValeurRetour;
 
-        compteur++;
+                free(ptrValeurRetour);
+                if (valeurRetour == 1)
+                {
+                    printf("\033[0;%dm[%d][🔄] 💔 Le voisin (🧦 n°%d) s'est déconnecté.\033[0m\n", (30 + numeroPi), numeroPi, tabSocketsVoisins[i]);
+                    close(tabSocketsVoisins[i]);
+
+                    // Retirez la socket du tableau et réduisez le nombre de voisins
+                    for (int j = i; j < nombreVoisins - 1; j++)
+                    {
+                        tabSocketsVoisins[j] = tabSocketsVoisins[j + 1];
+                    }
+                    nombreVoisins--;
+                    tabSocketsVoisins = realloc(tabSocketsVoisins, sizeof(int) * nombreVoisins);
+                }
+            }
+        }
     }
 }
 
@@ -371,7 +387,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 {
                     printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
                     close(descripteurSocket);
-                    FD_CLR(descripteurSocket, &set);               
+                    FD_CLR(descripteurSocket, &set);
                 }
 
                 if (resSelect > 1)
@@ -396,7 +412,8 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                         printf("\033[0;%dm[%d] 📢 %deme nouveau message reçus, on le diffuse :\033[0m\n", (30 + numeroPi), numeroPi, nombreMessagesRecus);
 
                     int idThread = 0;
-                    for (int socket = 2; socket <= max; socket++) {
+                    for (int socket = 2; socket <= max; socket++)
+                    {
                         if (FD_ISSET(socket, &set) && socket != descripteurSocket)
                         {
                             params->idThread = idThread + 1;
@@ -450,7 +467,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                 {
                     printf("\033[0;%dm[%d] 🚫 Message déjà reçus, on ne le diffuse pas.\033[0m\n", (30 + numeroPi), numeroPi);
                 }
-            compteur++;
+                compteur++;
             }
         }
     }
