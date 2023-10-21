@@ -201,7 +201,7 @@ void *diffusionMessage(void *params)
     if (typeEnvois == 0)
         printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' sur la 🧦 n°%d du voisin n°%d du Pi n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread, numeroPi);
     else
-        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' sur la 🧦 n°%d du voisin n°%d du Pi n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread, numeroP);
+        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' sur la 🧦 n°%d du voisin n°%d du Pi n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread, numeroPi);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
