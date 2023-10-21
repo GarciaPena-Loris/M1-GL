@@ -188,7 +188,7 @@ struct paramsDiffusionThread
     int numeroPi;
     int socketVoisin;
     int message;
-    int typeEnvois;
+    int numEnvois;
 };
 
 void *diffusionMessage(void *params)
@@ -198,21 +198,21 @@ void *diffusionMessage(void *params)
     int numeroPi = args->numeroPi;
     int socketVoisin = args->socketVoisin;
     int message = args->message;
-    int typeEnvois = args->typeEnvois;
+    int numEnvois = args->numEnvois;
 
     int *valeurDeRetour = (int *)malloc(sizeof(int));
     *valeurDeRetour = 0;
 
-    if (typeEnvois == 0)
-        printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' au voisin (🧦 n°%d) n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
-    else
+    if (numEnvois == 0)
         printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' au voisin (🧦 n°%d) n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
+    else
+        printf("\033[0;%dm[%d][%d 🔄]\t 💬 Envois du message '%d' au voisin (🧦 n°%d) n°%d.\033[0m\n", (30 + numeroPi), numeroPi, numEnvois, message, socketVoisin, idThread);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1)
     {
-        if (typeEnvois == 1)
+        if (numEnvois > 0)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         *valeurDeRetour = 1;
     }
@@ -220,7 +220,7 @@ void *diffusionMessage(void *params)
     ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1)
     {
-        if (typeEnvois == 1)
+        if (numEnvois > 0)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         *valeurDeRetour = 1;
     }
@@ -259,7 +259,7 @@ void *envoisPeriodique(void *params)
             paramsDiffusion->numeroPi = numeroPi;
             paramsDiffusion->socketVoisin = tabSocketsVoisins[i];
             paramsDiffusion->message = rand() % MAX_RANDOM;
-            paramsDiffusion->typeEnvois = 0;
+            paramsDiffusion->numEnvois = compteur;
 
             if (pthread_create(&threads[i], NULL, diffusionMessage, paramsDiffusion) != 0)
             {
@@ -375,7 +375,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         compteur = 0;
         for (int descripteurSocket = 2; descripteurSocket <= max || compteur < resSelect; descripteurSocket++)
         {
-            int message = -1;
+            int message;
             int tailleMessage;
 
             if (FD_ISSET(descripteurSocket, &setCopie))
@@ -386,6 +386,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     printf("\033[0;%dm[%d] 💔 Le voisin (🧦 n°%d) c'est deconnecté lors du rcv.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
                     close(descripteurSocket);
                     FD_CLR(descripteurSocket, &set);
+                    break;
                 }
                 else {
                     ssize_t resRecvTCP = recvTCP(descripteurSocket, &message, tailleMessage);
@@ -427,7 +428,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                             params->numeroPi = numeroPi;
                             params->socketVoisin = socket;
                             params->message = message;
-                            params->typeEnvois = 1;
+                            params->numEnvois = 0;
 
                             printf("\033[0;%dm[%d]\t 📡 Rediffusion du message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, socket);
 
