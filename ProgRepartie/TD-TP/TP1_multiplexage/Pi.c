@@ -12,6 +12,8 @@
 
 #include "fonctionTPC.h"
 
+#declare MAX_RANDOM 10
+
 struct infosPi
 {
     int numeroPi;
@@ -199,9 +201,9 @@ void *diffusionMessage(void *params)
     int typeEnvois = args->typeEnvois;
 
     if (typeEnvois == 0)
-        printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' sur la 🧦 n°%d du voisin n°%d du Pi n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread, numeroPi);
+        printf("\033[0;%dm[%d][🔄]\t 💬 Envois du message '%d' sur la 🧦 [%d] du voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
     else
-        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' sur la 🧦 n°%d du voisin n°%d du Pi n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread, numeroPi);
+        printf("\033[0;%dm[%d][➡️]\t 💬 Envois du message '%d' sur la 🧦 [%d] du voisin n°%d.\033[0m\n", (30 + numeroPi), numeroPi, message, socketVoisin, idThread);
 
     int tailleMessage = sizeof(message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
@@ -249,12 +251,8 @@ void *envoisPeriodique(void *params)
     int compteur = 0;
     while (1)
     {
+        printf("\033[0;%dm[%d][🔄 %d] ⏳ Attente de %d secondes...\033[0m\n", (30 + numeroPi), numeroPi, compteur, intervaleTemps);
         sleep(intervaleTemps);
-
-        if (compteur == 0)
-            printf("\033[0;%dm[%d][🔄] 🎯 Premier envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, nombreVoisins);
-        else
-            printf("\033[0;%dm[%d][🔄] 🎯 %deme envois du message aux %d voisins :\033[0m\n", (30 + numeroPi), numeroPi, compteur, nombreVoisins);
 
         for (int i = 0; i < nombreVoisins; i++)
         {
@@ -262,7 +260,7 @@ void *envoisPeriodique(void *params)
             paramsDiffusion->idThread = i + 1;
             paramsDiffusion->numeroPi = numeroPi;
             paramsDiffusion->socketVoisin = tabSocketsVoisins[i];
-            paramsDiffusion->message = rand() % 10;
+            paramsDiffusion->message = rand() % MAX_RANDOM;
             paramsDiffusion->typeEnvois = 0;
 
             if (pthread_create(&threads[i], NULL, diffusionMessage, paramsDiffusion) != 0)
@@ -279,7 +277,6 @@ void *envoisPeriodique(void *params)
         }
 
         compteur++;
-        printf("\033[0;%dm[%d][🔄] ⏳ Attente de %d secondes...\033[0m\n", (30 + numeroPi), numeroPi, intervaleTemps);
     }
 }
 
@@ -353,9 +350,9 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
             exit(1);
         }
         if (resSelect == 1)
-            printf("\033[0;%dm[%d] 📬 1 socket à reçue un message.\033[0m\n", (30 + numeroPi), numeroPi);
+            printf("\033[0;%dm[%d] 📬 1 socket à reçue un message :\033[0m\n", (30 + numeroPi), numeroPi);
         else
-            printf("\033[0;%dm[%d] 📬 %d sockets ont reçue un message;\033[0m\n", (30 + numeroPi), numeroPi, resSelect);
+            printf("\033[0;%dm[%d] 📬 %d sockets ont reçue un message :\033[0m\n", (30 + numeroPi), numeroPi, resSelect);
 
         // --- On parcours le tableau de multiplexage pour savoir quelle socket a recu un message
         compteur = 0;
@@ -363,11 +360,6 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
         {
             if (FD_ISSET(descripteurSocket, &setCopie))
             {
-                if (compteur == 0)
-                    printf("\033[0;%dm[%d]\t 📭 Reception du premier message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, descripteurSocket);
-                else
-                    printf("\033[0;%dm[%d]\t 📭 Reception du %deme message sur la 🧦 n°%d.\033[0m\n", (30 + numeroPi), numeroPi, compteur, descripteurSocket);
-
                 ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
                 if (resRecvTCPsize == 0 || resRecvTCPsize == -1)
                 {
@@ -381,7 +373,10 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     exit(1);
                 }
 
-                printf("\033[0;%dm[%d]\t 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
+                if (resSelect > 1)
+                    printf("\033[0;%dm[%d]\t [%d] 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, compteur, message);
+                else
+                    printf("\033[0;%dm[%d]\t 💬 Message reçus : '%d'.\033[0m\n", (30 + numeroPi), numeroPi, message);
 
                 // --- On renvois le message a tous les voisins sauf celui qui a recu le message si on avait pas deja recu ce message
                 if (estPresent(message, tabMessagesRecus, nombreMessagesRecus) == 0)
@@ -396,9 +391,9 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                     }
 
                     if (nombreMessagesRecus == 1)
-                        printf("\033[0;%dm[%d] 📢 1er message reçus, on le diffuse aux voisins :\033[0m\n", (30 + numeroPi), numeroPi);
+                        printf("\033[0;%dm[%d] 📢 1er message reçus, on le diffuse :\033[0m\n", (30 + numeroPi), numeroPi);
                     else
-                        printf("\033[0;%dm[%d] 📢 %deme message reçus, on le diffuse aux voisins :\033[0m\n", (30 + numeroPi), numeroPi, nombreMessagesRecus);
+                        printf("\033[0;%dm[%d] 📢 %deme nouveau message reçus, on le diffuse :\033[0m\n", (30 + numeroPi), numeroPi, nombreMessagesRecus);
 
                     for (int i = 0; i < nombreVoisins; i++)
                     {
@@ -420,33 +415,42 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
                             }
                         }
                     }
+                    // Afficher le tableau de message recus
+                    int tailleTotale = 1;
+                    for (int i = 0; i < nombreMessagesRecus; i++)
+                    {
+                        int message = tabMessagesRecus[i];
+                        tailleTotale += snprintf(NULL, 0, "%d, ", message);
+                    }
+
+                    char *messageRecus = malloc(tailleTotale);
+                    int offset = 0;
+                    messageRecus[offset++] = '[';
+                    for (int i = 0; i < nombreMessagesRecus; i++)
+                    {
+                        int message = tabMessagesRecus[i];
+                        offset += snprintf(messageRecus + offset, tailleTotale - offset, "%d", message);
+                        if (i != nombreMessagesRecus - 1)
+                        {
+                            messageRecus[offset++] = ',';
+                            messageRecus[offset++] = ' ';
+                        }
+                    }
+                    messageRecus[offset] = ']';
+                    printf("\033[0;%dm[%d] \t📜 Tableau des messages reçus : %s.\033[0m\n", (30 + numeroPi), numeroPi, messageRecus);
+
+                    if (nombreMessagesRecus == MAX_RANDOM)
+                    {
+                        printf("\033[0;%dm[%d] 🏁 Les %d messages ont été reçu, fin de la partie Multiplexage.\033[0m\n", (30 + numeroPi), numeroPi, MAX_RANDOM);
+                        exit(0);
+                    }
                 }
                 else
                 {
                     printf("\033[0;%dm[%d] 🚫 Message déjà reçus, on ne le diffuse pas.\033[0m\n", (30 + numeroPi), numeroPi);
                 }
-                // Afficher le tableau de message recus
-                int tailleTotale = 1;
-                for (int i = 0; i < nombreMessagesRecus; i++) {
-                    int message = tabMessagesRecus[i];
-                    tailleTotale += snprintf(NULL, 0, "%d, ", message);
-                }
-                
-                char *messageRecus = malloc(tailleTotale);
-                int offset = 0;
-                messageRecus[offset++] = '[';
-                for (int i = 0; i < nombreMessagesRecus; i++) {
-                    int message = tabMessagesRecus[i];
-                    offset += snprintf(messageRecus + offset, tailleTotale - offset, "%d", message);
-                    if (i != nombreMessagesRecus - 1) {
-                        messageRecus[offset++] = ',';
-                        messageRecus[offset++] = ' ';
-                    }
-                }
-                messageRecus[offset] = ']';
-                printf("\033[0;%dm[%d] \t📜 Tableau des messages reçus : %s.\033[0m\n", (30 + numeroPi), numeroPi, messageRecus);
-            }
             compteur++;
+            }
         }
     }
     free(threads);
