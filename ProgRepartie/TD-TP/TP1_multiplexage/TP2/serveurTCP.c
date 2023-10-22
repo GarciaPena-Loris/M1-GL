@@ -33,7 +33,7 @@ void traitement(int dsClient)
     close(dsClient);
     exit(1);
   }
-  printf("  Message recus : '%ld'\n", tailleMessageRecu);
+  printf("  Message recus : '%s'\n", tailleMessageRecu);
   printf("  Taille message : '%s'\n\n", sizeof(tailleMessageRecu));
   printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
 
