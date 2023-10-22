@@ -19,8 +19,8 @@ void traitement(int dsClient)
   /* Etape 5 : Traitement avec le client*/
   printf("---Recevoir message---\n\n");
   /* Etape 6 prebis: Reception de la taille du taille*/
-  char *tailleMessageRecu = malloc(320);
-  ssize_t resRecvTaille = recv(dsClient, tailleMessageRecu, 320, 0);
+  char *message = malloc(320);
+  ssize_t resRecvTaille = recv(dsClient, message, 320, 0);
   if (resRecvTaille == -1)
   {
     perror("  Serveur : pb avec le recv :");
@@ -33,8 +33,8 @@ void traitement(int dsClient)
     close(dsClient);
     exit(1);
   }
-  printf("  Message recus : '%s'\n", tailleMessageRecu);
-  printf("  Taille message : '%s'\n\n", sizeof(tailleMessageRecu));
+  printf("  Message recus : '%s'\n", message);
+  printf("  Taille message : '%ld'\n\n", sizeof(message));
   printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
 
   close(dsClient);
