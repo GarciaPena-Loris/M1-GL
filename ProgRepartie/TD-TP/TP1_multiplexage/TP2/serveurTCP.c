@@ -42,7 +42,7 @@ void traitement(int dsClient)
   printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
 
 
-  ssize_t resRecvTaille = recv(dsClient, message, 320, 0);
+  resRecvTaille = recv(dsClient, message, 320, 0);
   if (resRecvTaille == -1)
   {
     perror("  Serveur : pb avec le recv :");
