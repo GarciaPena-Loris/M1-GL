@@ -34,7 +34,7 @@ void traitement(int ds, int nbAppel)
     close(ds);
     exit(1);
   }
-  printf("  Message envoyés lors de l'envois du message: '%ld'\n", message);
+  printf("  Message envoyés lors de l'envois du message: '%s'\n", message);
   printf("  Nombre d'octets envoyés lors de l'envois de la taille: %zd\n\n", resSend);
   close(ds);
 
