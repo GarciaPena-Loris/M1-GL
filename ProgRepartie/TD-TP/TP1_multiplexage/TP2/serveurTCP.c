@@ -19,7 +19,7 @@ void traitement(int dsClient)
   /* Etape 5 : Traitement avec le client*/
   printf("---Recevoir message---\n\n");
   /* Etape 6 prebis: Reception de la taille du taille*/
-  char *message = malloc(320);
+  char *message[320];
   ssize_t resRecvTaille = recv(dsClient, message, 320, 0);
   if (resRecvTaille == -1)
   {
