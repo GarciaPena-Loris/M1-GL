@@ -35,7 +35,7 @@ void traitement(int dsClient)
   }
   printf("  Message recus : '%ld'\n", tailleMessageRecu);
   printf("  Taille message : '%s'\n\n", sizeof(tailleMessageRecu));
-  printf("  Nombre d'octet recus : '%ld'\n\n", resRecvTaille);
+  printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
 
   close(dsClient);
   return;

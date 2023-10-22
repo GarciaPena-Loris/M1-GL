@@ -20,6 +20,7 @@ void traitement(int ds, int nbAppel)
   printf("  Envois de la taille du message... \n");
   long tailleMessage = 240;
   char* message = malloc(320);
+  
   ssize_t resSend = send(ds, &message, sizeof(tailleMessage), 0);
   if (resSend == -1)
   {
