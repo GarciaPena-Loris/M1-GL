@@ -42,7 +42,43 @@ void traitement(int dsClient)
   printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
 
 
-  resRecvTaille = recv(dsClient, message, 320, 0);
+  resRecvTaille = recv(dsClient, message, 120, 0);
+  if (resRecvTaille == -1)
+  {
+    perror("  Serveur : pb avec le recv :");
+    close(dsClient);
+    exit(1);
+  }
+  else if (resRecvTaille == 0)
+  {
+    perror("  Serveur : Connection avec le client perdu :");
+    close(dsClient);
+    exit(1);
+  }
+
+  printf("  Message recus : '%s'\n", message);
+  printf("  Taille message : '%ld'\n\n", sizeof(message));
+  printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
+
+  resRecvTaille = recv(dsClient, message, 120, 0);
+  if (resRecvTaille == -1)
+  {
+    perror("  Serveur : pb avec le recv :");
+    close(dsClient);
+    exit(1);
+  }
+  else if (resRecvTaille == 0)
+  {
+    perror("  Serveur : Connection avec le client perdu :");
+    close(dsClient);
+    exit(1);
+  }
+
+  printf("  Message recus : '%s'\n", message);
+  printf("  Taille message : '%ld'\n\n", sizeof(message));
+  printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
+
+  resRecvTaille = recv(dsClient, message, 120, 0);
   if (resRecvTaille == -1)
   {
     perror("  Serveur : pb avec le recv :");
