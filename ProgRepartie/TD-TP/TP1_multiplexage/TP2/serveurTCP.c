@@ -23,8 +23,8 @@ void traitement(int dsClient)
   char choix[10];
   fgets(choix, sizeof(choix), stdin);
 
-  char message[3000];
-  ssize_t resRecvTaille = recv(dsClient, message, 320, 0);
+  char message[320] = "";
+  ssize_t resRecvTaille = recv(dsClient, &message, 320, 0);
   if (resRecvTaille == -1)
   {
     perror("  Serveur : pb avec le recv :");
@@ -40,6 +40,21 @@ void traitement(int dsClient)
   printf("  Message recus : '%s'\n", message);
   printf("  Taille message : '%ld'\n\n", sizeof(message));
   printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
+
+
+  ssize_t resRecvTaille = recv(dsClient, message, 320, 0);
+  if (resRecvTaille == -1)
+  {
+    perror("  Serveur : pb avec le recv :");
+    close(dsClient);
+    exit(1);
+  }
+  else if (resRecvTaille == 0)
+  {
+    perror("  Serveur : Connection avec le client perdu :");
+    close(dsClient);
+    exit(1);
+  }
 
   close(dsClient);
   return;
