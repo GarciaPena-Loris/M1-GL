@@ -24,7 +24,7 @@ void traitement(int dsClient)
   fgets(choix, sizeof(choix), stdin);
 
   char message[320] = "";
-  ssize_t resRecvTaille = recv(dsClient, &message, 320, 0);
+  ssize_t resRecvTaille = recv(dsClient, message, 120, 0);
   if (resRecvTaille == -1)
   {
     perror("  Serveur : pb avec le recv :");
