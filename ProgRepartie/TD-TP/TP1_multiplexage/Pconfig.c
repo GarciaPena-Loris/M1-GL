@@ -9,7 +9,7 @@
 #include <string.h>
 #include <ifaddrs.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 struct infosPi
 {

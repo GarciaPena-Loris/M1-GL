@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 #define MAX_RANDOM 10
 

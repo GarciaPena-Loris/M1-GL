@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 #define NOMBRE_VOISIN_MAX 5
 

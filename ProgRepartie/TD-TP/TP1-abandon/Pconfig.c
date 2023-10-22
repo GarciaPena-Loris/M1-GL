@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 typedef struct accesZone {
     long etiquette;

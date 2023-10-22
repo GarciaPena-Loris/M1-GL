@@ -10,7 +10,7 @@
 #include <pthread.h>
 #include <string.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 #define MAX_RANDOM 10
 
@@ -216,13 +216,14 @@ void *diffusionMessage(void *params)
             printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
         *valeurDeRetour = 1;
     }
-
-    ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
-    if (resSendTCP == 0 || resSendTCP == -1)
-    {
-        if (numEnvois > 0)
-            printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
-        *valeurDeRetour = 1;
+    else {
+        ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
+        if (resSendTCP == 0 || resSendTCP == -1)
+        {
+            if (numEnvois > 0)
+                printf("\033[0;%dm[%d][➡️] 💔 Le voisin (🧦 n°%d) c'est deconnecté au moment du send.\033[0m\n", (30 + numeroPi), numeroPi, socketVoisin);
+            *valeurDeRetour = 1;
+        }
     }
 
     return (void *)valeurDeRetour;
@@ -484,6 +485,7 @@ void messageMultiplexe(int numeroPi, int *tabSocketsVoisins, int nombreVoisins, 
 
     printf("\033[0;%dm[%d] ✅ Fin d'affichage des voisins.\033[0m\n", (30 + numeroPi), numeroPi);
 }
+
 int main(int argc, char *argv[])
 {
     /* Je passe en paramètre le numéro de port et le numero du processus.*/

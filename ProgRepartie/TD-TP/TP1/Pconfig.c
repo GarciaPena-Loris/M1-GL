@@ -8,7 +8,7 @@
 #include <string.h>
 #include <ifaddrs.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 int main(int argc, char *argv[])
 {

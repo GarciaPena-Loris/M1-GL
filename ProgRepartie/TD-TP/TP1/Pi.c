@@ -8,7 +8,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 
-#include "fonctionTPC.h"
+#include "fonctionTCP.h"
 
 struct Couple {
     int numero_pi;
