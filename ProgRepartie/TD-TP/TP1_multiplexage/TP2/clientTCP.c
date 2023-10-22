@@ -17,11 +17,11 @@
 void traitement(int ds, int nbAppel)
 {
 
-  printf("  Envois de la taille du message... \n");
+  printf("  Envois du message... \n");
   long tailleMessage = 240;
-  char* message = malloc(320);
+  char* message = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
   
-  ssize_t resSend = send(ds, &message, sizeof(tailleMessage), 0);
+  ssize_t resSend = send(ds, &message, 240, 0);
   if (resSend == -1)
   {
     perror("Client : pb avec le send:");
