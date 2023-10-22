@@ -23,7 +23,7 @@ void traitement(int dsClient)
   char choix[10];
   fgets(choix, sizeof(choix), stdin);
 
-  char message[320] = "";
+  char message[1000];
   ssize_t resRecvTaille = recv(dsClient, message, 120, 0);
   if (resRecvTaille == -1)
   {
@@ -55,6 +55,11 @@ void traitement(int dsClient)
     close(dsClient);
     exit(1);
   }
+
+  printf("  Message recus : '%s'\n", message);
+  printf("  Taille message : '%ld'\n\n", sizeof(message));
+  printf("  Valeur de retour du recv : '%ld'\n\n", resRecvTaille);
+
 
   close(dsClient);
   return;
