@@ -2,18 +2,6 @@ import java.util.*;
 
 import org.antlr.v4.runtime.misc.Pair;
 
-class Couleur {
-    private int couleur;
-
-    public Couleur(int couleur) {
-        this.couleur = couleur;
-    }
-
-    public int getCouleur() {
-        return couleur;
-    }
-}
-
 class Sommet {
     private String nom;
     private int couleur;
@@ -47,8 +35,32 @@ class Graphe {
         aretesPreference = new ArrayList<>();
     }
 
+    public ArrayList<Sommet> getSommets() {
+        return sommets;
+    }
+
     public void addSommet(Sommet sommet) {
         sommets.add(sommet);
+    }
+
+    public void removeSommet(Sommet sommet) {
+        sommets.remove(sommet);
+    }
+
+    public ArrayList<Pair<Sommet, Sommet>> getAretesInterferences() {
+        return aretesInterferences;
+    }
+
+    public void removeAretesInterferences(Pair<Sommet, Sommet> arete) {
+        aretesInterferences.remove(arete);
+    }
+
+    public ArrayList<Pair<Sommet, Sommet>> getAretesPreference() {
+        return aretesPreference;
+    }
+
+    public void removeAretesPreference(Pair<Sommet, Sommet> arete) {
+        aretesPreference.remove(arete);
     }
 
     public void addInterference(Sommet sommet, Sommet voisin) {
@@ -71,128 +83,178 @@ class Graphe {
         return aretesPreference;
     }
 
+    public Graphe newGrapheSansSommet(Sommet sommet) {
+        Graphe newGraphe = new Graphe();
+        newGraphe.sommets = new ArrayList<>(this.sommets);
+        newGraphe.aretesInterferences = new ArrayList<>(this.aretesInterferences);
+        newGraphe.aretesPreference = new ArrayList<>(this.aretesPreference);
+
+        newGraphe.removeSommet(sommet);
+
+        for (Pair<Sommet, Sommet> arete : aretesInterferences) {
+            if (arete.a == sommet || arete.b == sommet) {
+                newGraphe.removeAretesInterferences(arete);
+            }
+        }
+        for (Pair<Sommet, Sommet> arete : aretesPreference) {
+            if (arete.a == sommet || arete.b == sommet) {
+                newGraphe.removeAretesPreference(arete);
+            }
+        }
+        return newGraphe;
+    }
+
+    public ArrayList<Sommet> getVoisins(Sommet sommet) {
+        ArrayList<Sommet> voisins = new ArrayList<>();
+        for (Pair<Sommet, Sommet> arete : aretesInterferences) {
+            if (arete.a == sommet)
+                voisins.add(arete.b);
+            if (arete.b == sommet)
+                voisins.add(arete.a);
+        }
+        return voisins;
+    }
+
     // Fonctions coloration
-    public int chooseSpillVertex(List<Integer> spillCandidates) {
-        int bestVertex = -1;
-        int bestCost = Integer.MAX_VALUE;
-
-        for (int vertex : spillCandidates) {
-            int degree = graph.get(vertex).size(); // Degré du sommet
-            int numConflictingRegisters = countConflictingRegisters(vertex); // Comptage des registres en conflit
-
-            // Définissez votre fonction de coût ici en fonction du degré et du nombre de
-            // registres en conflit
-            int cost = computeCost(degree, numConflictingRegisters);
-
-            if (cost < bestCost) {
-                bestCost = cost;
-                bestVertex = vertex;
+    public Sommet getSommetPlusHautDegre() {
+        Sommet sommet = sommets.get(0);
+        for (Sommet s : sommets) {
+            if (getVoisins(s).size() > getVoisins(sommet).size()) {
+                sommet = s;
             }
         }
-
-        return bestVertex;
+        return sommet;
     }
 
-    // Exemple d'une fonction de coût simple, vous pouvez personnaliser la vôtre
-    private int computeCost(int degree, int numConflictingRegisters) {
-        // Par exemple, vous pouvez attribuer un coût qui dépend du degré et du nombre
-        // de registres en conflit
-        return degree + numConflictingRegisters;
-    }
-
-    // Compte le nombre de registres en conflit pour un sommet donné
-    private int countConflictingRegisters(int vertex) {
-        int count = 0;
-        int currentColor = colors.get(vertex);
-
-        for (int neighbor : graph.get(vertex)) {
-            if (colors.get(neighbor) == currentColor) {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    public void colorierGraphe(Graphe graphe, int k) {
-        if (graphe.sommets.size() == 1) {
-            return attribuerCouleur(graphe, graphe.sommets.get(0));
-        }
-        for (int i = 0; i < sommets.size(); i++) {
-            if (estTrivialementColoriable(i)) {
-                System.out.println("Le sommet " + i + " est trivialement coloriable, on le colorie");
-                graphe.sommets.remove(i);
-                colorierGraphe(graphe, k);
-                return attribuerCouleur(graphe, graphe.sommets.get(i));
-            } else {
-                graphe.sommets.remove(i);
-                colorierGraphe(graphe, k);
-                return spillVertex(graphe, graphe.sommets.get(i));
-            }
-        }
+    public int calculerDegre(Sommet sommet) {
+        return getVoisins(sommet).size();
     }
 
     // Vérifie si un sommet est trivialement colorable
-    private boolean estTrivialementColoriable(int vertex) {
-        for (int neighbor : graph.get(vertex)) {
-            if (colors.get(neighbor) == colors.get(vertex)) {
-                return false;
+    public boolean estTrivialementColoriable(Sommet sommet, int k) {
+        if (calculerDegre(sommet) < k) {
+            return true;
+        }
+        return false;
+    }
+
+    public int attribuerCouleur(Sommet sommet, int k) {
+        ArrayList<Integer> couleurUtilisees = new ArrayList<Integer>();
+        for (Sommet voisins : getVoisins(sommet)) {
+            couleurUtilisees.add(voisins.getCouleur());
+        }
+        for (int couleur = 1; couleur <= k; couleur++) {
+            if (!couleurUtilisees.contains(couleur)) {
+                sommet.setCouleur(couleur);
+
+                // Changer la couleur dans les inferferences
+                for (Pair<Sommet, Sommet> arete : aretesInterferences) {
+                    if (arete.a == sommet) {
+                        arete.a.setCouleur(couleur);
+                    }
+                    if (arete.b == sommet) {
+                        arete.b.setCouleur(couleur);
+                    }
+                }
+
+                // Changer la couleur dans les preferences
+                for (Pair<Sommet, Sommet> arete : aretesPreference) {
+                    if (arete.a == sommet) {
+                        arete.a.setCouleur(couleur);
+                    }
+                    if (arete.b == sommet) {
+                        arete.b.setCouleur(couleur);
+                    }
+                }
+                return couleur;
             }
         }
-        return true;
+        return 0;
     }
 
-    private int getAvailableColor(int vertex) {
-        ArrayList<Integer> couleur = new ArrayList<Integer>();
-        ArrayList<Integer> usedColors = new ArrayList()<Integer>();
-        for (int aretes : aretesInterference) {
-            if (aretes.a == vertex || aretes.b == vertex){
-                
-            }
-            if (aretes.get(sommet).getCouleur() != -1) {
-                sommet.add(couleur.get(neighbor));
-            }
+    public void spillSommet(Sommet sommet) {
+        sommets.get(sommets.indexOf(sommet)).setCouleur(-1);
+    }
+
+    @Override
+    public String toString() {
+        String res = "\n-- Sommets --\n";
+        for (Sommet sommet : sommets) {
+            res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + " (" + sommet.getCouleur() + ")"
+                    + "\033[0m\n";
         }
-        for (int color = 0; ; color++) {
-            if (!usedColors.contains(color)) {
-                return color;
-            }
-        }
-    }
-
-    private void spillVertex(int vertex) {
-
-        colors.add(vertex, -1);
-    }
-
-    public List<Integer> getColors() {
-        return colors;
-    }
-
-    public void afficherGrahpe() {
+        res += "-- Interferences --\n";
         for (Sommet sommet : sommets) {
             String voisinsInterference = "";
-            String voisinsPreference = "";
             for (Pair<Sommet, Sommet> arete : aretesInterferences) {
                 if (arete.a == sommet) {
-                    voisinsInterference += arete.b.getNom() + " ";
+                    if (arete.b.getCouleur() == -1)
+                        voisinsInterference += "\033[30m(" + arete.b.getNom() + ")\033[0m ";
+                    else
+                        voisinsInterference += "\033[3" + arete.b.getCouleur() + "m" + arete.b.getNom() + "\033[0m ";
                 }
             }
-            for (Pair<Sommet, Sommet> arete : aretesPreference) {
-                if (arete.a == sommet) {
-                    voisinsPreference += arete.b.getNom() + " ";
-                }
-            }
-            if (voisinsInterference.length() > 0)
-                System.out.print(sommet.getNom() + " -----> " + voisinsInterference + "\n");
-            if (voisinsPreference.length() > 0) {
-                System.out.print(sommet.getNom() + " -.-.-> " + voisinsPreference + "\n");
+            if (voisinsInterference.length() > 0) {
+                if (sommet.getCouleur() == -1)
+                    res += "\033[30m(" + sommet.getNom() + ")\033[0m -> " + voisinsInterference + "\n";
+                else
+                    res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + "\033[0m -> " + voisinsInterference
+                            + "\n";
+
             }
         }
+        res += "-- Preferences --\n";
+        for (Sommet sommet : sommets) {
+            String voisinsPreference = "";
+            for (Pair<Sommet, Sommet> arete : aretesPreference) {
+                if (arete.a == sommet) {
+                    if (arete.b.getCouleur() == -1)
+                        voisinsPreference += "\033[30m(" + arete.b.getNom() + ")\033[0m ";
+                    else
+                        voisinsPreference += "\033[3" + arete.b.getCouleur() + "m" + arete.b.getNom() + "\033[0m ";
+                }
+            }
+            if (voisinsPreference.length() > 0) {
+                if (sommet.getCouleur() == -1)
+                    res += "\033[30m(" + sommet.getNom() + ")\033[0m -> " + voisinsPreference + "\n";
+                else
+                    res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + "\033[0m -> " + voisinsPreference
+                            + "\n";
+            }
+        }
+        return res;
+    }
+}
+
+class ColoriageGraphe {
+    public static Graphe colorierGraphe(Graphe graphe, int k) {
+        if (graphe.getSommets().isEmpty()) {
+            // Cas de base : tous les sommets sont coloriés
+            return graphe;
+        }
+
+        // Parcourez les sommets pour trouver un sommet trivialement coloriable
+        for (Sommet sommet : graphe.getSommets()) {
+            if (graphe.estTrivialementColoriable(sommet, k)) {
+                colorierGraphe(graphe.newGrapheSansSommet(sommet), k);
+                System.out.println("Le sommet " + sommet.getNom()
+                        + " est trivialement coloriable, on lui attribut la couleur \033[3"
+                        + graphe.attribuerCouleur(sommet, k) + "m" + graphe.attribuerCouleur(sommet, k) + "\033[0m");
+                return graphe;
+            }
+        }
+
+        // Si aucun sommet trivialement coloriable n'est trouvé, choisissez le sommet de
+        // plus haut degré
+        Sommet sommet = graphe.getSommetPlusHautDegre();
+        System.out.println("Spillage du sommet " + sommet.getNom() + " (degré : " + graphe.calculerDegre(sommet) + ")");
+        colorierGraphe(graphe.newGrapheSansSommet(sommet), k);
+        graphe.spillSommet(sommet);
+        return graphe;
     }
 
     public static void main(String[] args) {
-        Graphe Graphe = new Graphe();
+        Graphe graphe = new Graphe();
 
         Sommet t = new Sommet("t");
         Sommet u = new Sommet("u");
@@ -201,23 +263,27 @@ class Graphe {
         Sommet y = new Sommet("y");
         Sommet z = new Sommet("z");
 
-        Graphe.addSommet(t);
-        Graphe.addSommet(u);
-        Graphe.addSommet(v);
-        Graphe.addSommet(x);
-        Graphe.addSommet(y);
-        Graphe.addSommet(z);
+        graphe.addSommet(t);
+        graphe.addSommet(u);
+        graphe.addSommet(v);
+        graphe.addSommet(x);
+        graphe.addSommet(y);
+        graphe.addSommet(z);
 
-        Graphe.addInterference(t, v);
-        Graphe.addInterference(t, y);
-        Graphe.addInterference(u, x);
-        Graphe.addInterference(u, y);
-        Graphe.addInterference(v, x);
-        Graphe.addInterference(v, z);
-        Graphe.addInterference(x, y);
-        Graphe.addPreference(u, t);
+        graphe.addInterference(t, v);
+        graphe.addInterference(t, y);
+        graphe.addInterference(u, x);
+        graphe.addInterference(u, y);
+        graphe.addInterference(v, x);
+        graphe.addInterference(v, z);
+        graphe.addInterference(x, y);
+        graphe.addPreference(u, t);
 
-        Graphe.afficherGrahpe();
+        System.out.println(graphe);
+
+        colorierGraphe(graphe, 3);
+
+        System.out.println(graphe);
 
     }
 }
