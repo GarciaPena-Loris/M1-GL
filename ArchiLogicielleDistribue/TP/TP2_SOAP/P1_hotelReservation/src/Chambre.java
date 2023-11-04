@@ -45,8 +45,7 @@ public class Chambre {
 
     @Override
     public String toString() {
-        String res = "Chambre " + this.numero + " (" + this.nombreLits + " lits) à " + this.hotel.getNom() + " ("
-                + this.hotel.getNombreEtoiles() + " étoiles)";
+        String res = "Chambre " + this.numero + " (" + this.nombreLits + " lits) qui coute " + this.prix + " euros";
         return res;
     }
 

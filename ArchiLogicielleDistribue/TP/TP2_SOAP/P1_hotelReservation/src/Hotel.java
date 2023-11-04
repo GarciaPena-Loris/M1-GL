@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.time.LocalDate;
 
 public class Hotel {
@@ -85,68 +87,97 @@ public class Hotel {
         this.reservations.remove(reservation);
     }
 
+    // Fonction récursive pour trouver des combinaisons de chambres
+    private void chercherCombinaison(ArrayList<Chambre> chambresDisponibles, int personnesRestantes,
+            ArrayList<Chambre> combinaisonActuelle,
+            HashMap<Integer, ArrayList<Chambre>> listeCombinaisonsChambresDisponibles, double prixTotal) {
+        if (personnesRestantes == 0) {
+            if (combinaisonActuelle.size() > 0) {
+                // Créez une copie de la combinaison actuelle
+                ArrayList<Chambre> nouvelleCombinaison = new ArrayList<>(combinaisonActuelle);
+                // Triez les chambres par numéro dans la nouvelle combinaison
+                nouvelleCombinaison.sort(Comparator.comparing(Chambre::getNumero));
+                // Ajoutez la nouvelle combinaison à la HashMap avec le prix total
+                listeCombinaisonsChambresDisponibles.put((int) prixTotal, nouvelleCombinaison);
+            }
+        } else if (personnesRestantes > 0) {
+            for (int i = 0; i < chambresDisponibles.size(); i++) {
+                Chambre chambre = chambresDisponibles.get(i);
+                if (chambre.getNombreLits() <= personnesRestantes) {
+                    // Vérifiez que la chambre n'a pas déjà été utilisée
+                    if (!combinaisonActuelle.contains(chambre)) {
+                        combinaisonActuelle.add(chambre);
+                        // Mettez à jour le prix total
+                        double nouveauPrixTotal = prixTotal + chambre.getPrix();
+                        chercherCombinaison(chambresDisponibles, personnesRestantes - chambre.getNombreLits(),
+                                combinaisonActuelle, listeCombinaisonsChambresDisponibles, nouveauPrixTotal);
+                        combinaisonActuelle.remove(combinaisonActuelle.size() - 1);
+                    }
+                }
+            }
+        }
+    }
+
     // functions
-    public ArrayList<Chambre> getChambreDisponible(String ville, LocalDate dateArrivee, LocalDate dateDepart, int prixMin,
-            int prixMax,
-            int nombreEtoiles, int nombrePersonne) {
-        ArrayList<Chambre> chambresVides = new ArrayList<Chambre>();
+    public HashMap<Integer, ArrayList<Chambre>> getChambreDisponibleCriteres(String ville, LocalDate dateArrivee,
+            LocalDate dateDepart,
+            int prixMin,
+            int prixMax, int nombreEtoiles, int nombrePersonne) {
+
+        HashMap<Integer, ArrayList<Chambre>> listeCombinaisonsChambresDisponibles = new HashMap<Integer, ArrayList<Chambre>>();
+
         if (this.adresse.getVille().equals(ville) && this.nombreEtoiles == nombreEtoiles) {
-            ArrayList<Chambre> chambresDisponibles = new ArrayList<Chambre>();
-            for (Reservation reservation : this.reservations) {
-                if (reservation.getDateArrive().compareTo(dateArrivee) >= 0
-                        && reservation.getDateDepart().compareTo(dateDepart) <= 0) {
-                    for (Chambre chambre : reservation.getChambresReservees()) {
-                        chambresDisponibles.add(chambre);
-                    }
-                }
-            }
 
-            for (Chambre chambreReservee : chambreReserveesDate) {
-                chambresDisponibles.remove(chambreReservee);
-            }
+            ArrayList<Chambre> chambresDisponibles = new ArrayList<>();
 
+            // On ajoute toute les chambre qui correspondent aux critères
             for (Chambre chambre : this.chambres) {
-                if (chambre.getNombreLits() == nombrePersonne && chambre.getPrix() >= prixMin
-                        && chambre.getPrix() <= prixMax) {
-                    if (!chambreReserveesDate.contains(chambre)) {
-                        chambresVides.add(chambre);
-                    }
+                if (chambre.getPrix() >= prixMin && chambre.getPrix() <= prixMax
+                        && chambre.getNombreLits() <= nombrePersonne) {
+                    chambresDisponibles.add(chambre);
                 }
             }
 
-            if (chambresVides.size() == 0) {
-                ArrayList<Chambre> chambresDisponibles = new ArrayList<>(this.chambres);
-
-
-                int litsDisponibles = 0;
-                ArrayList<Chambre> chambresPourGroupe = new ArrayList<>();
-
-                for (Chambre chambre : chambresDisponibles) {
-                    if (chambre.getNombreLits() >= nombrePersonne) {
-                        chambresPourGroupe.add(chambre);
-                        litsDisponibles += chambre.getNombreLits();
-                        if (litsDisponibles >= nombrePersonne) {
-                            break;
+            // On supprime les chambre déja reservées
+            for (Reservation reservation : this.reservations) {
+                if (reservation.getDateArrive().isBefore(dateDepart)
+                        && reservation.getDateDepart().isAfter(dateArrivee)) {
+                    for (Chambre chambre : reservation.getChambresReservees()) {
+                        if (chambresDisponibles.contains(chambre)) {
+                            chambresDisponibles.remove(chambre);
                         }
                     }
                 }
-
-                // Vérifier que le nombre de lits ne dépasse pas de 10% le nombre de personnes
-                if (litsDisponibles >= nombrePersonne && litsDisponibles <= 1.1 * nombrePersonne) {
-                    chambresVides.addAll(chambresPourGroupe);
-                }
             }
 
+            if (chambresDisponibles.size() > 0) {
+                // Vérifier si il y a une chambre avec le nombre de lits correspondant
+                for (Chambre chambre : chambresDisponibles) {
+                    if (chambre.getNombreLits() == nombrePersonne) {
+                        ArrayList<Chambre> combinaisonChambre = new ArrayList<>();
+                        combinaisonChambre.add(chambre);
+                        listeCombinaisonsChambresDisponibles.put((int) chambre.getPrix(), combinaisonChambre);
+                        return listeCombinaisonsChambresDisponibles;
+                    }
+                }
+
+                // Vérifier s'il existe une combinaison de chambres qui correspond au nombre de
+                // personnes
+                chercherCombinaison(chambresDisponibles, nombrePersonne, new ArrayList<Chambre>(),
+                        listeCombinaisonsChambresDisponibles, 0);
+
+                return listeCombinaisonsChambresDisponibles;
+            }
         }
-        return chambresVides;
+        return listeCombinaisonsChambresDisponibles;
     }
 
     @Override
     public String toString() {
-        String res = "L'hotel " + this.nom + " situé à " + this.adresse.getVille() + " (" + this.nombreEtoiles
-                + " étoiles) possède " + this.chambres.size() + " chambres :\n";
+        String res = "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
+                + " étoiles) situé à " + this.adresse.getVille() + " possède " + this.chambres.size() + " chambres :\n";
         for (Chambre chambre : this.chambres) {
-            res += chambre.toString() + "\n";
+            res += "\t" + chambre.toString() + "\n";
         }
         return res;
     }
