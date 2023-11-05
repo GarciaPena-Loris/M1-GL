@@ -7,20 +7,20 @@ public class Offre {
     private int identifiant;
     private int nombreLitsTotal;
     private double prix;
-    private Date dateDebut;
-    private Date dateFin;
+    private Date dateArrivee;
+    private Date dateDepart;
     private ArrayList<Chambre> chambres;
     private Hotel hotel;
 
     public Offre() {
     }
 
-    public Offre(int identifiant, int nombreLitsTotal, double prix, Date dateDebut, Date dateFin, ArrayList<Chambre> chambres, Hotel hotel) {
+    public Offre(int identifiant, int nombreLitsTotal, double prix, Date dateArrivee, Date dateDepart, ArrayList<Chambre> chambres, Hotel hotel) {
         this.identifiant = identifiant;
         this.nombreLitsTotal = nombreLitsTotal;
         this.prix = prix;
-        this.dateDebut = dateDebut;
-        this.dateFin = dateFin;
+        this.dateArrivee = dateArrivee;
+        this.dateDepart = dateDepart;
         this.chambres = chambres;
         this.hotel = hotel;
     }
@@ -49,20 +49,20 @@ public class Offre {
         this.prix = prix;
     }
 
-    public Date getDateDebut() {
-        return dateDebut;
+    public Date getdateArrivee() {
+        return dateArrivee;
     }
 
-    public void setDateDebut(Date dateDebut) {
-        this.dateDebut = dateDebut;
+    public void setdateArrivee(Date dateArrivee) {
+        this.dateArrivee = dateArrivee;
     }
 
-    public Date getDateFin() {
-        return dateFin;
+    public Date getdateDepart() {
+        return dateDepart;
     }
 
-    public void setDateFin(Date dateFin) {
-        this.dateFin = dateFin;
+    public void setdateDepart(Date dateDepart) {
+        this.dateDepart = dateDepart;
     }
 
     public ArrayList<Chambre> getChambres() {

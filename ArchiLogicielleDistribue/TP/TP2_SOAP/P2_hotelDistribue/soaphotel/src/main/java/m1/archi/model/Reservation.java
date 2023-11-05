@@ -11,7 +11,7 @@ public class Reservation {
     private Hotel hotel;
     private ArrayList<Chambre> chambresReservees;
     private Client clientPrincipal;
-    private Date dateArrive;
+    private Date dateArrivee;
     private Date dateDepart;
     private int nombrePersonnes;
     private double montantReservation;
@@ -21,21 +21,21 @@ public class Reservation {
     }
 
     public Reservation(String numero, Hotel hotel, ArrayList<Chambre> chambresReservees, Client clientPrincipal,
-                       Date dateArrive, Date dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
-        if (dateArrive.after(dateDepart)) {
+                       Date dateArrivee, Date dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
+        if (dateArrivee.after(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
         this.numero = numero;
         this.hotel = hotel;
         this.chambresReservees = chambresReservees;
         this.clientPrincipal = clientPrincipal;
-        this.dateArrive = dateArrive;
+        this.dateArrivee = dateArrivee;
         this.dateDepart = dateDepart;
         this.nombrePersonnes = nombrePersonnes;
         int montantReservation = 0;
 
         long millisecondsPerDay = 24 * 60 * 60 * 1000;
-        long daysDifference = (dateDepart.getTime() - dateArrive.getTime()) / millisecondsPerDay;
+        long daysDifference = (dateDepart.getTime() - dateArrivee.getTime()) / millisecondsPerDay;
 
         for (Chambre chambre : chambresReservees) {
             montantReservation += chambre.getPrix() * daysDifference;
@@ -73,12 +73,12 @@ public class Reservation {
         this.chambresReservees = chambresReservees;
     }
 
-    public Date getDateArrive() {
-        return dateArrive;
+    public Date getdateArrivee() {
+        return dateArrivee;
     }
 
-    public void setDateArrive(Date dateArrive) {
-        this.dateArrive = dateArrive;
+    public void setdateArrivee(Date dateArrivee) {
+        this.dateArrivee = dateArrivee;
     }
 
     public Date getDateDepart() {
@@ -131,7 +131,7 @@ public class Reservation {
         }
         res += "\n";
         res += "Client principal : " + clientPrincipal.getNom() + " " + clientPrincipal.getPrenom() + "\n";
-        res += "Du " + dateArrive + " au " + dateDepart + "\n";
+        res += "Du " + dateArrivee + " au " + dateDepart + "\n";
         res += "Nombre de personnes : " + nombrePersonnes + "\n";
         res += "Petit déjeuner : " + petitDejeuner + "\n";
         res += "Montant de la réservation : " + montantReservation + "€\n";

@@ -11,6 +11,7 @@ public class Hotel {
     private int nombreEtoiles;
     private ArrayList<Chambre> chambres;
     private ArrayList<Reservation> reservations;
+    private ArrayList<Offre> offres;
 
     public Hotel() {
     }
@@ -22,6 +23,7 @@ public class Hotel {
         this.nombreEtoiles = nombreEtoiles;
         this.chambres = new ArrayList<Chambre>();
         this.reservations = new ArrayList<Reservation>();
+        this.offres = new ArrayList<Offre>();
     }
 
     public String getIdentifiant() {
@@ -97,6 +99,22 @@ public class Hotel {
         this.reservations.add(reservation);
     }
 
+    public ArrayList<Offre> getOffres() {
+        return this.offres;
+    }
+
+    public void setOffres(ArrayList<Offre> offres) {
+        this.offres = offres;
+    }
+
+    public void addOffre(Offre offre) {
+        this.offres.add(offre);
+    }
+
+    public void removeOffre(Offre offre) {
+        this.offres.remove(offre);
+    }
+
     public void removeReservation(Reservation reservation) {
         this.reservations.remove(reservation);
     }
@@ -155,7 +173,7 @@ public class Hotel {
 
             // On supprime les chambre déja reservées
             for (Reservation reservation : this.reservations) {
-                if (reservation.getDateArrive().before(dateDepart)
+                if (reservation.getdateArrivee().before(dateDepart)
                         && reservation.getDateDepart().after(dateArrivee)) {
                     for (Chambre chambre : reservation.getChambresReservees()) {
                         if (chambresDisponibles.contains(chambre)) {
@@ -172,6 +190,7 @@ public class Hotel {
                         int indentifiant = (int) new Date().getTime();
                         Offre offre = new Offre(indentifiant, chambre.getNombreLits(), chambre.getPrix(), dateArrivee, dateDepart, new ArrayList<>(Arrays.asList(chambre)), this);
                         offres.add(offre);
+                        this.addOffre(offre);
                         return offres;
                     }
                 }
@@ -187,6 +206,7 @@ public class Hotel {
                     int indentifiant = (int) new Date().getTime();
                     Offre offre = new Offre(indentifiant, nombrePersonne, combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum(), dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
                     offres.add(offre);
+                    this.addOffre(offre);
                 }
 
                 return offres;
@@ -195,24 +215,33 @@ public class Hotel {
         return null;
     }
 
-    public Reservation reserverChambres(ArrayList<Chambre> chambres, Client clientPrincipal, Date dateArrivee, Date dateDepart, int nombrePersonne, boolean petitDejeuner) throws DateNonValideException {
-        if (dateArrivee.after(dateDepart)) {
+    public Reservation reserverChambres(Offre offre, String nomClient, String prenomClient, String email, String telephone, Carte carte, boolean petitDejeuner) throws DateNonValideException {
+        if (offre.getdateArrivee().after(offre.getdateDepart())) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
+        Client clientPrincipal = new Client(nomClient, prenomClient, email, telephone, carte);
         String numero = "R" + new Date().getTime();
-        Reservation reservation = new Reservation(numero, this, chambres, clientPrincipal, dateArrivee, dateDepart, nombrePersonne, petitDejeuner);
+        Reservation reservation = new Reservation(numero, this, offre.getChambres(), clientPrincipal, offre.getdateArrivee(), offre.getdateDepart(), offre.getNombreLitsTotal(), petitDejeuner);
         this.addReservation(reservation);
         clientPrincipal.addReservationToHistorique(reservation);
+        this.removeOffre(offre);
         return reservation;
+    }
+
+    public String getHotelInfo() {
+        String res = "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
+                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres :\n";
+
+        for (Chambre chambre : this.chambres) {
+            res += "\t- " + chambre.toString() + "\n";
+        }
+        return res;
     }
 
     @Override
     public String toString() {
         String res = "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
-                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres :\n";
-        for (Chambre chambre : this.chambres) {
-            res += "\t- " + chambre.toString() + "\n";
-        }
+                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres.";
         return res;
     }
 

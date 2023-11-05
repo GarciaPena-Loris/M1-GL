@@ -147,8 +147,11 @@ public class RandomDonneStockage {
         if (random.nextInt(4) == 0) {
             numeroRue += "bis"; // Ajoute "bis" avec une chance sur 4
         }
-        if (random.nextInt(10) == 0) {
+        else if (random.nextInt(10) == 0) {
             numeroRue += "ter"; // Ajoute "ter" avec une chance sur 10
+        }
+        else if (random.nextInt(100) == 0) {
+            numeroRue += "shrek";
         }
         return String.valueOf(numeroRue);
     }
