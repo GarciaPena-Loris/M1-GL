@@ -1,8 +1,3 @@
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.time.LocalDate;
-
 public class OldUtilisation {
         /*
         public static void main(String[] args) {

@@ -198,8 +198,8 @@ class UPPAnd extends UPPBinOp {
             ArrayList<String> globals, PRegister reg, RTLInst succ) {
         PRegister regE1 = e1.getPRegister(locals);
         PRegister regE2 = e2.getPRegister(locals);
-        RTLInst div = new RTLAnd(regE1, regE2, reg, succ);
-        RTLInst ne2 = e2.toRTL(locals, globals, regE2, div);
+        RTLInst and = new RTLAnd(regE1, regE2, reg, succ);
+        RTLInst ne2 = e2.toRTL(locals, globals, regE2, and);
         return e1.toRTL(locals, globals, regE1, ne2);
     }// toRTL
 
@@ -216,8 +216,8 @@ class UPPOr extends UPPBinOp {
             ArrayList<String> globals, PRegister reg, RTLInst succ) {
         PRegister regE1 = e1.getPRegister(locals);
         PRegister regE2 = e2.getPRegister(locals);
-        RTLInst div = new RTLOr(regE1, regE2, reg, succ);
-        RTLInst ne2 = e2.toRTL(locals, globals, regE2, div);
+        RTLInst or = new RTLOr(regE1, regE2, reg, succ);
+        RTLInst ne2 = e2.toRTL(locals, globals, regE2, or);
         return e1.toRTL(locals, globals, regE1, ne2);
     }// toRTL
 
