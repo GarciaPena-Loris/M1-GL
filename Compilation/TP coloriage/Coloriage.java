@@ -2,6 +2,9 @@ import java.util.*;
 
 import org.antlr.v4.runtime.misc.Pair;
 
+// GARCIA-PENA Loris
+// MAZERAND Elliot
+
 class Sommet {
     private String nom;
     private int couleur;
@@ -191,14 +194,16 @@ class Graphe {
                     if (arete.b.getCouleur() == -1)
                         voisinsInterference += "\033[30m(" + arete.b.getNom() + ")\033[0m ";
                     else
-                        voisinsInterference += "\033[3" + arete.b.getCouleur() + "m" + arete.b.getNom() + "\033[0m ";
+                        voisinsInterference += "\033[3" + arete.b.getCouleur() + "m" + arete.b.getNom() + " ("
+                                + arete.b.getCouleur() + ")\033[0m ";
                 }
             }
             if (voisinsInterference.length() > 0) {
                 if (sommet.getCouleur() == -1)
                     res += "\033[30m(" + sommet.getNom() + ")\033[0m -> " + voisinsInterference + "\n";
                 else
-                    res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + "\033[0m -> " + voisinsInterference
+                    res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + " (" + sommet.getCouleur() + ")"
+                            + "\033[0m -> " + voisinsInterference
                             + "\n";
 
             }
@@ -211,14 +216,16 @@ class Graphe {
                     if (arete.b.getCouleur() == -1)
                         voisinsPreference += "\033[30m(" + arete.b.getNom() + ")\033[0m ";
                     else
-                        voisinsPreference += "\033[3" + arete.b.getCouleur() + "m" + arete.b.getNom() + "\033[0m ";
+                        voisinsPreference += "\033[3" + arete.b.getCouleur() + "m" + arete.b.getNom() + " ("
+                                + arete.b.getCouleur() + ")\033[0m ";
                 }
             }
             if (voisinsPreference.length() > 0) {
                 if (sommet.getCouleur() == -1)
                     res += "\033[30m(" + sommet.getNom() + ")\033[0m -> " + voisinsPreference + "\n";
                 else
-                    res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + "\033[0m -> " + voisinsPreference
+                    res += "\033[3" + sommet.getCouleur() + "m" + sommet.getNom() + " (" + sommet.getCouleur() + ")"
+                            + "\033[0m -> " + voisinsPreference
                             + "\n";
             }
         }
@@ -226,7 +233,112 @@ class Graphe {
     }
 }
 
+class Colalising {
+    private Sommet nouveauSommet;
+    private ArrayList<Sommet> sommetsSauvegardes = new ArrayList<>();
+    private ArrayList<Pair<Sommet, Sommet>> sauvegarderPairs = new ArrayList<>();
+    private ArrayList<Pair<Sommet, Sommet>> nouvellesPairs = new ArrayList<>();
+
+    public Sommet getNouveauSommet() {
+        return nouveauSommet;
+    }
+
+    public void setNouveauSommet(Sommet nouveauSommet) {
+        this.nouveauSommet = nouveauSommet;
+    }
+
+    public ArrayList<Sommet> getSommetsSauvegardes() {
+        return sommetsSauvegardes;
+    }
+
+    public void setSommetsSauvegardes(ArrayList<Sommet> sommetsSauvegardes) {
+        this.sommetsSauvegardes = sommetsSauvegardes;
+    }
+
+    public ArrayList<Pair<Sommet, Sommet>> getSauvegarderPairs() {
+        return sauvegarderPairs;
+    }
+
+    public void setSauvegarderPairs(ArrayList<Pair<Sommet, Sommet>> sauvegarderPairs) {
+        this.sauvegarderPairs = sauvegarderPairs;
+    }
+
+    public ArrayList<Pair<Sommet, Sommet>> getNouvellesPairs() {
+        return nouvellesPairs;
+    }
+
+    public void setNouvellesPairs(ArrayList<Pair<Sommet, Sommet>> nouvellesPairs) {
+        this.nouvellesPairs = nouvellesPairs;
+    }
+
+}
+
 class ColoriageGraphe {
+    public static ArrayList<Colalising> listeColalisings = new ArrayList<>();
+
+    public static void coalisingGraphe(Graphe graphe) {
+        for (Pair<Sommet, Sommet> aretePreference : graphe.getAretesPreference()) {
+            ArrayList<Sommet> sommetsSauvegardes = new ArrayList<>();
+            ArrayList<Pair<Sommet, Sommet>> sauvegarderPairs = new ArrayList<>();
+            ArrayList<Pair<Sommet, Sommet>> nouvellesPairs = new ArrayList<>();
+
+            Sommet sommetCoalise = new Sommet(aretePreference.a.getNom() + aretePreference.b.getNom());
+            graphe.addSommet(sommetCoalise);
+
+            for (Pair<Sommet, Sommet> areteInterference : graphe.getAretesInterferences()) {
+                if (areteInterference.a == aretePreference.a || areteInterference.a == aretePreference.b) {
+                    nouvellesPairs.add(new Pair<>(sommetCoalise, areteInterference.b));
+                    sauvegarderPairs.add(areteInterference);
+                }
+                if (areteInterference.b == aretePreference.a || areteInterference.b == aretePreference.b) {
+                    nouvellesPairs.add(new Pair<>(sommetCoalise, areteInterference.a));
+                    sauvegarderPairs.add(areteInterference);
+                }
+            }
+
+            for (Pair<Sommet, Sommet> pair : nouvellesPairs) {
+                graphe.addInterference(pair.a, pair.b);
+            }
+
+            for (Pair<Sommet, Sommet> pair : sauvegarderPairs) {
+                graphe.removeAretesInterferences(pair);
+            }
+
+            sommetsSauvegardes.add(aretePreference.a);
+            sommetsSauvegardes.add(aretePreference.b);
+
+            graphe.removeSommet(aretePreference.a);
+            graphe.removeSommet(aretePreference.b);
+
+            Colalising coalising = new Colalising();
+            coalising.setNouveauSommet(sommetCoalise);
+            coalising.setNouvellesPairs(nouvellesPairs);
+            coalising.setSauvegarderPairs(sauvegarderPairs);
+            coalising.setSommetsSauvegardes(sommetsSauvegardes);
+
+            listeColalisings.add(coalising);
+        }
+    }
+
+    public static void decolisingGraphe(Graphe graphe) {
+        for (Colalising coalising : listeColalisings) {
+            for (Sommet sommet : coalising.getSommetsSauvegardes()) {
+                sommet.setCouleur(coalising.getNouveauSommet().getCouleur());
+                graphe.addSommet(sommet);
+                graphe.removeSommet(coalising.getNouveauSommet());
+            }
+
+            for (Pair<Sommet, Sommet> arete : coalising.getSauvegarderPairs()) {
+                graphe.addInterference(arete.a, arete.b);
+            }
+
+            for (Pair<Sommet, Sommet> arete : coalising.getNouvellesPairs()) {
+                graphe.removeAretesInterferences(arete);
+            }
+        }
+        listeColalisings.clear();
+    }
+
     public static Graphe colorierGraphe(Graphe graphe, int k) {
         if (graphe.getSommets().isEmpty()) {
             // Cas de base : tous les sommets sont coloriés
@@ -254,6 +366,8 @@ class ColoriageGraphe {
     }
 
     public static void main(String[] args) {
+        System.out.println("---- Graphe vue en TD (k = 3)----");
+
         Graphe graphe = new Graphe();
 
         Sommet t = new Sommet("t");
@@ -280,10 +394,69 @@ class ColoriageGraphe {
         graphe.addPreference(u, t);
 
         System.out.println(graphe);
+        coalisingGraphe(graphe);
 
+        System.out.println("---- On coalise le graphe ----");
+        System.out.println(graphe);
         colorierGraphe(graphe, 3);
 
+        System.out.println("---- On colorie le graphe ----");
         System.out.println(graphe);
+
+        System.out.println("---- On décoalise le graphe ----");
+        decolisingGraphe(graphe);
+        System.out.println(graphe);
+
+        // #################################################################
+
+        System.out.println("\n\n---- Graphe vue en TD (k = 2)----");
+        coalisingGraphe(graphe);
+
+        System.out.println("---- On coalise le graphe ----");
+        System.out.println(graphe);
+        colorierGraphe(graphe, 2);
+
+        System.out.println("---- On colorie le graphe ----");
+        System.out.println(graphe);
+
+        System.out.println("---- On décoalise le graphe ----");
+        decolisingGraphe(graphe);
+        System.out.println(graphe);
+
+        // #################################################################
+
+        System.out.println("\n\n---- Graphe diamand ----");
+
+        Graphe diamand = new Graphe();
+
+        Sommet a = new Sommet("a");
+        Sommet b = new Sommet("b");
+        Sommet c = new Sommet("c");
+        Sommet d = new Sommet("d");
+
+        diamand.addSommet(a);
+        diamand.addSommet(b);
+        diamand.addSommet(c);
+        diamand.addSommet(d);
+        diamand.addInterference(a, b);
+        diamand.addInterference(a, c);
+        diamand.addInterference(b, d);
+        diamand.addInterference(c, d);
+        diamand.addPreference(a, d);
+
+        System.out.println(diamand);
+        coalisingGraphe(diamand);
+
+        System.out.println("---- On coalise le diamand ----");
+        System.out.println(diamand);
+        colorierGraphe(diamand, 3);
+
+        System.out.println("---- On colorie le diamand ----");
+        System.out.println(diamand);
+
+        System.out.println("---- On décoalise le diamand ----");
+        decolisingGraphe(diamand);
+        System.out.println(diamand);
 
     }
 }
