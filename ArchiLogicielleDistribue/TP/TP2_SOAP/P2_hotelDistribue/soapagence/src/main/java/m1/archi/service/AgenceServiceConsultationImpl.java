@@ -2,8 +2,8 @@ package m1.archi.service;
 
 import m1.archi.exception.DateNonValideException;
 import m1.archi.exception.UserNotFoundException;
-import m1.archi.hotel.Offre;
 import m1.archi.model.Agence;
+import m1.archi.model.Offres;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class AgenceServiceConsultationImpl implements AgenceServiceConsultation 
     }
 
     @Override
-    public ArrayList<ArrayList<Offre>> listeChoisOffresHotelCriteres(String login, String motDePasse, String ville, Date dateArrivee, Date dateDepart, int prixMin, int prixMax, int nombreEtoiles, int nombrePersonne)
+    public ArrayList<Offres> listeChoisOffresHotelCriteres(String login, String motDePasse, String ville, Date dateArrivee, Date dateDepart, int prixMin, int prixMax, int nombreEtoiles, int nombrePersonne)
             throws DateNonValideException, UserNotFoundException {
         return agence.listeChoisOffresHotelCriteres(login, motDePasse, ville, dateArrivee, dateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne);
     }

@@ -30,6 +30,46 @@ public interface AgenceServiceIdentification {
      * 
      * @param arg0
      * @return
+     *     returns java.lang.String
+     * @throws HotelNotFoundExceptionException
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "afficherHotelSimple", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.AfficherHotelSimple")
+    @ResponseWrapper(localName = "afficherHotelSimpleResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.AfficherHotelSimpleResponse")
+    @Action(input = "http://service.archi.m1/AgenceServiceIdentification/afficherHotelSimpleRequest", output = "http://service.archi.m1/AgenceServiceIdentification/afficherHotelSimpleResponse", fault = {
+        @FaultAction(className = HotelNotFoundExceptionException.class, value = "http://service.archi.m1/AgenceServiceIdentification/afficherHotelSimple/Fault/HotelNotFoundException_Exception")
+    })
+    public String afficherHotelSimple(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundExceptionException
+    ;
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     * @throws HotelNotFoundExceptionException
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "afficherReservationsHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.AfficherReservationsHotel")
+    @ResponseWrapper(localName = "afficherReservationsHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.AfficherReservationsHotelResponse")
+    @Action(input = "http://service.archi.m1/AgenceServiceIdentification/afficherReservationsHotelRequest", output = "http://service.archi.m1/AgenceServiceIdentification/afficherReservationsHotelResponse", fault = {
+        @FaultAction(className = HotelNotFoundExceptionException.class, value = "http://service.archi.m1/AgenceServiceIdentification/afficherReservationsHotel/Fault/HotelNotFoundException_Exception")
+    })
+    public String afficherReservationsHotel(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundExceptionException
+    ;
+
+    /**
+     * 
+     * @param arg0
+     * @return
      *     returns boolean
      * @throws AgenceNotFoundException_Exception
      */
@@ -41,9 +81,29 @@ public interface AgenceServiceIdentification {
         @FaultAction(className = AgenceNotFoundException_Exception.class, value = "http://service.archi.m1/AgenceServiceIdentification/deleteAgence/Fault/AgenceNotFoundException")
     })
     public boolean deleteAgence(
-            @WebParam(name = "arg0", targetNamespace = "")
-            String arg0)
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
         throws AgenceNotFoundException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     * @throws HotelNotFoundExceptionException
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "afficherHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.AfficherHotel")
+    @ResponseWrapper(localName = "afficherHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.AfficherHotelResponse")
+    @Action(input = "http://service.archi.m1/AgenceServiceIdentification/afficherHotelRequest", output = "http://service.archi.m1/AgenceServiceIdentification/afficherHotelResponse", fault = {
+        @FaultAction(className = HotelNotFoundExceptionException.class, value = "http://service.archi.m1/AgenceServiceIdentification/afficherHotel/Fault/HotelNotFoundException_Exception")
+    })
+    public String afficherHotel(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundExceptionException
     ;
 
     /**
@@ -73,8 +133,28 @@ public interface AgenceServiceIdentification {
         @FaultAction(className = AgenceNotFoundException_Exception.class, value = "http://service.archi.m1/AgenceServiceIdentification/afficherAgence/Fault/AgenceNotFoundException")
     })
     public String afficherAgence(
-            @WebParam(name = "arg0", targetNamespace = "")
-            String arg0)
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws AgenceNotFoundException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.util.List<java.lang.String>
+     * @throws AgenceNotFoundException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getListeIdentifiantHotelsPartenaire", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.GetListeIdentifiantHotelsPartenaire")
+    @ResponseWrapper(localName = "getListeIdentifiantHotelsPartenaireResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.agence.GetListeIdentifiantHotelsPartenaireResponse")
+    @Action(input = "http://service.archi.m1/AgenceServiceIdentification/getListeIdentifiantHotelsPartenaireRequest", output = "http://service.archi.m1/AgenceServiceIdentification/getListeIdentifiantHotelsPartenaireResponse", fault = {
+        @FaultAction(className = AgenceNotFoundException_Exception.class, value = "http://service.archi.m1/AgenceServiceIdentification/getListeIdentifiantHotelsPartenaire/Fault/AgenceNotFoundException")
+    })
+    public List<String> getListeIdentifiantHotelsPartenaire(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
         throws AgenceNotFoundException_Exception
     ;
 

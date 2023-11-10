@@ -3,6 +3,7 @@ package m1.archi.model;
 import m1.archi.exception.DateNonValideException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Hotel {
     private String identifiant;
@@ -122,26 +123,28 @@ public class Hotel {
     // Fonction récursive pour trouver des combinaisons de chambres
     private void chercherCombinaison(ArrayList<Chambre> chambresDisponibles, int personnesRestantes,
                                      ArrayList<Chambre> combinaisonActuelle,
-                                     ArrayList<ArrayList<Chambre>> listeCombinaisonsChambres) {
+                                     Set<List<Integer>> combinaisonsDeLits, List<ArrayList<Chambre>> listeCombinaisonsChambres) {
         if (personnesRestantes == 0) {
-            if (combinaisonActuelle.size() > 0) {
-                // Créez une copie de la combinaison actuelle
-                ArrayList<Chambre> nouvelleCombinaison = new ArrayList<>(combinaisonActuelle);
-                // Triez les chambres par numéro dans la nouvelle combinaison
-                nouvelleCombinaison.sort(Comparator.comparing(Chambre::getNumero));
-                // Ajoutez la nouvelle combinaison à la HashMap avec le prix total
-                listeCombinaisonsChambres.add(nouvelleCombinaison);
+            if (!combinaisonActuelle.isEmpty()) {
+                combinaisonActuelle.sort(Comparator.comparing(Chambre::getNombreLits));
+                // Générer une liste du nombre de lits dans la combinaison actuelle
+                List<Integer> lits = combinaisonActuelle.stream()
+                        .map(Chambre::getNombreLits)
+                        .collect(Collectors.toList());
+
+                if (!combinaisonsDeLits.contains(lits)) {
+                    combinaisonsDeLits.add(lits);
+                    listeCombinaisonsChambres.add(new ArrayList<>(combinaisonActuelle));
+                }
             }
         } else if (personnesRestantes > 0) {
-            for (int i = 0; i < chambresDisponibles.size(); i++) {
-                Chambre chambre = chambresDisponibles.get(i);
+            for (Chambre chambre : chambresDisponibles) {
                 if (chambre.getNombreLits() <= personnesRestantes) {
-                    // Vérifiez que la chambre n'a pas déjà été utilisée
                     if (!combinaisonActuelle.contains(chambre)) {
                         combinaisonActuelle.add(chambre);
                         chercherCombinaison(chambresDisponibles, personnesRestantes - chambre.getNombreLits(),
-                                combinaisonActuelle, listeCombinaisonsChambres);
-                        combinaisonActuelle.remove(combinaisonActuelle.size() - 1);
+                                combinaisonActuelle, combinaisonsDeLits, listeCombinaisonsChambres);
+                        combinaisonActuelle.remove(chambre);
                     }
                 }
             }
@@ -176,19 +179,17 @@ public class Hotel {
                 if (reservation.getdateArrivee().before(dateDepart)
                         && reservation.getDateDepart().after(dateArrivee)) {
                     for (Chambre chambre : reservation.getChambresReservees()) {
-                        if (chambresDisponibles.contains(chambre)) {
-                            chambresDisponibles.remove(chambre);
-                        }
+                        chambresDisponibles.remove(chambre);
                     }
                 }
             }
 
-            if (chambresDisponibles.size() > 0) {
+            if (!chambresDisponibles.isEmpty()) {
                 // Vérifier si il y a une chambre avec le nombre de lits correspondant
                 for (Chambre chambre : chambresDisponibles) {
                     if (chambre.getNombreLits() == nombrePersonne) {
-                        int indentifiant = (int) new Date().getTime();
-                        Offre offre = new Offre(indentifiant, chambre.getNombreLits(), chambre.getPrix(), dateArrivee, dateDepart, new ArrayList<>(Arrays.asList(chambre)), this);
+                        String indentifiant = "O" + new Date().getTime();
+                        Offre offre = new Offre(indentifiant, chambre.getNombreLits(), chambre.getPrix(), dateArrivee, dateDepart, new ArrayList<>(Collections.singletonList(chambre)), this.identifiant);
                         offres.add(offre);
                         this.addOffre(offre);
                         return offres;
@@ -198,13 +199,15 @@ public class Hotel {
                 // Vérifier s'il existe une combinaison de chambres qui correspond au nombre de
                 // personnes
                 ArrayList<ArrayList<Chambre>> listeCombinaisonsChambres = new ArrayList<>();
+                Set<List<Integer>> combinaisonsDeLits = new HashSet<>();
 
                 chercherCombinaison(chambresDisponibles, nombrePersonne, new ArrayList<Chambre>(),
-                        listeCombinaisonsChambres);
+                        combinaisonsDeLits, listeCombinaisonsChambres);
 
+                Random random = new Random();
                 for (ArrayList<Chambre> combinaisonChambresDisponibles : listeCombinaisonsChambres) {
-                    int indentifiant = (int) new Date().getTime();
-                    Offre offre = new Offre(indentifiant, nombrePersonne, combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum(), dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
+                    String indentifiant = "O" + random.nextInt(1000) + new Date().getTime();
+                    Offre offre = new Offre(indentifiant, nombrePersonne, combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum(), dateArrivee, dateDepart, combinaisonChambresDisponibles, this.identifiant);
                     offres.add(offre);
                     this.addOffre(offre);
                 }
@@ -229,20 +232,31 @@ public class Hotel {
     }
 
     public String getHotelInfo() {
-        String res = "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
-                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres :\n";
+        StringBuilder res = new StringBuilder("L'hotel '" + this.nom + "' (" + this.nombreEtoiles
+                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres :\n");
 
         for (Chambre chambre : this.chambres) {
-            res += "\t- " + chambre.toString() + "\n";
+            res.append("\t- ").append(chambre.toString()).append("\n");
         }
-        return res;
+        return res.toString();
+    }
+
+    public String getReservationHotel() {
+        StringBuilder res = new StringBuilder();
+        int compteur = 1;
+        if (this.reservations.isEmpty()) {
+            return "Aucune réservation";
+        }
+        for (Reservation reservation : this.reservations) {
+            res.append("Reservation n°").append(compteur).append(" : ").append(reservation.toString()).append("\n");
+        }
+        return res.toString();
     }
 
     @Override
     public String toString() {
-        String res = "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
+        return "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
                 + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres.";
-        return res;
     }
 
 }

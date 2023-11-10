@@ -41,10 +41,10 @@ public interface UserServiceInscription {
         @FaultAction(className = UserAlreadyExistsException_Exception.class, value = "http://service.archi.m1/UserServiceInscription/inscription/Fault/UserAlreadyExistsException")
     })
     public boolean inscription(
-            @WebParam(name = "arg0", targetNamespace = "")
-            String arg0,
-            @WebParam(name = "arg1", targetNamespace = "")
-            String arg1)
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1)
         throws UserAlreadyExistsException_Exception
     ;
 

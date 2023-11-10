@@ -73,7 +73,7 @@ public class HotelRepositoryImpl implements HotelRepository {
                 int numeroChambre = j;
                 int nombreLits = RandomDonneStockage.randomNombreLits();
                 int prix = RandomDonneStockage.randomPrix(nombreEtoiles, nombreLits);
-                Chambre chambre = new Chambre(numeroChambre, prix, nombreLits);
+                Chambre chambre = new Chambre(numeroChambre, prix, nombreLits, identifiantHotel);
                 hotel.addChambre(chambre);
             }
         }
@@ -107,11 +107,29 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
+    public String afficherHotelSimple(String identifiant) throws HotelNotFoundException {
+        Hotel hotel = hotels.stream().filter(h -> h.getIdentifiant().equals(identifiant)).findFirst().orElse(null);
+        if (hotel == null)
+            throw new HotelNotFoundException("Error: Hotel " + identifiant + " not found");
+
+        return hotel.toString();
+    }
+
+    @Override
     public String afficherHotel(String identifiant) throws HotelNotFoundException {
         Hotel hotel = hotels.stream().filter(h -> h.getIdentifiant().equals(identifiant)).findFirst().orElse(null);
         if (hotel == null)
             throw new HotelNotFoundException("Error: Hotel " + identifiant + " not found");
 
         return hotel.getHotelInfo();
+    }
+
+    @Override
+    public String afficherReservationsHotel(String identifiant) throws HotelNotFoundException {
+        Hotel hotel = hotels.stream().filter(h -> h.getIdentifiant().equals(identifiant)).findFirst().orElse(null);
+        if (hotel == null)
+            throw new HotelNotFoundException("Error: Hotel " + identifiant + " not found");
+
+        return hotel.getReservationHotel();
     }
 }

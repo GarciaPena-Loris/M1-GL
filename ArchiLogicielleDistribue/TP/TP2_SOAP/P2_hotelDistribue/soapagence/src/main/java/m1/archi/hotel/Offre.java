@@ -22,9 +22,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="chambres" type="{http://service.archi.m1/}chambre" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="hotel" type="{http://service.archi.m1/}hotel" minOccurs="0"/>
- *         &lt;element name="identifiant" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="idHotel" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="identifiant" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="nombreLitsTotal" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="prix" type="{http://www.w3.org/2001/XMLSchema}double"/>
  *         &lt;element name="dateArrivee" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *         &lt;element name="dateDepart" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
  *       &lt;/sequence>
@@ -38,9 +39,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "offre", propOrder = {
     "chambres",
-    "hotel",
+    "idHotel",
     "identifiant",
     "nombreLitsTotal",
+    "prix",
     "dateArrivee",
     "dateDepart"
 })
@@ -48,9 +50,10 @@ public class Offre {
 
     @XmlElement(nillable = true)
     protected List<Chambre> chambres;
-    protected Hotel hotel;
-    protected int identifiant;
+    protected String idHotel;
+    protected String identifiant;
     protected int nombreLitsTotal;
+    protected double prix;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar dateArrivee;
     @XmlSchemaType(name = "dateTime")
@@ -86,42 +89,50 @@ public class Offre {
     }
 
     /**
-     * Obtient la valeur de la propriété hotel.
+     * Obtient la valeur de la propriété idHotel.
      * 
      * @return
      *     possible object is
-     *     {@link Hotel }
+     *     {@link String }
      *     
      */
-    public Hotel getHotel() {
-        return hotel;
+    public String getIdHotel() {
+        return idHotel;
     }
 
     /**
-     * Définit la valeur de la propriété hotel.
+     * Définit la valeur de la propriété idHotel.
      * 
      * @param value
      *     allowed object is
-     *     {@link Hotel }
+     *     {@link String }
      *     
      */
-    public void setHotel(Hotel value) {
-        this.hotel = value;
+    public void setIdHotel(String value) {
+        this.idHotel = value;
     }
 
     /**
      * Obtient la valeur de la propriété identifiant.
      * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public int getIdentifiant() {
+    public String getIdentifiant() {
         return identifiant;
     }
 
     /**
      * Définit la valeur de la propriété identifiant.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
      */
-    public void setIdentifiant(int value) {
+    public void setIdentifiant(String value) {
         this.identifiant = value;
     }
 
@@ -139,6 +150,22 @@ public class Offre {
      */
     public void setNombreLitsTotal(int value) {
         this.nombreLitsTotal = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété prix.
+     * 
+     */
+    public double getPrix() {
+        return prix;
+    }
+
+    /**
+     * Définit la valeur de la propriété prix.
+     * 
+     */
+    public void setPrix(double value) {
+        this.prix = value;
     }
 
     /**

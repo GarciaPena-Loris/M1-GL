@@ -13,6 +13,10 @@ public interface HotelRepository {
 
     boolean deleteHotel(String identifiant) throws HotelNotFoundException;
 
+    String afficherHotelSimple(String identifiant) throws HotelNotFoundException;
+
     String afficherHotel(String identifiant) throws HotelNotFoundException;
+
+    String afficherReservationsHotel(String identifiant) throws HotelNotFoundException;
 
 }

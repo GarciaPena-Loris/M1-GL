@@ -2,8 +2,10 @@ package m1.archi.model;
 
 import m1.archi.exception.DateNonValideException;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 public class Reservation {
@@ -124,17 +126,22 @@ public class Reservation {
 
     @Override
     public String toString() {
-        String res = "Reservation " + numero + " : " + hotel.getNom() + " (" + hotel.getAdresse().getVille() + ")\n";
-        res += "Chambres réservées : ";
+        String res = "La reservation n°" + numero + " à l'hotel " + hotel.getNom() + " (" + hotel.getAdresse().getVille() + ") reserve " + chambresReservees.size() + " chambre(s) :\n";
         for (Chambre chambre : chambresReservees) {
-            res += chambre.getNumero() + " ";
+            res += "\t" + chambre + "\n";
         }
-        res += "\n";
-        res += "Client principal : " + clientPrincipal.getNom() + " " + clientPrincipal.getPrenom() + "\n";
-        res += "Du " + dateArrivee + " au " + dateDepart + "\n";
-        res += "Nombre de personnes : " + nombrePersonnes + "\n";
-        res += "Petit déjeuner : " + petitDejeuner + "\n";
-        res += "Montant de la réservation : " + montantReservation + "€\n";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy", new Locale("fr", "FR")); // "fr" pour le français, "FR" pour la France.
+        String dateArriveeFormatted = sdf.format(dateArrivee);
+        String dateDepartFormatted = sdf.format(dateDepart);
+
+        res += "Cette reservation est faite au nom de : " + clientPrincipal.getNom() + " " + clientPrincipal.getPrenom();
+        res += " du " + dateArriveeFormatted + " au " + dateDepartFormatted + ".\n";
+        res += "Il y a " + nombrePersonnes + " personnages dans cette réservation, pour un montant total de " + montantReservation + "€, ";
+        if (petitDejeuner) {
+            res += " avec petit déjeuner inclus.";
+        } else {
+            res += " sans petit déjeuner inclus.";
+        }
         return res;
     }
 

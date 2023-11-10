@@ -52,24 +52,24 @@ public interface AgenceServiceReservation {
         @FaultAction(className = ReservationProblemeException_Exception.class, value = "http://service.archi.m1/AgenceServiceReservation/reserverChambresHotel/Fault/ReservationProblemeException")
     })
     public String reserverChambresHotel(
-            @WebParam(name = "arg0", targetNamespace = "")
-            String arg0,
-            @WebParam(name = "arg1", targetNamespace = "")
-            String arg1,
-            @WebParam(name = "arg2", targetNamespace = "")
-            Offre arg2,
-            @WebParam(name = "arg3", targetNamespace = "")
-            boolean arg3,
-            @WebParam(name = "arg4", targetNamespace = "")
-            String arg4,
-            @WebParam(name = "arg5", targetNamespace = "")
-            String arg5,
-            @WebParam(name = "arg6", targetNamespace = "")
-            String arg6,
-            @WebParam(name = "arg7", targetNamespace = "")
-            String arg7,
-            @WebParam(name = "arg8", targetNamespace = "")
-            Carte arg8)
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        String arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        Offre arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        boolean arg3,
+        @WebParam(name = "arg4", targetNamespace = "")
+        String arg4,
+        @WebParam(name = "arg5", targetNamespace = "")
+        String arg5,
+        @WebParam(name = "arg6", targetNamespace = "")
+        String arg6,
+        @WebParam(name = "arg7", targetNamespace = "")
+        String arg7,
+        @WebParam(name = "arg8", targetNamespace = "")
+        Carte arg8)
         throws DateNonValideException_Exception, ReservationProblemeException_Exception, UserNotFoundException_Exception
     ;
 

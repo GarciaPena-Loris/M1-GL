@@ -44,10 +44,10 @@ public class Agence {
 
     }
 
-    public boolean connectionUser(String login, String motDePasse) throws UserNotFoundException {
+    public void connectionUser(String login, String motDePasse) throws UserNotFoundException {
         for (User u : listeUsers) {
             if (u.getLogin().equals(login) && u.getMotDePasse().equals(motDePasse)) {
-                return true;
+                return;
             }
         }
         throw new UserNotFoundException("Error: User " + login + " not found");
@@ -110,11 +110,11 @@ public class Agence {
     }
 
     /* FONCTION */
-    public ArrayList<ArrayList<Offre>> listeChoisOffresHotelCriteres(String login, String motDePasse, String ville, Date dateArrivee, Date dateDepart, int prixMin, int prixMax, int nombreEtoiles, int nombrePersonne) throws DateNonValideException, UserNotFoundException {
+    public ArrayList<Offres> listeChoisOffresHotelCriteres(String login, String motDePasse, String ville, Date dateArrivee, Date dateDepart, int prixMin, int prixMax, int nombreEtoiles, int nombrePersonne) throws DateNonValideException, UserNotFoundException {
         // Essayer de se connecter
         connectionUser(login, motDePasse);
 
-        ArrayList<ArrayList<Offre>> listeChoisOffresHotel = new ArrayList<ArrayList<Offre>>();
+        ArrayList<Offres> listeChoisOffresHotel = new ArrayList<Offres>();
         for (String identifiantHotel : mapIdentifiantsHotelsPartenairesReduction.keySet()) {
             try {
                 URL url = new URL("http://localhost:8080/hotelservice/" + identifiantHotel + "/consultation");
@@ -128,13 +128,16 @@ public class Agence {
                 gc.setTime(dateDepart);
                 XMLGregorianCalendar xmlDateDepart = df.newXMLGregorianCalendar(gc);
 
-                listeChoisOffresHotel.add((ArrayList<Offre>) proxy.getChambreDisponibleCriteres(ville, xmlDateArrivee, xmlDateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne));
+                Offres offres = new Offres();
+                ArrayList<Offre> listeOffres = (ArrayList<Offre>) proxy.getChambreDisponibleCriteres(ville, xmlDateArrivee, xmlDateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne);
+
+                offres.setOffres(listeOffres);
+
+                listeChoisOffresHotel.add(offres);
 
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
-            } catch (DatatypeConfigurationException e) {
-                throw new DateNonValideException(e);
-            } catch (DateNonValideException_Exception e) {
+            } catch (DatatypeConfigurationException | DateNonValideException_Exception e) {
                 throw new DateNonValideException(e);
             }
         }
@@ -147,12 +150,12 @@ public class Agence {
         connectionUser(login, motDePasse);
 
         try {
-            URL url = new URL("http://localhost:8080/hotelservice/" + offre.getHotel().getIdentifiant() + "/reservation");
+            URL url = new URL("http://localhost:8080/hotelservice/" + offre.getIdHotel() + "/reservation");
             HotelServiceReservationImplService hotelServiceReservation = new HotelServiceReservationImplService(url);
             HotelServiceReservation proxy = hotelServiceReservation.getHotelServiceReservationImplPort();
 
             Reservation reservation = proxy.reserverChambres(offre, petitDejeuner, nomClient, prenomClient, email, telephone, carte);
-            reservation.setMontantReservation(reservation.getMontantReservation() * (mapIdentifiantsHotelsPartenairesReduction.get(offre.getHotel().getIdentifiant()) / 100));
+            reservation.setMontantReservation(reservation.getMontantReservation() * ((double) mapIdentifiantsHotelsPartenairesReduction.get(offre.getIdHotel()) / 100));
 
             return reservation.getNumero();
         } catch (MalformedURLException e) {
@@ -168,9 +171,10 @@ public class Agence {
     public String getAgenceInfo() {
         String res = "L'agence '" + this.nom + "' (" + this.identifiant + ") possède " + this.mapIdentifiantsHotelsPartenairesReduction.keySet().size() + " hotels partenaires :\n";
         
-        int i = 1;
+        int compteur = 1;
         for (String hotel : this.mapIdentifiantsHotelsPartenairesReduction.keySet()) {
-            res += "\t" + i + "- L'hotel (" + hotel + ") avec une reduction de " + this.mapIdentifiantsHotelsPartenairesReduction.get(hotel) + "% sur les chambres.\n";
+            res += "\t" + compteur + "- L'hotel (" + hotel + ") avec une reduction de " + this.mapIdentifiantsHotelsPartenairesReduction.get(hotel) + "% sur les chambres.\n";
+            compteur++;
         }
         return res;
     }

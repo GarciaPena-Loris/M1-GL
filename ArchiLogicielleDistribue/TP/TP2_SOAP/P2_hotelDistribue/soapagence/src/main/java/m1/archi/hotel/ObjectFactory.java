@@ -76,19 +76,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Hotel }
-     * 
-     */
-    public Hotel createHotel() {
-        return new Hotel();
-    }
-
-    /**
      * Create an instance of {@link Reservation }
      * 
      */
     public Reservation createReservation() {
         return new Reservation();
+    }
+
+    /**
+     * Create an instance of {@link Hotel }
+     * 
+     */
+    public Hotel createHotel() {
+        return new Hotel();
     }
 
     /**

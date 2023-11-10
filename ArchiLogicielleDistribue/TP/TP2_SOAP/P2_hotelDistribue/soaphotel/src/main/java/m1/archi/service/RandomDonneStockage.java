@@ -191,7 +191,7 @@ public class RandomDonneStockage {
 
     }
     public static int randomNombreChambres() {
-        return new Random().nextInt(50) + 1; // Nombre de chambres entre 1 et 10
+        return new Random().nextInt(50) + 5; // Nombre de chambres entre 1 et 10
     }
 
 }

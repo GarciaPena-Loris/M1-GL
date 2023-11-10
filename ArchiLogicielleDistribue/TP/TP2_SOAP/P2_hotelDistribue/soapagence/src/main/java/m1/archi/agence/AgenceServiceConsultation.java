@@ -39,7 +39,7 @@ public interface AgenceServiceConsultation {
      * @param arg6
      * @param arg8
      * @return
-     *     returns java.util.List<m1.archi.agence.ArrayList>
+     *     returns java.util.List<m1.archi.agence.Offres>
      * @throws DateNonValideException_Exception
      * @throws UserNotFoundException_Exception
      */
@@ -51,7 +51,7 @@ public interface AgenceServiceConsultation {
         @FaultAction(className = DateNonValideException_Exception.class, value = "http://service.archi.m1/AgenceServiceConsultation/listeChoisOffresHotelCriteres/Fault/DateNonValideException"),
         @FaultAction(className = UserNotFoundException_Exception.class, value = "http://service.archi.m1/AgenceServiceConsultation/listeChoisOffresHotelCriteres/Fault/UserNotFoundException")
     })
-    public List<ArrayList> listeChoisOffresHotelCriteres(
+    public List<Offres> listeChoisOffresHotelCriteres(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")

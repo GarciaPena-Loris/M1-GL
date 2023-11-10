@@ -20,5 +20,11 @@ public interface HotelServiceIdentification {
     boolean deleteHotel(String identifiant) throws HotelNotFoundException;
 
     @WebMethod
+    String afficherHotelSimple(String identifiant) throws HotelNotFoundException;
+
+    @WebMethod
     String afficherHotel(String identifiant) throws HotelNotFoundException;
+
+    @WebMethod
+    String afficherReservationsHotel(String identifiant) throws HotelNotFoundException;
 }

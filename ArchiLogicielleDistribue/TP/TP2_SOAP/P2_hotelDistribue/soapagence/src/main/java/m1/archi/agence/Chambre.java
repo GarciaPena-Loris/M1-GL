@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="idHotel" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="nombreLits" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="numero" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="prix" type="{http://www.w3.org/2001/XMLSchema}double"/>
@@ -29,15 +30,41 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "chambre", propOrder = {
+    "idHotel",
     "nombreLits",
     "numero",
     "prix"
 })
 public class Chambre {
 
+    protected String idHotel;
     protected int nombreLits;
     protected int numero;
     protected double prix;
+
+    /**
+     * Obtient la valeur de la propriété idHotel.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getIdHotel() {
+        return idHotel;
+    }
+
+    /**
+     * Définit la valeur de la propriété idHotel.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setIdHotel(String value) {
+        this.idHotel = value;
+    }
 
     /**
      * Obtient la valeur de la propriété nombreLits.

@@ -28,6 +28,26 @@ public interface HotelServiceIdentification {
 
     /**
      * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     * @throws HotelNotFoundException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "afficherReservationsHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherReservationsHotel")
+    @ResponseWrapper(localName = "afficherReservationsHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherReservationsHotelResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotelResponse", fault = {
+        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotel/Fault/HotelNotFoundException")
+    })
+    public String afficherReservationsHotel(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundException_Exception
+    ;
+
+    /**
+     * 
      * @return
      *     returns java.util.List<java.lang.String>
      */
@@ -47,12 +67,12 @@ public interface HotelServiceIdentification {
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "afficherHotels", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotels")
-    @ResponseWrapper(localName = "afficherHotelsResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelsResponse")
-    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherHotelsRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherHotelsResponse", fault = {
-        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherHotels/Fault/HotelNotFoundException")
+    @RequestWrapper(localName = "afficherHotelSimple", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelSimple")
+    @ResponseWrapper(localName = "afficherHotelSimpleResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelSimpleResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimpleRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimpleResponse", fault = {
+        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimple/Fault/HotelNotFoundException")
     })
-    public String afficherHotels(
+    public String afficherHotelSimple(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0)
         throws HotelNotFoundException_Exception
@@ -60,19 +80,22 @@ public interface HotelServiceIdentification {
 
     /**
      * 
+     * @param arg0
      * @return
-     *     returns boolean
-     * @throws HotelAlreadyExistsException_Exception
+     *     returns java.lang.String
+     * @throws HotelNotFoundException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addRandomHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AddRandomHotel")
-    @ResponseWrapper(localName = "addRandomHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AddRandomHotelResponse")
-    @Action(input = "http://service.archi.m1/HotelServiceIdentification/addRandomHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/addRandomHotelResponse", fault = {
-        @FaultAction(className = HotelAlreadyExistsException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/addRandomHotel/Fault/HotelAlreadyExistsException")
+    @RequestWrapper(localName = "afficherHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotel")
+    @ResponseWrapper(localName = "afficherHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherHotelResponse", fault = {
+        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherHotel/Fault/HotelNotFoundException")
     })
-    public boolean addRandomHotel()
-        throws HotelAlreadyExistsException_Exception
+    public String afficherHotel(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundException_Exception
     ;
 
     /**
@@ -93,6 +116,23 @@ public interface HotelServiceIdentification {
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0)
         throws HotelNotFoundException_Exception
+    ;
+
+    /**
+     * 
+     * @return
+     *     returns boolean
+     * @throws HotelAlreadyExistsException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "addRandomHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AddRandomHotel")
+    @ResponseWrapper(localName = "addRandomHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AddRandomHotelResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/addRandomHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/addRandomHotelResponse", fault = {
+        @FaultAction(className = HotelAlreadyExistsException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/addRandomHotel/Fault/HotelAlreadyExistsException")
+    })
+    public boolean addRandomHotel()
+        throws HotelAlreadyExistsException_Exception
     ;
 
 }

@@ -21,5 +21,14 @@ public interface AgenceServiceIdentification {
     String afficherAgence(String identifiant) throws AgenceNotFoundException;
 
     @WebMethod
+    ArrayList<String> getListeIdentifiantHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException;
+
+    @WebMethod
+    String afficherHotelSimple(String identifiant) throws HotelNotFoundException_Exception;
+
+    @WebMethod
     String afficherHotel(String identifiant) throws HotelNotFoundException_Exception;
+
+    @WebMethod
+    String afficherReservationsHotel(String identifiant) throws HotelNotFoundException_Exception;
 }

@@ -28,7 +28,17 @@ public class HotelServiceIdentificationImpl implements HotelServiceIdentificatio
     }
 
     @Override
+    public String afficherHotelSimple(String identifiant) throws HotelNotFoundException {
+        return this.hotelRepository.afficherHotelSimple(identifiant);
+    }
+
+    @Override
     public String afficherHotel(String identifiant) throws HotelNotFoundException {
         return this.hotelRepository.afficherHotel(identifiant);
+    }
+
+    @Override
+    public String afficherReservationsHotel(String identifiant) throws HotelNotFoundException {
+        return this.hotelRepository.afficherReservationsHotel(identifiant);
     }
 }

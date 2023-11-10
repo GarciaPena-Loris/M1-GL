@@ -5,13 +5,16 @@ public class Chambre {
     private double prix;
     private int nombreLits;
 
+    private String idHotel;
+
     public Chambre() {
     }
-    
-    public Chambre(int numero, double prix, int nombreLits) {
+
+    public Chambre(int numero, double prix, int nombreLits, String idHotel) {
         this.numero = numero;
         this.prix = prix;
         this.nombreLits = nombreLits;
+        this.idHotel = idHotel;
     }
 
     public int getNumero() {
@@ -36,6 +39,14 @@ public class Chambre {
 
     public void setNombreLits(int nombreLits) {
         this.nombreLits = nombreLits;
+    }
+
+    public String getIdHotel() {
+        return this.idHotel;
+    }
+
+    public void setIdHotel(String idHotel) {
+        this.idHotel = idHotel;
     }
 
     @Override

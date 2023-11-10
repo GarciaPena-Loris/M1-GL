@@ -32,7 +32,22 @@ public class AgenceServiceIdentificationImpl implements AgenceServiceIdentificat
     }
 
     @Override
+    public ArrayList<String> getListeIdentifiantHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
+        return this.agenceRepository.getListeIdentifiantHotelsPartenaire(identifiantAgence);
+    }
+
+    @Override
+    public String afficherHotelSimple(String identifiant) throws HotelNotFoundException_Exception {
+        return this.agenceRepository.afficherHotelSimple(identifiant);
+    }
+
+    @Override
     public String afficherHotel(String identifiant) throws HotelNotFoundException_Exception {
         return this.agenceRepository.afficherHotel(identifiant);
+    }
+
+    @Override
+    public String afficherReservationsHotel(String identifiantHotel) throws HotelNotFoundException_Exception {
+        return this.agenceRepository.afficherReservationsHotel(identifiantHotel);
     }
 }

@@ -92,8 +92,20 @@ public class AgenceRepositoryImpl implements AgenceRepository {
         return agence.getAgenceInfo();
     }
 
+    public ArrayList<String> getListeIdentifiantHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
+        Agence agence = agences.stream().filter(h -> h.getIdentifiant().equals(identifiantAgence)).findFirst().orElse(null);
+        if (agence == null)
+            throw new AgenceNotFoundException("Error: Agence " + identifiantAgence + " not found");
+
+        return new ArrayList<>(agence.getIdentifiantHotelPartenaire().keySet());
+    }
+
+    public String afficherHotelSimple(String identifiantHotel) throws HotelNotFoundException_Exception {
+        return proxy.afficherHotelSimple(identifiantHotel);
+    }
+
     public String afficherHotel(String identifiantHotel) throws HotelNotFoundException_Exception {
-        return proxy.afficherHotels(identifiantHotel);
+        return proxy.afficherHotel(identifiantHotel);
     }
 
     public boolean deleteAgence(String identifiant) throws AgenceNotFoundException {
@@ -102,5 +114,9 @@ public class AgenceRepositoryImpl implements AgenceRepository {
             throw new AgenceNotFoundException("Error: Agence " + identifiant + " not found");
 
         return agences.remove(agence);
+    }
+
+    public String afficherReservationsHotel(String identifiantHotel) throws HotelNotFoundException_Exception {
+        return proxy.afficherReservationsHotel(identifiantHotel);
     }
 }

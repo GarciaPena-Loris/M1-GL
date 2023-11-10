@@ -1,35 +1,36 @@
 package m1.archi.model;
 
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Offre {
-    private int identifiant;
+    private String identifiant;
     private int nombreLitsTotal;
     private double prix;
     private Date dateArrivee;
     private Date dateDepart;
     private ArrayList<Chambre> chambres;
-    private Hotel hotel;
+    private String idHotel;
 
     public Offre() {
     }
 
-    public Offre(int identifiant, int nombreLitsTotal, double prix, Date dateArrivee, Date dateDepart, ArrayList<Chambre> chambres, Hotel hotel) {
+    public Offre(String identifiant, int nombreLitsTotal, double prix, Date dateArrivee, Date dateDepart, ArrayList<Chambre> chambres, String idHotel) {
         this.identifiant = identifiant;
         this.nombreLitsTotal = nombreLitsTotal;
         this.prix = prix;
         this.dateArrivee = dateArrivee;
         this.dateDepart = dateDepart;
         this.chambres = chambres;
-        this.hotel = hotel;
+        this.idHotel = idHotel;
     }
 
-    public int getIdentifiant() {
+    public String getIdentifiant() {
         return identifiant;
     }
 
-    public void setIdentifiant(int identifiant) {
+    public void setIdentifiant(String identifiant) {
         this.identifiant = identifiant;
     }
 
@@ -45,7 +46,7 @@ public class Offre {
         return prix;
     }
 
-    public void setPrix(int prix) {
+    public void setPrix(double prix) {
         this.prix = prix;
     }
 
@@ -73,11 +74,11 @@ public class Offre {
         this.chambres = chambres;
     }
 
-    public Hotel getHotel() {
-        return hotel;
+    public String getIdHotel() {
+        return idHotel;
     }
 
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
+    public void setIdHotel(String idHotel) {
+        this.idHotel = idHotel;
     }
 }
