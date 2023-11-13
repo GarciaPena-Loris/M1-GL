@@ -10,5 +10,5 @@ import javax.jws.WebService;
 public interface HotelServiceReservation {
     
     @WebMethod
-    Reservation reserverChambres(Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, Carte carte) throws DateNonValideException;
+    Reservation reserverChambres(Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, String nomCarte, String numeroCarte, String expirationCarte, String CCVCarte) throws DateNonValideException;
 }

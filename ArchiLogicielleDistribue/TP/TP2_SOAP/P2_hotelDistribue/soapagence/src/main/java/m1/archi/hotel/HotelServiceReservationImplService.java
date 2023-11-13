@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "HotelServiceReservationImplService", targetNamespace = "http://service.archi.m1/", wsdlLocation = "http://localhost:8080/hotelservice/H1699631146821/reservation?wsdl")
+@WebServiceClient(name = "HotelServiceReservationImplService", targetNamespace = "http://service.archi.m1/", wsdlLocation = "http://localhost:8080/hotelservice/H1699887523990/reservation?wsdl")
 public class HotelServiceReservationImplService
     extends Service
 {
@@ -30,7 +30,7 @@ public class HotelServiceReservationImplService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/hotelservice/H1699631146821/reservation?wsdl");
+            url = new URL("http://localhost:8080/hotelservice/H1699887523990/reservation?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
@@ -75,7 +75,7 @@ public class HotelServiceReservationImplService
     /**
      * 
      * @param features
-     *     A list of {@link javax.xml.ws.WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
+     *     A list of {@link WebServiceFeature} to configure on the proxy.  Supported features not in the <code>features</code> parameter will have their default values.
      * @return
      *     returns HotelServiceReservation
      */

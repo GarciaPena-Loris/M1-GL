@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://service.archi.m1/}reservation" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class ReserverChambresHotelResponse {
 
     @XmlElement(name = "return")
-    protected String _return;
+    protected Reservation _return;
 
     /**
      * Obtient la valeur de la propriété return.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Reservation }
      *     
      */
-    public String getReturn() {
+    public Reservation getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class ReserverChambresHotelResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Reservation }
      *     
      */
-    public void setReturn(String value) {
+    public void setReturn(Reservation value) {
         this._return = value;
     }
 

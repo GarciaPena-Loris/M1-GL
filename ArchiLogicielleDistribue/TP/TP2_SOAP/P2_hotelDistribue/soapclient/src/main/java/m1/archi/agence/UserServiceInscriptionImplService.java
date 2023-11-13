@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "UserServiceInscriptionImplService", targetNamespace = "http://service.archi.m1/", wsdlLocation = "http://localhost:8090/agencesservice/A1699631286287/inscription?wsdl")
+@WebServiceClient(name = "UserServiceInscriptionImplService", targetNamespace = "http://service.archi.m1/", wsdlLocation = "http://localhost:8090/agencesservice/A1699892793072/inscription?wsdl")
 public class UserServiceInscriptionImplService
     extends Service
 {
@@ -30,7 +30,7 @@ public class UserServiceInscriptionImplService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8090/agencesservice/A1699631286287/inscription?wsdl");
+            url = new URL("http://localhost:8090/agencesservice/A1699892793072/inscription?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

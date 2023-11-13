@@ -145,7 +145,7 @@ public class Agence {
 
     }
 
-    public String reserverChambresHotel(String login, String motDePasse, Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, Carte carte) throws DateNonValideException, UserNotFoundException, ReservationProblemeException {
+    public Reservation reserverChambresHotel(String login, String motDePasse, Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, String nomCarte, String numeroCarte, String expirationCarte, String CCVCarte) throws DateNonValideException, UserNotFoundException, ReservationProblemeException {
         // Essayer de se connecter
         connectionUser(login, motDePasse);
 
@@ -154,10 +154,10 @@ public class Agence {
             HotelServiceReservationImplService hotelServiceReservation = new HotelServiceReservationImplService(url);
             HotelServiceReservation proxy = hotelServiceReservation.getHotelServiceReservationImplPort();
 
-            Reservation reservation = proxy.reserverChambres(offre, petitDejeuner, nomClient, prenomClient, email, telephone, carte);
+            Reservation reservation = proxy.reserverChambres(offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
             reservation.setMontantReservation(reservation.getMontantReservation() * ((double) mapIdentifiantsHotelsPartenairesReduction.get(offre.getIdHotel()) / 100));
 
-            return reservation.getNumero();
+            return reservation;
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (DateNonValideException_Exception e) {

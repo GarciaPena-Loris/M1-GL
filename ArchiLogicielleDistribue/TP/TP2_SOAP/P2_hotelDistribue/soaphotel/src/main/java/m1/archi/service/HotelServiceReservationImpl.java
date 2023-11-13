@@ -20,8 +20,8 @@ public class HotelServiceReservationImpl implements HotelServiceReservation {
     }
 
     @Override
-    public Reservation reserverChambres(Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, Carte carte)
+    public Reservation reserverChambres(Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, String nomCarte, String numeroCarte, String expirationCarte, String CCVCarte)
     throws DateNonValideException {
-        return hotel.reserverChambres(offre, nomClient, prenomClient, email, telephone, carte, petitDejeuner);
+        return hotel.reserverChambres(offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
     }
 }

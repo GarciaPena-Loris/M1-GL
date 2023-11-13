@@ -18,16 +18,15 @@ public class AgenceRepositoryImpl implements AgenceRepository {
 
     /* CONSTRUCTORS */
     public AgenceRepositoryImpl() throws MalformedURLException {
-        // Création d'un nombre aléatoire d'agence (entre 3 et 6)
-        int nombreAgence = new Random().nextInt(3) + 3;
+        // Création d'un nombre aléatoire d'agence (entre 4 et 10)
+        int nombreAgence = new Random().nextInt(6) + 4;
 
         System.out.println("Génération de " + nombreAgence + " agence aléatoires : \n");
 
         // Récupération de la liste des identifiants des hôtels
         URL url = new URL("http://localhost:8080/hotelservice/identifiantHotels");
         HotelServiceIdentificationImplService hotelService = new HotelServiceIdentificationImplService(url);
-        HotelServiceIdentification proxy = hotelService.getHotelServiceIdentificationImplPort();
-        this.proxy = proxy;
+        this.proxy = hotelService.getHotelServiceIdentificationImplPort();
 
         // Génération des agences
         for (int i = 0; i < nombreAgence; i++) {
@@ -84,6 +83,14 @@ public class AgenceRepositoryImpl implements AgenceRepository {
         return agences.stream().map(Agence::getIdentifiant).collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 
+    public Agence getAgence(String identifiant) throws AgenceNotFoundException {
+        Agence agence = agences.stream().filter(h -> h.getIdentifiant().equals(identifiant)).findFirst().orElse(null);
+        if (agence == null)
+            throw new AgenceNotFoundException("Error: Agence " + identifiant + " not found");
+
+        return agence;
+    }
+
     public String afficherAgence(String identifiant) throws AgenceNotFoundException {
         Agence agence = agences.stream().filter(h -> h.getIdentifiant().equals(identifiant)).findFirst().orElse(null);
         if (agence == null)
@@ -100,8 +107,28 @@ public class AgenceRepositoryImpl implements AgenceRepository {
         return new ArrayList<>(agence.getIdentifiantHotelPartenaire().keySet());
     }
 
+    public ArrayList<Hotel> getListeHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
+        Agence agence = agences.stream().filter(h -> h.getIdentifiant().equals(identifiantAgence)).findFirst().orElse(null);
+        if (agence == null)
+            throw new AgenceNotFoundException("Error: Agence " + identifiantAgence + " not found");
+
+        ArrayList<Hotel> listeHotelsPartenaire = new ArrayList<>();
+        for (String identifiantHotel : agence.getIdentifiantHotelPartenaire().keySet()) {
+            try {
+                listeHotelsPartenaire.add(proxy.getHotel(identifiantHotel));
+            } catch (HotelNotFoundException_Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return listeHotelsPartenaire;
+    }
+
     public String afficherHotelSimple(String identifiantHotel) throws HotelNotFoundException_Exception {
         return proxy.afficherHotelSimple(identifiantHotel);
+    }
+
+    public Hotel getHotel(String identifiant) throws HotelNotFoundException_Exception {
+        return proxy.getHotel(identifiant);
     }
 
     public String afficherHotel(String identifiantHotel) throws HotelNotFoundException_Exception {

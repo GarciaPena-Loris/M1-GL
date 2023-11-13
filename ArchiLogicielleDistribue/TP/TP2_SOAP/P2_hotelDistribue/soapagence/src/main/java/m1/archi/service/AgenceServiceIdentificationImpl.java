@@ -1,7 +1,9 @@
 package m1.archi.service;
 
 import m1.archi.exception.AgenceNotFoundException;
+import m1.archi.hotel.Hotel;
 import m1.archi.hotel.HotelNotFoundException_Exception;
+import m1.archi.model.Agence;
 import m1.archi.repository.AgenceRepository;
 import m1.archi.repository.AgenceRepositoryImpl;
 
@@ -27,6 +29,11 @@ public class AgenceServiceIdentificationImpl implements AgenceServiceIdentificat
     }
 
     @Override
+    public Agence getAgence(String identifiant) throws AgenceNotFoundException {
+        return this.agenceRepository.getAgence(identifiant);
+    }
+
+    @Override
     public String afficherAgence(String identifiant) throws AgenceNotFoundException {
         return this.agenceRepository.afficherAgence(identifiant);
     }
@@ -34,6 +41,16 @@ public class AgenceServiceIdentificationImpl implements AgenceServiceIdentificat
     @Override
     public ArrayList<String> getListeIdentifiantHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
         return this.agenceRepository.getListeIdentifiantHotelsPartenaire(identifiantAgence);
+    }
+
+    @Override
+    public ArrayList<Hotel> getListeHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
+        return this.agenceRepository.getListeHotelsPartenaire(identifiantAgence);
+    }
+
+    @Override
+    public Hotel getHotel(String identifiant) throws HotelNotFoundException_Exception {
+        return this.agenceRepository.getHotel(identifiant);
     }
 
     @Override

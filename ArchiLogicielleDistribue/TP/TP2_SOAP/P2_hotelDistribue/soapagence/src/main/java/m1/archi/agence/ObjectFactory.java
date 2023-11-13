@@ -24,9 +24,10 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _UserAlreadyExistsException_QNAME = new QName("http://service.archi.m1/", "UserAlreadyExistsException");
-    private final static QName _Inscription_QNAME = new QName("http://service.archi.m1/", "inscription");
-    private final static QName _InscriptionResponse_QNAME = new QName("http://service.archi.m1/", "inscriptionResponse");
+    private final static QName _UserNotFoundException_QNAME = new QName("http://service.archi.m1/", "UserNotFoundException");
+    private final static QName _DateNonValideException_QNAME = new QName("http://service.archi.m1/", "DateNonValideException");
+    private final static QName _ListeChoisOffresHotelCriteresResponse_QNAME = new QName("http://service.archi.m1/", "listeChoisOffresHotelCriteresResponse");
+    private final static QName _ListeChoisOffresHotelCriteres_QNAME = new QName("http://service.archi.m1/", "listeChoisOffresHotelCriteres");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: m1.archi.agence
@@ -36,54 +37,95 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Inscription }
+     * Create an instance of {@link UserNotFoundException }
      * 
      */
-    public Inscription createInscription() {
-        return new Inscription();
+    public UserNotFoundException createUserNotFoundException() {
+        return new UserNotFoundException();
     }
 
     /**
-     * Create an instance of {@link UserAlreadyExistsException }
+     * Create an instance of {@link DateNonValideException }
      * 
      */
-    public UserAlreadyExistsException createUserAlreadyExistsException() {
-        return new UserAlreadyExistsException();
+    public DateNonValideException createDateNonValideException() {
+        return new DateNonValideException();
     }
 
     /**
-     * Create an instance of {@link InscriptionResponse }
+     * Create an instance of {@link ListeChoisOffresHotelCriteres }
      * 
      */
-    public InscriptionResponse createInscriptionResponse() {
-        return new InscriptionResponse();
+    public ListeChoisOffresHotelCriteres createListeChoisOffresHotelCriteres() {
+        return new ListeChoisOffresHotelCriteres();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UserAlreadyExistsException }{@code >}}
+     * Create an instance of {@link ListeChoisOffresHotelCriteresResponse }
      * 
      */
-    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "UserAlreadyExistsException")
-    public JAXBElement<UserAlreadyExistsException> createUserAlreadyExistsException(UserAlreadyExistsException value) {
-        return new JAXBElement<UserAlreadyExistsException>(_UserAlreadyExistsException_QNAME, UserAlreadyExistsException.class, null, value);
+    public ListeChoisOffresHotelCriteresResponse createListeChoisOffresHotelCriteresResponse() {
+        return new ListeChoisOffresHotelCriteresResponse();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Inscription }{@code >}}
+     * Create an instance of {@link Offres }
      * 
      */
-    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "inscription")
-    public JAXBElement<Inscription> createInscription(Inscription value) {
-        return new JAXBElement<Inscription>(_Inscription_QNAME, Inscription.class, null, value);
+    public Offres createOffres() {
+        return new Offres();
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link InscriptionResponse }{@code >}}
+     * Create an instance of {@link Offre }
      * 
      */
-    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "inscriptionResponse")
-    public JAXBElement<InscriptionResponse> createInscriptionResponse(InscriptionResponse value) {
-        return new JAXBElement<InscriptionResponse>(_InscriptionResponse_QNAME, InscriptionResponse.class, null, value);
+    public Offre createOffre() {
+        return new Offre();
+    }
+
+    /**
+     * Create an instance of {@link Chambre }
+     * 
+     */
+    public Chambre createChambre() {
+        return new Chambre();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link UserNotFoundException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "UserNotFoundException")
+    public JAXBElement<UserNotFoundException> createUserNotFoundException(UserNotFoundException value) {
+        return new JAXBElement<UserNotFoundException>(_UserNotFoundException_QNAME, UserNotFoundException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DateNonValideException }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "DateNonValideException")
+    public JAXBElement<DateNonValideException> createDateNonValideException(DateNonValideException value) {
+        return new JAXBElement<DateNonValideException>(_DateNonValideException_QNAME, DateNonValideException.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListeChoisOffresHotelCriteresResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "listeChoisOffresHotelCriteresResponse")
+    public JAXBElement<ListeChoisOffresHotelCriteresResponse> createListeChoisOffresHotelCriteresResponse(ListeChoisOffresHotelCriteresResponse value) {
+        return new JAXBElement<ListeChoisOffresHotelCriteresResponse>(_ListeChoisOffresHotelCriteresResponse_QNAME, ListeChoisOffresHotelCriteresResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ListeChoisOffresHotelCriteres }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://service.archi.m1/", name = "listeChoisOffresHotelCriteres")
+    public JAXBElement<ListeChoisOffresHotelCriteres> createListeChoisOffresHotelCriteres(ListeChoisOffresHotelCriteres value) {
+        return new JAXBElement<ListeChoisOffresHotelCriteres>(_ListeChoisOffresHotelCriteres_QNAME, ListeChoisOffresHotelCriteres.class, null, value);
     }
 
 }

@@ -8,9 +8,14 @@ import m1.archi.model.Hotel;
 import m1.archi.service.HotelServiceConsultationImpl;
 import m1.archi.service.HotelServiceReservationImpl;
 import m1.archi.service.RandomDonneStockage;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.xml.ws.Endpoint;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static org.apache.commons.io.FileUtils.readFileToByteArray;
 
 public class HotelRepositoryImpl implements HotelRepository {
 
@@ -18,9 +23,9 @@ public class HotelRepositoryImpl implements HotelRepository {
     private ArrayList<Hotel> hotels = new ArrayList<>();
 
     /* CONSTRUCTORS */
-    public HotelRepositoryImpl() {
-        // Création d'un nombre aléatoire d'hôtels (entre 10 et 30)
-        int nombreHotels = (int) (Math.random() * 20) + 10;
+    public HotelRepositoryImpl() throws IOException {
+        // Création d'un nombre aléatoire d'hôtels (entre 50 et 150)
+        int nombreHotels = (int) (Math.random() * 100) + 100;
 
         System.out.println("Génération de " + nombreHotels + " hôtels aléatoires : \n");
 
@@ -48,7 +53,7 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     /* METHODS */
-    private Hotel randomHotel() {
+    private Hotel randomHotel() throws IOException {
         String identifiantHotel = RandomDonneStockage.randomIdentifiantHotel();
 
         System.out.println("Génération d'un hotel (" + identifiantHotel + ") :");
@@ -64,16 +69,29 @@ public class HotelRepositoryImpl implements HotelRepository {
         // -- Génération d'un hôtel aléatoire
         String nomHotel = RandomDonneStockage.randomNomHotel();
         int nombreEtoiles = RandomDonneStockage.randomNombreEtoiles();
-        Hotel hotel = new Hotel(identifiantHotel, nomHotel, adresseHotel, nombreEtoiles);
+        File imageHotel = RandomDonneStockage.randomImagePays(pays);
+        String base64ImageHotel = "";
+        if (!(imageHotel == null)) {
+            byte[] imageBytes = readFileToByteArray(imageHotel);
+            // Encoder l'image en base64
+            String base64Image = Base64.encodeBase64String(imageBytes);
+        }
+
+        Hotel hotel = new Hotel(identifiantHotel, nomHotel, adresseHotel, nombreEtoiles, base64ImageHotel);
 
         // -- Génération de chambres aléatoires
         int nombreChambres = RandomDonneStockage.randomNombreChambres();
         for (int j = 1; j <= nombreChambres; j++) {
             if (j != 13) {
-                int numeroChambre = j;
                 int nombreLits = RandomDonneStockage.randomNombreLits();
                 int prix = RandomDonneStockage.randomPrix(nombreEtoiles, nombreLits);
-                Chambre chambre = new Chambre(numeroChambre, prix, nombreLits, identifiantHotel);
+                File imageChambre = RandomDonneStockage.randomImageChambre(nombreEtoiles);
+                String base64ImageChambre = "";
+                if (!(imageChambre == null)) {
+                    byte[] imageBytes = readFileToByteArray(imageChambre);
+                    base64ImageChambre = Base64.encodeBase64String(imageBytes);
+                }
+                Chambre chambre = new Chambre(j, prix, nombreLits, identifiantHotel, base64ImageChambre);
                 hotel.addChambre(chambre);
             }
         }
@@ -89,7 +107,16 @@ public class HotelRepositoryImpl implements HotelRepository {
     }
 
     @Override
-    public boolean addRandomHotel() throws HotelAlreadyExistsException {
+    public Hotel getHotel(String identifiant) throws HotelNotFoundException {
+        Hotel hotel = hotels.stream().filter(h -> h.getIdentifiant().equals(identifiant)).findFirst().orElse(null);
+        if (hotel == null)
+            throw new HotelNotFoundException("Error: Hotel " + identifiant + " not found");
+
+        return hotel;
+    }
+
+    @Override
+    public boolean addRandomHotel() throws HotelAlreadyExistsException, IOException {
         Hotel hotel = randomHotel();
         if (hotels.contains(hotel))
             throw new HotelAlreadyExistsException("Error: Hotel " + hotel.getIdentifiant() + " already exists");

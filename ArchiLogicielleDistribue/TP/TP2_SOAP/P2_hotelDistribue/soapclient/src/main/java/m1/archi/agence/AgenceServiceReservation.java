@@ -33,14 +33,17 @@ public interface AgenceServiceReservation {
      * @param arg4
      * @param arg1
      * @param arg0
+     * @param arg10
+     * @param arg11
      * @param arg7
      * @param arg6
+     * @param arg9
      * @param arg8
      * @return
-     *     returns java.lang.String
-     * @throws UserNotFoundException_Exception
-     * @throws ReservationProblemeException_Exception
+     *     returns m1.archi.agence.Reservation
      * @throws DateNonValideException_Exception
+     * @throws ReservationProblemeException_Exception
+     * @throws UserNotFoundException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -51,7 +54,7 @@ public interface AgenceServiceReservation {
         @FaultAction(className = UserNotFoundException_Exception.class, value = "http://service.archi.m1/AgenceServiceReservation/reserverChambresHotel/Fault/UserNotFoundException"),
         @FaultAction(className = ReservationProblemeException_Exception.class, value = "http://service.archi.m1/AgenceServiceReservation/reserverChambresHotel/Fault/ReservationProblemeException")
     })
-    public String reserverChambresHotel(
+    public Reservation reserverChambresHotel(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0,
         @WebParam(name = "arg1", targetNamespace = "")
@@ -69,7 +72,13 @@ public interface AgenceServiceReservation {
         @WebParam(name = "arg7", targetNamespace = "")
         String arg7,
         @WebParam(name = "arg8", targetNamespace = "")
-        Carte arg8)
+        String arg8,
+        @WebParam(name = "arg9", targetNamespace = "")
+        String arg9,
+        @WebParam(name = "arg10", targetNamespace = "")
+        String arg10,
+        @WebParam(name = "arg11", targetNamespace = "")
+        String arg11)
         throws DateNonValideException_Exception, ReservationProblemeException_Exception, UserNotFoundException_Exception
     ;
 

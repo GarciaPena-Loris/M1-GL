@@ -1,7 +1,6 @@
 package m1.archi.service;
 
-import m1.archi.model.Chambre;
-
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,8 +40,7 @@ public class RandomDonneStockage {
     };
 
     private static final String[] listePays = {
-            "France", "Espagne", "Italie", "Allemagne", "Royaume-Uni",
-            "Portugal", "Grèce", "Suisse", "Belgique", "Canada"
+            "France", "Espagne", "Grece", "Canada"
     };
 
     private static final HashMap<String, ArrayList<String>> listeVillePays = new HashMap<>();
@@ -50,8 +48,6 @@ public class RandomDonneStockage {
     static {
         listeVillePays.put("France", new ArrayList<String>() {{
             add("Paris");
-            add("Marseille");
-            add("Lyon");
             add("Toulouse");
             add("Nice");
         }});
@@ -59,64 +55,14 @@ public class RandomDonneStockage {
             add("Madrid");
             add("Barcelone");
             add("Valence");
-            add("Séville");
-            add("Bilbao");
         }});
-        listeVillePays.put("Italie", new ArrayList<String>() {{
-            add("Rome");
-            add("Milan");
-            add("Naples");
-            add("Turin");
-            add("Florence");
-        }});
-        listeVillePays.put("Allemagne", new ArrayList<String>() {{
-            add("Berlin");
-            add("Munich");
-            add("Hambourg");
-            add("Cologne");
-            add("Francfort");
-        }});
-        listeVillePays.put("Royaume-Uni", new ArrayList<String>() {{
-            add("Londres");
-            add("Manchester");
-            add("Birmingham");
-            add("Glasgow");
-            add("Édimbourg");
-        }});
-        listeVillePays.put("Portugal", new ArrayList<String>() {{
-            add("Lisbonne");
-            add("Porto");
-            add("Coimbra");
-            add("Faro");
-            add("Braga");
-        }});
-        listeVillePays.put("Grèce", new ArrayList<String>() {{
+        listeVillePays.put("Grece", new ArrayList<String>() {{
             add("Athènes");
-            add("Thessalonique");
-            add("Héraklion");
             add("Rhodes");
-            add("Patras");
-        }});
-        listeVillePays.put("Suisse", new ArrayList<String>() {{
-            add("Zurich");
-            add("Genève");
-            add("Bâle");
-            add("Berne");
-            add("Lausanne");
-        }});
-        listeVillePays.put("Belgique", new ArrayList<String>() {{
-            add("Bruxelles");
-            add("Anvers");
-            add("Gand");
-            add("Liège");
-            add("Bruges");
         }});
         listeVillePays.put("Canada", new ArrayList<String>() {{
             add("Toronto");
             add("Montréal");
-            add("Vancouver");
-            add("Ottawa");
-            add("Québec");
         }});
     }
 
@@ -138,7 +84,26 @@ public class RandomDonneStockage {
 
     public static String randomVille(String pays) {
         ArrayList<String> villesPays = listeVillePays.get(pays);
-        return getElementListeAleatoire(villesPays.toArray(new String[villesPays.size()]));
+        return getElementListeAleatoire(villesPays.toArray(new String[0]));
+    }
+
+    public static File randomImagePays(String pays) {
+        String imageDirectory = "ressources/imagesHotels/" + pays + "/";
+        return getImage(imageDirectory);
+    }
+
+    private static File getImage(String imageDirectory) {
+        File directory = new File(imageDirectory);
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null && files.length > 0) {
+                Random random = new Random();
+                int randomIndex = random.nextInt(files.length);
+                return files[randomIndex];
+            }
+        }
+        System.out.println("Aucune image trouvée dans le dossier " + imageDirectory);
+        return null; // Aucune image trouvée
     }
 
     public static String randomNumero() {
@@ -146,24 +111,22 @@ public class RandomDonneStockage {
         String numeroRue = String.valueOf(random.nextInt(100) + 1); // Numéro de rue entre 1 et 100
         if (random.nextInt(4) == 0) {
             numeroRue += "bis"; // Ajoute "bis" avec une chance sur 4
-        }
-        else if (random.nextInt(10) == 0) {
+        } else if (random.nextInt(10) == 0) {
             numeroRue += "ter"; // Ajoute "ter" avec une chance sur 10
-        }
-        else if (random.nextInt(100) == 0) {
+        } else if (random.nextInt(100) == 0) {
             numeroRue += "shrek";
         }
-        return String.valueOf(numeroRue);
+        return numeroRue;
     }
 
     public static String randomPositionGPS() {
-        return String.valueOf(new Random().nextDouble() * 180 - 90) + "," + String.valueOf(new Random().nextDouble() * 360 - 180); // Position GPS aléatoire
+        return new Random().nextDouble() * 180 - 90 + "," + (new Random().nextDouble() * 360 - 180); // Position GPS aléatoire
     }
 
     public static int randomNombreEtoiles() {
         return new Random().nextInt(5) + 1; // Nombre d'étoiles entre 1 et 5
     }
-    
+
     public static int randomPrix(int nombreEtoile, int nombreLits) {
         switch (nombreEtoile) {
             case 1:
@@ -185,11 +148,17 @@ public class RandomDonneStockage {
         return new Random().nextInt(4) + 1; // Nombre de personnes entre 1 et 4
     }
 
+    public static File randomImageChambre(int nombreEtoiles) {
+        String imageDirectory = "ressources/imagesChambres/" + nombreEtoiles + "etoiles/";
+        return getImage(imageDirectory);
+    }
+
     public static String randomIdentifiantHotel() {
         Date date = new Date();
         return "H" + date.getTime();
 
     }
+
     public static int randomNombreChambres() {
         return new Random().nextInt(50) + 5; // Nombre de chambres entre 1 et 10
     }

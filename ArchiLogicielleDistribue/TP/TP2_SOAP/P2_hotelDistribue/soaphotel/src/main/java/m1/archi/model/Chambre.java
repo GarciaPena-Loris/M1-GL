@@ -4,17 +4,19 @@ public class Chambre {
     private int numero;
     private double prix;
     private int nombreLits;
-
     private String idHotel;
+
+    private String imageChambre;
 
     public Chambre() {
     }
 
-    public Chambre(int numero, double prix, int nombreLits, String idHotel) {
+    public Chambre(int numero, double prix, int nombreLits, String idHotel, String imageChambre) {
         this.numero = numero;
         this.prix = prix;
         this.nombreLits = nombreLits;
         this.idHotel = idHotel;
+        this.imageChambre = imageChambre;
     }
 
     public int getNumero() {
@@ -49,10 +51,17 @@ public class Chambre {
         this.idHotel = idHotel;
     }
 
+    public String getImageChambre() {
+        return this.imageChambre;
+    }
+
+    public void setImageChambre(String imageChambre) {
+        this.imageChambre = imageChambre;
+    }
+
     @Override
     public String toString() {
-        String res = "Chambre " + this.numero + " (" + this.nombreLits + " lits), coute " + this.prix + " euros";
-        return res;
+        return "Chambre " + this.numero + " (" + this.nombreLits + " lits), coute " + this.prix + " euros";
     }
 
 }

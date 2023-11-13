@@ -10,6 +10,7 @@ public class Hotel {
     private String nom;
     private Adresse adresse;
     private int nombreEtoiles;
+    private String imageHotel;
     private ArrayList<Chambre> chambres;
     private ArrayList<Reservation> reservations;
     private ArrayList<Offre> offres;
@@ -17,11 +18,12 @@ public class Hotel {
     public Hotel() {
     }
 
-    public Hotel(String identifiant, String nom, Adresse adresse, int nombreEtoiles) {
+    public Hotel(String identifiant, String nom, Adresse adresse, int nombreEtoiles, String imageHotel) {
         this.identifiant = identifiant;
         this.nom = nom;
         this.adresse = adresse;
         this.nombreEtoiles = nombreEtoiles;
+        this.imageHotel = imageHotel;
         this.chambres = new ArrayList<Chambre>();
         this.reservations = new ArrayList<Reservation>();
         this.offres = new ArrayList<Offre>();
@@ -74,6 +76,14 @@ public class Hotel {
 
     public void setNombreEtoiles(int nombreEtoiles) {
         this.nombreEtoiles = nombreEtoiles;
+    }
+
+    public String getImageHotel() {
+        return imageHotel;
+    }
+
+    public void setImageHotel(String imageHotel) {
+        this.imageHotel = imageHotel;
     }
 
     public void setChambres(ArrayList<Chambre> chambres) {
@@ -176,7 +186,7 @@ public class Hotel {
 
             // On supprime les chambre déja reservées
             for (Reservation reservation : this.reservations) {
-                if (reservation.getdateArrivee().before(dateDepart)
+                if (reservation.getDateArrivee().before(dateDepart)
                         && reservation.getDateDepart().after(dateArrivee)) {
                     for (Chambre chambre : reservation.getChambresReservees()) {
                         chambresDisponibles.remove(chambre);
@@ -218,13 +228,14 @@ public class Hotel {
         return null;
     }
 
-    public Reservation reserverChambres(Offre offre, String nomClient, String prenomClient, String email, String telephone, Carte carte, boolean petitDejeuner) throws DateNonValideException {
+    public Reservation reserverChambres(Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, String nomCarte, String numeroCarte, String expirationCarte, String CCVCarte) throws DateNonValideException {
         if (offre.getdateArrivee().after(offre.getdateDepart())) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
+        Carte carte = new Carte(nomCarte, numeroCarte, expirationCarte, CCVCarte);
         Client clientPrincipal = new Client(nomClient, prenomClient, email, telephone, carte);
         String numero = "R" + new Date().getTime();
-        Reservation reservation = new Reservation(numero, this, offre.getChambres(), clientPrincipal, offre.getdateArrivee(), offre.getdateDepart(), offre.getNombreLitsTotal(), petitDejeuner);
+        Reservation reservation = new Reservation(numero, this.identifiant, this.nombreEtoiles, offre.getChambres(), clientPrincipal, offre.getdateArrivee(), offre.getdateDepart(), offre.getNombreLitsTotal(), petitDejeuner);
         this.addReservation(reservation);
         clientPrincipal.addReservationToHistorique(reservation);
         this.removeOffre(offre);

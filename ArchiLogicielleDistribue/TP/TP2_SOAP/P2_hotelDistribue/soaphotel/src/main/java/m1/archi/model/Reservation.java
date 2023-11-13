@@ -10,7 +10,8 @@ import java.util.Random;
 
 public class Reservation {
     private String numero;
-    private Hotel hotel;
+    private String  identifiantHotel;
+    private int nombreEtoilesHotel;
     private ArrayList<Chambre> chambresReservees;
     private Client clientPrincipal;
     private Date dateArrivee;
@@ -22,28 +23,29 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String numero, Hotel hotel, ArrayList<Chambre> chambresReservees, Client clientPrincipal,
+    public Reservation(String numero, String identifiantHotel, int nombreEtoilesHotel, ArrayList<Chambre> chambresReservees, Client clientPrincipal,
                        Date dateArrivee, Date dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
         if (dateArrivee.after(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
         this.numero = numero;
-        this.hotel = hotel;
+        this.identifiantHotel = identifiantHotel;
+        this.nombreEtoilesHotel = nombreEtoilesHotel;
         this.chambresReservees = chambresReservees;
         this.clientPrincipal = clientPrincipal;
         this.dateArrivee = dateArrivee;
         this.dateDepart = dateDepart;
         this.nombrePersonnes = nombrePersonnes;
-        int montantReservation = 0;
+        double montantReservation = 0;
 
         long millisecondsPerDay = 24 * 60 * 60 * 1000;
         long daysDifference = (dateDepart.getTime() - dateArrivee.getTime()) / millisecondsPerDay;
 
         for (Chambre chambre : chambresReservees) {
-            montantReservation += chambre.getPrix() * daysDifference;
+            montantReservation += (chambre.getPrix() * daysDifference);
         }
         if (petitDejeuner) {
-            montantReservation += (hotel.getNombreEtoiles() * (new Random().nextInt(3) + 5)) * nombrePersonnes
+            montantReservation += ((long) nombreEtoilesHotel * (new Random().nextInt(3) + 5)) * nombrePersonnes
                     * daysDifference;
         }
         this.montantReservation = montantReservation;
@@ -59,12 +61,20 @@ public class Reservation {
         this.numero = numero;
     }
 
-    public Hotel getHotel() {
-        return hotel;
+    public String getIdentifiantHotel() {
+        return identifiantHotel;
     }
 
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
+    public void setIdentifiantHotel(String identifiantHotel) {
+        this.identifiantHotel = identifiantHotel;
+    }
+
+    public int getNombreEtoilesHotel() {
+        return nombreEtoilesHotel;
+    }
+
+    public void setNombreEtoilesHotel(int nombreEtoilesHotel) {
+        this.nombreEtoilesHotel = nombreEtoilesHotel;
     }
 
     public ArrayList<Chambre> getChambresReservees() {
@@ -75,11 +85,19 @@ public class Reservation {
         this.chambresReservees = chambresReservees;
     }
 
-    public Date getdateArrivee() {
+    public Client getClientPrincipal() {
+        return clientPrincipal;
+    }
+
+    public void setClientPrincipal(Client clientPrincipal) {
+        this.clientPrincipal = clientPrincipal;
+    }
+
+    public Date getDateArrivee() {
         return dateArrivee;
     }
 
-    public void setdateArrivee(Date dateArrivee) {
+    public void setDateArrivee(Date dateArrivee) {
         this.dateArrivee = dateArrivee;
     }
 
@@ -99,14 +117,6 @@ public class Reservation {
         this.nombrePersonnes = nombrePersonnes;
     }
 
-    public boolean isPetitDejeuner() {
-        return petitDejeuner;
-    }
-
-    public void setPetitDejeuner(boolean petitDejeuner) {
-        this.petitDejeuner = petitDejeuner;
-    }
-
     public double getMontantReservation() {
         return montantReservation;
     }
@@ -115,18 +125,19 @@ public class Reservation {
         this.montantReservation = montantReservation;
     }
 
-    public Client getclientPrincipal() {
-        return clientPrincipal;
+    public boolean isPetitDejeuner() {
+        return petitDejeuner;
     }
 
-    public void setclientPrincipal(Client clientPrincipal) {
-        this.clientPrincipal = clientPrincipal;
+    public void setPetitDejeuner(boolean petitDejeuner) {
+        this.petitDejeuner = petitDejeuner;
     }
+
     // #endregion
 
     @Override
     public String toString() {
-        String res = "La reservation n°" + numero + " à l'hotel " + hotel.getNom() + " (" + hotel.getAdresse().getVille() + ") reserve " + chambresReservees.size() + " chambre(s) :\n";
+        String res = "La reservation n°" + numero + " à l'hotel n°" + identifiantHotel + " (" + nombreEtoilesHotel +" étoiles) reserve " + chambresReservees.size() + " chambre(s) :\n";
         for (Chambre chambre : chambresReservees) {
             res += "\t" + chambre + "\n";
         }

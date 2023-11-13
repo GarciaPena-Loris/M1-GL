@@ -24,7 +24,10 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="arg5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="arg6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="arg7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg8" type="{http://service.archi.m1/}carte" minOccurs="0"/>
+ *         &lt;element name="arg8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="arg9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="arg10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="arg11" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,7 +46,10 @@ import javax.xml.bind.annotation.XmlType;
     "arg5",
     "arg6",
     "arg7",
-    "arg8"
+    "arg8",
+    "arg9",
+    "arg10",
+    "arg11"
 })
 public class ReserverChambresHotel {
 
@@ -55,7 +61,10 @@ public class ReserverChambresHotel {
     protected String arg5;
     protected String arg6;
     protected String arg7;
-    protected Carte arg8;
+    protected String arg8;
+    protected String arg9;
+    protected String arg10;
+    protected String arg11;
 
     /**
      * Obtient la valeur de la propriété arg0.
@@ -246,10 +255,10 @@ public class ReserverChambresHotel {
      * 
      * @return
      *     possible object is
-     *     {@link Carte }
+     *     {@link String }
      *     
      */
-    public Carte getArg8() {
+    public String getArg8() {
         return arg8;
     }
 
@@ -258,11 +267,83 @@ public class ReserverChambresHotel {
      * 
      * @param value
      *     allowed object is
-     *     {@link Carte }
+     *     {@link String }
      *     
      */
-    public void setArg8(Carte value) {
+    public void setArg8(String value) {
         this.arg8 = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété arg9.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getArg9() {
+        return arg9;
+    }
+
+    /**
+     * Définit la valeur de la propriété arg9.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setArg9(String value) {
+        this.arg9 = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété arg10.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getArg10() {
+        return arg10;
+    }
+
+    /**
+     * Définit la valeur de la propriété arg10.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setArg10(String value) {
+        this.arg10 = value;
+    }
+
+    /**
+     * Obtient la valeur de la propriété arg11.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getArg11() {
+        return arg11;
+    }
+
+    /**
+     * Définit la valeur de la propriété arg11.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setArg11(String value) {
+        this.arg11 = value;
     }
 
 }
