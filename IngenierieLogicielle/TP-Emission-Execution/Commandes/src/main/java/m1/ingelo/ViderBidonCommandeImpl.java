@@ -1,7 +1,7 @@
 package m1.ingelo;
 
-public class ViderBidonCommande extends Commande {
-    public ViderBidonCommande(Bidon bidon) {
+public class ViderBidonCommandeImpl extends CommandeImpl {
+    public ViderBidonCommandeImpl(Bidon bidon) {
         super(bidon, bidon.volume);
     }
 

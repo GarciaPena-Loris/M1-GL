@@ -1,8 +1,8 @@
 package m1.ingelo;
 
-public class RemplirBidonCommande extends Commande {
+public class RemplirBidonCommandeImpl extends CommandeImpl {
 
-    public RemplirBidonCommande(Bidon bidon) {
+    public RemplirBidonCommandeImpl(Bidon bidon) {
         super(bidon, bidon.capacite - bidon.volume);
     }
 

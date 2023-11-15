@@ -5,19 +5,57 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="358e55e4-f216-4cd2-a0df-42362124795b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/m1/ingelo/AppTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP2_SOAP/P2_hotelDistribue/soaphotel/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP2_SOAP/P2_hotelDistribue/soaphotel/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/exception/DateNonValideException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/exception/HotelAlreadyExistsException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/exception/HotelNotFoundException.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/CommandeImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/Undo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/src/main/java/m1/archi/REST_agence/RestAgenceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/REST_agence/src/test/java/m1/archi/REST_agence/RestAgenceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/.mvn/wrapper/maven-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/mvnw" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/mvnw.cmd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/src/main/java/m1/archi/restagence/RestAgenceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restAgence/src/test/java/m1/archi/restagence/RestAgenceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Adresse.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Adresse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Carte.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Carte.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Chambre.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Chambre.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Hotel.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Hotel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Offre.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Offre.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Reservation.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ArchiLogicielleDistribue/TP/TP3_REST/restHotel/src/main/java/m1/archi/resthotel/models/Reservation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/Bidon.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/Bidon.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/Commande.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/Commande.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/Partie.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/Partie.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/RemplirBidonCommande.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/RemplirBidonCommandeImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/TransvaserBidonCommande.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/TransvaserBidonCommandeImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/m1/ingelo/ViderBidonCommande.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/m1/ingelo/ViderBidonCommandeImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
@@ -25,28 +63,33 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 2
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="2XtY9wBZqsxS8dTlPUuz6tmaW9N" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/loloy/Desktop/cours/M1/M1-GL/ArchiLogicielleDistribue/TP/TP3_REST/restHotel&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\loloy\Desktop\cours\M1\M1-GL\IngenierieLogicielle\TP-Emission-Execution\Commandes\src\main\java\m1\ingelo" />
@@ -61,10 +104,19 @@
       <option name="presentableId" value="Default" />
       <updated>1699449696349</updated>
       <workItem from="1699449697983" duration="1398000" />
+      <workItem from="1699451145542" duration="126000" />
+      <workItem from="1699451294722" duration="6507000" />
+      <workItem from="1699459251805" duration="764000" />
+      <workItem from="1699460053267" duration="203000" />
+      <workItem from="1700032939697" duration="4214000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

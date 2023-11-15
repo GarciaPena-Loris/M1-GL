@@ -1,18 +1,9 @@
 package m1.ingelo;
 
-public abstract class Commande {
-    protected Bidon bidon;
-    protected int volumeDeplace;
+public interface Commande {
+    public void executer();
 
-    public Commande(Bidon bidon, int volumeDeplace) {
-        this.bidon = bidon;
-        this.volumeDeplace = volumeDeplace;
-    }
+    public void annuler();
 
-    public abstract void executer();
-
-    public abstract void annuler();
-
-    public abstract String afficherAction();
-
+    public String afficherAction();
 }

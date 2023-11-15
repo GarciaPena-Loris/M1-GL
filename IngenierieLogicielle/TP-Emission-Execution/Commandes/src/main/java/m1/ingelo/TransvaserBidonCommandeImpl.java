@@ -1,10 +1,10 @@
 package m1.ingelo;
 
-public class TransvaserBidonCommande extends Commande {
+public class TransvaserBidonCommandeImpl extends CommandeImpl {
 
     private Bidon autreBidon;
 
-    public TransvaserBidonCommande(Bidon bidon, Bidon autreBidon) {
+    public TransvaserBidonCommandeImpl(Bidon bidon, Bidon autreBidon) {
         super(bidon, Math.min(bidon.volume, autreBidon.capacite - autreBidon.volume));
         this.autreBidon = autreBidon;
     }
