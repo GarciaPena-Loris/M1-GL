@@ -237,7 +237,7 @@ public class Hotel {
         String numero = "R" + new Date().getTime();
         Reservation reservation = new Reservation(numero, this.identifiant, this.nombreEtoiles, offre.getChambres(), clientPrincipal, offre.getdateArrivee(), offre.getdateDepart(), offre.getNombreLitsTotal(), petitDejeuner);
         this.addReservation(reservation);
-        clientPrincipal.addReservationToHistorique(reservation);
+        clientPrincipal.addReservationToHistorique(reservation.getNumero());
         this.removeOffre(offre);
         return reservation;
     }

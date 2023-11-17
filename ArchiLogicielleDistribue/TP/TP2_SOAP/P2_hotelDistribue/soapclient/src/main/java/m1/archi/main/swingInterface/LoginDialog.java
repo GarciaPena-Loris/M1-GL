@@ -5,22 +5,23 @@ import m1.archi.main.User;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class LoginDialog extends JDialog {
     private User userConnecte;
-    private GestionnaireUser gestionnaireUser;
+    private JTextField usernameField;
+    private JPasswordField passwordField;
 
     public LoginDialog(Frame owner, GestionnaireUser gestionnaireUser) {
         super(owner, "Connectez / Inscrivez vous :", true);
-        this.gestionnaireUser = gestionnaireUser;
 
         JPanel loginPanel = new JPanel(new GridLayout(3, 2));
-        JLabel usernameLabel = new JLabel("Nom d'utilisateur:");
-        JLabel passwordLabel = new JLabel("Mot de passe:");
-        JTextField usernameField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
+        JLabel usernameLabel = new JLabel("  Nom d'utilisateur :");
+        JLabel passwordLabel = new JLabel("  Mot de passe :");
+
+        // Créer les champs de texte
+        usernameField = new JTextField();
+        passwordField = new JPasswordField();
+
 
         loginPanel.add(usernameLabel);
         loginPanel.add(usernameField);
@@ -33,7 +34,22 @@ public class LoginDialog extends JDialog {
         usernameField.setFont(font);
         passwordField.setFont(font);
 
+        JButton loginButton = getjButton(gestionnaireUser);
+
+        usernameField.getDocument().addDocumentListener(new InputDocumentListener(loginButton, usernameField, passwordField));
+        passwordField.getDocument().addDocumentListener(new InputDocumentListener(loginButton, usernameField, passwordField));
+
+
+        add(loginPanel, BorderLayout.CENTER);
+        add(loginButton, BorderLayout.SOUTH);
+        pack();
+        setSize(400, 180);
+        setLocationRelativeTo(owner);
+    }
+
+    private JButton getjButton(GestionnaireUser gestionnaireUser) {
         JButton loginButton = new JButton("Se connecter");
+        loginButton.setEnabled(false);
         loginButton.addActionListener(e -> {
             String login = usernameField.getText();
             String motdepasse = new String(passwordField.getPassword());
@@ -58,12 +74,7 @@ public class LoginDialog extends JDialog {
                 }
             }
         });
-
-        add(loginPanel, BorderLayout.CENTER);
-        add(loginButton, BorderLayout.SOUTH);
-        pack();
-        setSize(400, 200);
-        setLocationRelativeTo(owner);
+        return loginButton;
     }
 
     public User getUserConnecte() {

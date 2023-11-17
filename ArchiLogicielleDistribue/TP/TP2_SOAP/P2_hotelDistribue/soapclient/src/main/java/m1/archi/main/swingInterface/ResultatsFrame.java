@@ -3,51 +3,54 @@ package m1.archi.main.swingInterface;
 import m1.archi.agence.*;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.Comparator;
+import java.util.List;
 
 public class ResultatsFrame extends JFrame {
 
-        public ResultatsFrame(ArrayList<Offres> listeOffres, JFrame parent, AgenceServiceIdentification proxyAgence) throws HotelNotFoundExceptionException {
-            setTitle("Résultats de la recherche");
-            setSize(800, 600);
+    public ResultatsFrame(ArrayList<Offres> listeOffres, JFrame parent, AgenceServiceIdentification proxyAgence) throws HotelNotFoundExceptionException {
+        setTitle("Résultats de la recherche");
 
-            // Créez un modèle de liste pour afficher les offres
-            DefaultListModel<String> offresListModel = new DefaultListModel<>();
-            JList<String> offresList = new JList<>(offresListModel);
+        // Créez un modèle de liste pour afficher les offres
+        DefaultListModel<String> offresListModel = new DefaultListModel<>();
+        JList<String> offresList = new JList<>(offresListModel);
 
-            // Ajoutez les offres au modèle de liste
-            for (Offres offres : listeOffres) {
-                Hotel hotel = proxyAgence.getHotel(offres.getOffres().get(0).getIdHotel());
+        // Ajoutez les offres au modèle de liste
+        for (Offres offres : listeOffres) {
+            List<Offre> listeOffre = offres.getOffres();
+
+            if (!listeOffre.isEmpty()) {
+                Hotel hotel = proxyAgence.getHotel(listeOffre.get(0).getIdHotel());
                 String nomHotel = hotel.getNom();
-                offresListModel.addElement("Offres pour l'hotel " + nomHotel + ", situé à " + hotel.getAdresse().getVille() + " :");
+                offresListModel.addElement("- Selection de " + listeOffre.size() + " offres pour l'hotel " + nomHotel + ", situé " + hotel.getAdresse().getRue() + ". ");
             }
-
-            // Ajoutez un gestionnaire de sélection à la liste
-            offresList.addListSelectionListener(e -> {
-                if (!e.getValueIsAdjusting()) {
-                    // Obtenez l'offre sélectionnée
-                    Offres selectedOffres = listeOffres.get(offresList.getSelectedIndex());
-
-                    // Créez une nouvelle fenêtre pour afficher les détails de l'offre
-                    DetailsOffreFrame detailsOffreFrame = null;
-                    try {
-                        detailsOffreFrame = new DetailsOffreFrame(selectedOffres, parent, proxyAgence);
-                    } catch (HotelNotFoundExceptionException ex) {
-                        System.out.println("Hotel non trouvé");
-                    }
-                    assert detailsOffreFrame != null;
-                    detailsOffreFrame.setVisible(true);
-                }
-            });
-
-            // Ajoutez la liste au panneau de contenu
-            JScrollPane scrollPane = new JScrollPane(offresList);
-            getContentPane().add(scrollPane);
-
-            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            setLocationRelativeTo(parent);
-            setVisible(true);
+            else {
+                offresListModel.addElement("Aucune offre pour cet hotel.");
+            }
         }
+
+        // Ajoutez un gestionnaire de sélection à la liste
+        offresList.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                // Obtenez l'offre sélectionnée
+                Offres selectedOffres = listeOffres.get(offresList.getSelectedIndex());
+                selectedOffres.getOffres().sort(Comparator.comparing(Offre::getPrix));
+
+                // Créez une nouvelle fenêtre pour afficher les détails de l'offre
+                DetailsOffreFrame detailsOffreFrame = new DetailsOffreFrame(selectedOffres, this);
+                detailsOffreFrame.setVisible(true);
+            }
+        });
+
+        // Ajoutez la liste au panneau de contenu
+        JScrollPane scrollPane = new JScrollPane(offresList);
+        getContentPane().add(scrollPane);
+
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setSize(800, 400);
+        setLocationRelativeTo(parent);
+
+    }
+
 }

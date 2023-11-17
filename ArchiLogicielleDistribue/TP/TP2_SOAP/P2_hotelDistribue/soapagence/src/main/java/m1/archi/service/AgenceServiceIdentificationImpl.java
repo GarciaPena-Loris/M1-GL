@@ -44,6 +44,11 @@ public class AgenceServiceIdentificationImpl implements AgenceServiceIdentificat
     }
 
     @Override
+    public int getReduction(String identifiantAgence, String identifiantHotel) throws AgenceNotFoundException {
+        return this.agenceRepository.getReduction(identifiantAgence, identifiantHotel);
+    }
+
+    @Override
     public ArrayList<Hotel> getListeHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
         return this.agenceRepository.getListeHotelsPartenaire(identifiantAgence);
     }

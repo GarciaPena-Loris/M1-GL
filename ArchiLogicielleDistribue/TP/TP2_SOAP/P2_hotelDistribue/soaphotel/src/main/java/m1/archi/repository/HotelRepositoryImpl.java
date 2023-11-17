@@ -25,7 +25,7 @@ public class HotelRepositoryImpl implements HotelRepository {
     /* CONSTRUCTORS */
     public HotelRepositoryImpl() throws IOException {
         // Création d'un nombre aléatoire d'hôtels (entre 50 et 150)
-        int nombreHotels = (int) (Math.random() * 100) + 10;
+        int nombreHotels = (int) (Math.random() * 100) + 50;
 
         System.out.println("Génération de " + nombreHotels + " hôtels aléatoires : \n");
 

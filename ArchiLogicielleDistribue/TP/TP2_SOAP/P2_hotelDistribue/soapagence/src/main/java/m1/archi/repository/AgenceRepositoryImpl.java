@@ -107,6 +107,14 @@ public class AgenceRepositoryImpl implements AgenceRepository {
         return new ArrayList<>(agence.getIdentifiantHotelPartenaire().keySet());
     }
 
+    public int getReduction(String identifiantAgence, String identifiantHotel) throws AgenceNotFoundException {
+        Agence agence = agences.stream().filter(h -> h.getIdentifiant().equals(identifiantAgence)).findFirst().orElse(null);
+        if (agence == null)
+            throw new AgenceNotFoundException("Error: Agence " + identifiantAgence + " not found");
+
+        return agence.getIdentifiantHotelPartenaire().get(identifiantHotel);
+    }
+
     public ArrayList<Hotel> getListeHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException {
         Agence agence = agences.stream().filter(h -> h.getIdentifiant().equals(identifiantAgence)).findFirst().orElse(null);
         if (agence == null)

@@ -9,7 +9,7 @@ public class Client {
     private String telephone;
     private Carte carte;
 
-    private ArrayList<Reservation> historiqueReservations;
+    private ArrayList<String> historiqueReservations;
 
     public Client() {
     }
@@ -20,8 +20,7 @@ public class Client {
         this.email = email;
         this.telephone = telephone;
         this.carte = carte;
-
-        this.historiqueReservations = new ArrayList<Reservation>();
+        this.historiqueReservations = new ArrayList<>();
     }
 
     public String getNom() {
@@ -66,32 +65,32 @@ public class Client {
 
     // Historique des réservations
 
-    public ArrayList<Reservation> getHistoriqueReservations() {
+    public ArrayList<String> getHistoriqueReservations() {
         return historiqueReservations;
     }
 
-    public void setHistoriqueReservations(ArrayList<Reservation> historiqueReservations) {
+    public void setHistoriqueReservations(ArrayList<String> historiqueReservations) {
         this.historiqueReservations = historiqueReservations;
     }
 
-    public void addReservationToHistorique(Reservation reservation) {
+    public void addReservationToHistorique(String reservation) {
         this.historiqueReservations.add(reservation);
     }
 
 
     @Override
     public String toString() {
-        String res = this.nom + " " + this.prenom + " (" + this.email + ")\n";
-        res += "Carte " + this.carte.getNumero() + "\n";
-        res += "Réservations en cours : ";
-        res += "\nHistorique des réservations : ";
+        StringBuilder res = new StringBuilder(this.nom + " " + this.prenom + " (" + this.email + ")\n");
+        res.append("Carte ").append(this.carte.getNumero()).append("\n");
+        res.append("Réservations en cours : ");
+        res.append("\nHistorique des réservations : ");
         if (this.historiqueReservations.size() == 0) {
-            res += "aucune";
+            res.append("aucune");
         } else {
-            for (Reservation reservation : this.historiqueReservations) {
-                res += reservation.getNumero() + " ";
+            for (String reservation : this.historiqueReservations) {
+                res.append(reservation).append(" ");
             }
         }
-        return res;
+        return res.toString();
     }
 }

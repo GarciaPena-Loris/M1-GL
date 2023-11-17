@@ -133,7 +133,8 @@ public class Agence {
 
                 offres.setOffres(listeOffres);
 
-                listeChoisOffresHotel.add(offres);
+                if (!listeOffres.isEmpty())
+                    listeChoisOffresHotel.add(offres);
 
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);

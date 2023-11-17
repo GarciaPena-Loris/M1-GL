@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="carte" type="{http://service.archi.m1/}carte" minOccurs="0"/>
  *         &lt;element name="email" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="historiqueReservations" type="{http://service.archi.m1/}reservation" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="historiqueReservations" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="nom" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="prenom" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="telephone" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -47,7 +47,7 @@ public class Client {
     protected Carte carte;
     protected String email;
     @XmlElement(nillable = true)
-    protected List<Reservation> historiqueReservations;
+    protected List<String> historiqueReservations;
     protected String nom;
     protected String prenom;
     protected String telephone;
@@ -118,13 +118,13 @@ public class Client {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Reservation }
+     * {@link String }
      * 
      * 
      */
-    public List<Reservation> getHistoriqueReservations() {
+    public List<String> getHistoriqueReservations() {
         if (historiqueReservations == null) {
-            historiqueReservations = new ArrayList<Reservation>();
+            historiqueReservations = new ArrayList<String>();
         }
         return this.historiqueReservations;
     }

@@ -19,6 +19,8 @@ public interface AgenceRepository {
 
     ArrayList<String> getListeIdentifiantHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException;
 
+    int getReduction(String identifiantAgence, String identifiantHotel) throws AgenceNotFoundException;
+
     ArrayList<Hotel> getListeHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException;
 
     Hotel getHotel(String identifiant) throws HotelNotFoundException_Exception;

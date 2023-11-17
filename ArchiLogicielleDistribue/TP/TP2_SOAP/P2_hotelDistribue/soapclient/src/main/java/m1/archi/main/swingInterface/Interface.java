@@ -14,12 +14,15 @@ import java.util.*;
 
 public class Interface {
     private final GestionnaireUser gestionnaireUser;
-    private User userConnecte;
     private final HashMap<String, String> mapAgenceNomIdentifiant = new HashMap<>();
     private final HashMap<String, ArrayList<Hotel>> mapAgenceHotelPartenaire = new HashMap<>();
+    private final HashMap<String, Integer> mapIdentifiantsHotelsPartenairesReduction = new HashMap<>();
+
+    private ArrayList<String> listeVilles = new ArrayList<>();
     private final ArrayList<String> listeIdentifiantAgence;
-    private String selectedAgence;
-    private ArrayList<Hotel> hotelsPartenaires = new ArrayList<Hotel>();
+    public static String selectedAgence;
+    public static User userConnecte;
+    public static ArrayList<Hotel> hotelsPartenaires = new ArrayList<Hotel>();
 
     public Interface(AgenceServiceIdentification proxyAgences, GestionnaireUser gestionnaireUser) throws MalformedURLException {
         // Récupération des identifiants des agences
@@ -59,9 +62,10 @@ public class Interface {
             JComboBox<String> agenceComboBox = new JComboBox<>(agences);
             agenceComboBox.setPreferredSize(new Dimension(400, 30));
 
-            topPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); // Alignement à gauche
-            topPanel.add(agenceLabel);
-            topPanel.add(agenceComboBox);
+            JPanel agencePanel = new JPanel();
+            agencePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+            agencePanel.add(agenceLabel);
+            agencePanel.add(agenceComboBox);
 
             // Étape 2 : Liste d'hôtels
             DefaultListModel<String> hotelListModel = new DefaultListModel<>();
@@ -74,9 +78,15 @@ public class Interface {
             bottomPanel.add(searchButton, BorderLayout.SOUTH);
 
             // Étape 4 : Recherche et réservation
+            JPanel connectionPanel = new JPanel();
+            connectionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+
             JButton connectionButton = new JButton("Connexion");
-            topPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            topPanel.add(connectionButton);
+            connectionPanel.add(connectionButton);
+
+            topPanel.setLayout(new BorderLayout());
+            topPanel.add(agencePanel, BorderLayout.WEST);
+            topPanel.add(connectionPanel, BorderLayout.EAST);
 
             // Étape 5 : S'incrire dans une agence
             JButton inscriptionButton = new JButton("S'enregistrer à l'agence");
@@ -96,9 +106,16 @@ public class Interface {
                     @Override
                     protected Void doInBackground() {
                         try {
+                            mapIdentifiantsHotelsPartenairesReduction.clear();
+                            listeVilles.clear();
                             if (mapAgenceHotelPartenaire.get(selectedAgence) == null) {
                                 hotelsPartenaires = (ArrayList<Hotel>) proxyAgences.getListeHotelsPartenaire(selectedAgence);
                                 mapAgenceHotelPartenaire.put(selectedAgence, hotelsPartenaires);
+                                for (Hotel hotel : hotelsPartenaires) {
+                                    if (!listeVilles.contains(hotel.getAdresse().getVille()))
+                                        listeVilles.add(hotel.getAdresse().getVille());
+                                    mapIdentifiantsHotelsPartenairesReduction.put(hotel.getIdentifiant(), proxyAgences.getReduction(selectedAgence, hotel.getIdentifiant()));
+                                }
                             } else hotelsPartenaires = mapAgenceHotelPartenaire.get(selectedAgence);
                         } catch (AgenceNotFoundException_Exception ex) {
                             System.out.println("⚠️ L'agence n'a pas été trouvée.");
@@ -117,7 +134,7 @@ public class Interface {
                             for (int i = 0; i < hotel.getNombreEtoiles(); i++) {
                                 hotelString.append("⭐");
                             }
-                            hotelString.append(") ").append("situé à ").append(hotel.getAdresse().getVille()).append(" (").append(hotel.getAdresse().getPays()).append(") possède ").append(hotel.getChambres().size()).append(" chambres.");
+                            hotelString.append(") ").append("situé à ").append(hotel.getAdresse().getVille()).append(" (").append(hotel.getAdresse().getPays()).append(") possède ").append(hotel.getChambres().size()).append(" chambres et est proposé avec une réduction de ").append(mapIdentifiantsHotelsPartenairesReduction.get(hotel.getIdentifiant())).append("%. ");
                             hotelListModel.addElement(hotelString.toString());
                         }
                     }
@@ -125,126 +142,29 @@ public class Interface {
                 worker.execute(); // Démarre le travail dans un thread séparé
             });
 
-            hotelListUI.addListSelectionListener(e -> {
-                if (!e.getValueIsAdjusting()) {
-                    int selectedIndex = hotelListUI.getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        Hotel selectedHotel = hotelsPartenaires.get(selectedIndex);
-
-                        // Créez un panneau pour afficher les informations de l'hôtel
-                        JPanel hotelInfoPanel = new JPanel();
-                        hotelInfoPanel.setLayout(new BoxLayout(hotelInfoPanel, BoxLayout.Y_AXIS));
-
-                        // Ajoutez les détails de l'hôtel à un composant JTextPane avec HTML
-                        StringBuilder res = new StringBuilder("<html><b>L'hotel '" + selectedHotel.getNom() + "' (");
-                        for (int i = 0; i < selectedHotel.getNombreEtoiles(); i++) {
-                            res.append("⭐");
-                        }
-                        res.append(") situé au ").append(selectedHotel.getAdresse().getNumero()).append(" ").append(selectedHotel.getAdresse().getRue()).append(" en ").append(selectedHotel.getAdresse().getPays())
-                                .append(", possède ").append(selectedHotel.getChambres().size()).append(" chambres :</b><br>");
-
-                        // Ajoutez le texte en gras au JTextPane
-                        JTextPane hotelInfoTextPane = new JTextPane();
-                        hotelInfoTextPane.setContentType("text/html");
-                        hotelInfoTextPane.setEditable(false);
-                        hotelInfoTextPane.setText(res.toString());
-
-                        // Ajoutez le JTextPane à un JScrollPane et au panneau
-                        JScrollPane scrollPaneHotel = new JScrollPane(hotelInfoTextPane);
-                        hotelInfoPanel.add(scrollPaneHotel);
-
-                        // Créez un JLabel pour afficher l'image
-                        JLabel hotelImageLabel = new JLabel();
-                        String base64Image = selectedHotel.getImageHotel();
-                        byte[] imageBytes = Base64.getDecoder().decode(base64Image);
-                        ImageIcon hotelImageIcon = new ImageIcon(imageBytes);
-                        // Redimensionnez l'image pour harmoniser la taille
-                        Image scaledImage = hotelImageIcon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
-                        hotelImageIcon = new ImageIcon(scaledImage);
-                        hotelImageLabel.setIcon(hotelImageIcon);
-                        hotelInfoPanel.add(hotelImageLabel);
-
-                        // Créez une liste pour afficher les détails des chambres
-                        DefaultListModel<String> chambreListModel = new DefaultListModel<>();
-                        JList<String> chambreList = new JList<>(chambreListModel);
-                        for (Chambre chambre : selectedHotel.getChambres()) {
-                            chambreListModel.addElement("- Chambre n°" + chambre.getNumero() + " pour " + chambre.getNombreLits() + " personnes, coûte " + chambre.getPrix() + "€ la nuit.");
-                        }
-
-                        chambreList.addListSelectionListener(c -> {
-                            if (!c.getValueIsAdjusting()) {
-                                int selectedChambreIndex = chambreList.getSelectedIndex();
-                                if (selectedChambreIndex != -1) {
-                                    Chambre selectedChambre = selectedHotel.getChambres().get(selectedChambreIndex);
-
-                                    // Créez un panneau pour afficher les informations de la chambre
-                                    JPanel chambreInfoPanel = new JPanel();
-                                    chambreInfoPanel.setLayout(new BoxLayout(chambreInfoPanel, BoxLayout.Y_AXIS));
-
-                                    // Ajoutez les détails de la chambre à un composant JTextPane avec HTML
-                                    String resChambre = "<html><b>Chambre n°" + selectedChambre.getNumero() + "</b><br>" + "Prix : " + selectedChambre.getPrix() + "€<br>" +
-                                            "Nombre de lits : " + selectedChambre.getNombreLits() + "<br>" +
-                                            "Image de la chambre : </html>";
-
-                                    // Ajoutez le texte au JTextPane
-                                    JTextPane chambreInfoTextPane = new JTextPane();
-                                    chambreInfoTextPane.setContentType("text/html");
-                                    chambreInfoTextPane.setEditable(false);
-                                    chambreInfoTextPane.setText(resChambre);
-                                    chambreInfoPanel.add(chambreInfoTextPane);
-
-                                    // Ajoutez l'image de la chambre
-                                    JLabel chambreImageLabel = new JLabel();
-                                    String base64ImageChambre = selectedChambre.getImageChambre();
-                                    byte[] imageBytesChambre = Base64.getDecoder().decode(base64ImageChambre);
-                                    ImageIcon chambreImageIcon = new ImageIcon(imageBytesChambre);
-                                    // Redimensionnez l'image pour harmoniser la taille
-                                    Image scaledImageChambre = chambreImageIcon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
-                                    chambreImageIcon = new ImageIcon(scaledImageChambre);
-                                    chambreImageLabel.setIcon(chambreImageIcon);
-                                    chambreInfoPanel.add(chambreImageLabel);
-
-                                    // Affichez le panneau d'informations de la chambre dans une fenêtre
-                                    JFrame chambreInfoFrame = new JFrame("Détails de la chambre " + selectedChambre.getNumero());
-                                    chambreInfoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                                    chambreInfoFrame.getContentPane().add(chambreInfoPanel);
-                                    chambreInfoFrame.pack();
-                                    chambreInfoFrame.setLocationRelativeTo(null);
-                                    chambreInfoFrame.setVisible(true);
-
-                                    System.out.println("Chambre sélectionnée : " + selectedChambre.getNumero());
-                                }
-                            }
-                        });
-
-                        hotelInfoPanel.add(new JScrollPane(chambreList));
-
-                        // Affichez le panneau d'informations de l'hôtel dans une boîte de dialogue
-                        JOptionPane.showMessageDialog(frame, hotelInfoPanel, "Détails de l'hôtel " + selectedHotel.getIdentifiant() + " : ", JOptionPane.PLAIN_MESSAGE);
-
-                    }
-                }
-            });
+            // Créer une instance de HotelListSelectionListener
+            HotelListSelectionListener hotelListSelectionListener = new HotelListSelectionListener(frame);
+            // Ajouter l'écouteur à la liste d'hôtels
+            hotelListUI.addListSelectionListener(hotelListSelectionListener);
 
             // Événement pour la connection d'un utilisateur
             connectionButton.addActionListener(e -> {
-                LoginDialog loginDialog = new LoginDialog(frame, gestionnaireUser);
-                loginDialog.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        if (userConnecte == null) {
+                if (userConnecte != null) {
+                    userConnecte = null;
+                    connectionButton.setText("Connection");
+                } else {
+                    LoginDialog loginDialog = new LoginDialog(frame, gestionnaireUser);
+                    loginDialog.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
                             userConnecte = loginDialog.getUserConnecte();
                             if (userConnecte != null) {
                                 connectionButton.setText("Déconnexion");
                             }
                         }
-                        else {
-                            userConnecte = null;
-                            connectionButton.setText("Connection");
-                        }
-                    }
-                });
-                loginDialog.setVisible(true);
+                    });
+                    loginDialog.setVisible(true);
+                }
             });
 
             // Événement pour rechercher des offres
@@ -253,7 +173,7 @@ public class Interface {
                     // Ouvrir la fenêtre de recherche
                     SearchDialog searchDialog = null;
                     try {
-                        searchDialog = new SearchDialog(frame, selectedAgence, userConnecte, proxyAgences);
+                        searchDialog = new SearchDialog(frame, selectedAgence, userConnecte, proxyAgences, listeVilles);
                     } catch (MalformedURLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -278,7 +198,7 @@ public class Interface {
 
                         proxyInscription.inscription(userConnecte.getLogin(), userConnecte.getPassword());
 
-                        JOptionPane.showMessageDialog(frame, "Vous êtes maintenant inscrit dans l'agence " + selectedAgence + " !");
+                        JOptionPane.showMessageDialog(frame, "Vous êtes maintenant inscrit dans l'agence " + agenceComboBox.getSelectedItem() + " !");
                     } catch (MalformedURLException ex) {
                         throw new RuntimeException(ex);
                     } catch (UserAlreadyExistsException_Exception ex) {

@@ -28,6 +28,58 @@ public interface HotelServiceIdentification {
 
     /**
      * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     * @throws HotelNotFoundException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "afficherHotelSimple", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelSimple")
+    @ResponseWrapper(localName = "afficherHotelSimpleResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelSimpleResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimpleRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimpleResponse", fault = {
+        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimple/Fault/HotelNotFoundException")
+    })
+    public String afficherHotelSimple(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundException_Exception
+    ;
+
+    /**
+     * 
+     * @return
+     *     returns java.util.List<java.lang.String>
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getIdentifiantHotels", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetIdentifiantHotels")
+    @ResponseWrapper(localName = "getIdentifiantHotelsResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetIdentifiantHotelsResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/getIdentifiantHotelsRequest", output = "http://service.archi.m1/HotelServiceIdentification/getIdentifiantHotelsResponse")
+    public List<String> getIdentifiantHotels();
+
+    /**
+     * 
+     * @param arg0
+     * @return
+     *     returns java.lang.String
+     * @throws HotelNotFoundException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "afficherReservationsHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherReservationsHotel")
+    @ResponseWrapper(localName = "afficherReservationsHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherReservationsHotelResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotelResponse", fault = {
+        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotel/Fault/HotelNotFoundException")
+    })
+    public String afficherReservationsHotel(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0)
+        throws HotelNotFoundException_Exception
+    ;
+
+    /**
+     * 
      * @return
      *     returns boolean
      * @throws HotelAlreadyExistsException_Exception
@@ -67,51 +119,19 @@ public interface HotelServiceIdentification {
 
     /**
      * 
-     * @return
-     *     returns java.util.List<java.lang.String>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getIdentifiantHotels", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetIdentifiantHotels")
-    @ResponseWrapper(localName = "getIdentifiantHotelsResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetIdentifiantHotelsResponse")
-    @Action(input = "http://service.archi.m1/HotelServiceIdentification/getIdentifiantHotelsRequest", output = "http://service.archi.m1/HotelServiceIdentification/getIdentifiantHotelsResponse")
-    public List<String> getIdentifiantHotels();
-
-    /**
-     * 
      * @param arg0
      * @return
-     *     returns java.lang.String
+     *     returns m1.archi.hotel.Hotel
      * @throws HotelNotFoundException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "afficherHotelSimple", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelSimple")
-    @ResponseWrapper(localName = "afficherHotelSimpleResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherHotelSimpleResponse")
-    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimpleRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimpleResponse", fault = {
-        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherHotelSimple/Fault/HotelNotFoundException")
+    @RequestWrapper(localName = "getHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetHotel")
+    @ResponseWrapper(localName = "getHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetHotelResponse")
+    @Action(input = "http://service.archi.m1/HotelServiceIdentification/getHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/getHotelResponse", fault = {
+        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/getHotel/Fault/HotelNotFoundException")
     })
-    public String afficherHotelSimple(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0)
-        throws HotelNotFoundException_Exception
-    ;
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns java.lang.String
-     * @throws HotelNotFoundException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "afficherReservationsHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherReservationsHotel")
-    @ResponseWrapper(localName = "afficherReservationsHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.AfficherReservationsHotelResponse")
-    @Action(input = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotelResponse", fault = {
-        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherReservationsHotel/Fault/HotelNotFoundException")
-    })
-    public String afficherReservationsHotel(
+    public Hotel getHotel(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0)
         throws HotelNotFoundException_Exception
@@ -132,26 +152,6 @@ public interface HotelServiceIdentification {
         @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/afficherHotel/Fault/HotelNotFoundException")
     })
     public String afficherHotel(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0)
-        throws HotelNotFoundException_Exception
-    ;
-
-    /**
-     * 
-     * @param arg0
-     * @return
-     *     returns m1.archi.hotel.Hotel
-     * @throws HotelNotFoundException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getHotel", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetHotel")
-    @ResponseWrapper(localName = "getHotelResponse", targetNamespace = "http://service.archi.m1/", className = "m1.archi.hotel.GetHotelResponse")
-    @Action(input = "http://service.archi.m1/HotelServiceIdentification/getHotelRequest", output = "http://service.archi.m1/HotelServiceIdentification/getHotelResponse", fault = {
-        @FaultAction(className = HotelNotFoundException_Exception.class, value = "http://service.archi.m1/HotelServiceIdentification/getHotel/Fault/HotelNotFoundException")
-    })
-    public Hotel getHotel(
         @WebParam(name = "arg0", targetNamespace = "")
         String arg0)
         throws HotelNotFoundException_Exception

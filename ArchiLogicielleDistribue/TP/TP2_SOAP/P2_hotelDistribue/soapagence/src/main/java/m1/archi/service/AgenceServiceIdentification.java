@@ -29,6 +29,9 @@ public interface AgenceServiceIdentification {
     ArrayList<String> getListeIdentifiantHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException;
 
     @WebMethod
+    int getReduction(String identifiantAgence, String identifiantHotel) throws AgenceNotFoundException;
+
+    @WebMethod
     ArrayList<Hotel> getListeHotelsPartenaire(String identifiantAgence) throws AgenceNotFoundException;
 
     @WebMethod
