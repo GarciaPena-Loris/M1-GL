@@ -26,5 +26,13 @@ public class User {
         return login;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
 }
 

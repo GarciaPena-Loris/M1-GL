@@ -25,7 +25,7 @@ public class HotelRepositoryImpl implements HotelRepository {
     /* CONSTRUCTORS */
     public HotelRepositoryImpl() throws IOException {
         // Création d'un nombre aléatoire d'hôtels (entre 50 et 150)
-        int nombreHotels = (int) (Math.random() * 100) + 100;
+        int nombreHotels = (int) (Math.random() * 100) + 10;
 
         System.out.println("Génération de " + nombreHotels + " hôtels aléatoires : \n");
 
@@ -80,15 +80,17 @@ public class HotelRepositoryImpl implements HotelRepository {
         Hotel hotel = new Hotel(identifiantHotel, nomHotel, adresseHotel, nombreEtoiles, base64ImageHotel);
 
         // -- Génération de chambres aléatoires
+        File imageChambre = null;
+        String base64ImageChambre = "";
+        byte[] imageBytes = null;
         int nombreChambres = RandomDonneStockage.randomNombreChambres();
         for (int j = 1; j <= nombreChambres; j++) {
             if (j != 13) {
                 int nombreLits = RandomDonneStockage.randomNombreLits();
                 int prix = RandomDonneStockage.randomPrix(nombreEtoiles, nombreLits);
-                File imageChambre = RandomDonneStockage.randomImageChambre(nombreEtoiles);
-                String base64ImageChambre = "";
+                imageChambre = RandomDonneStockage.randomImageChambre(nombreEtoiles);
                 if (!(imageChambre == null)) {
-                    byte[] imageBytes = readFileToByteArray(imageChambre);
+                    imageBytes = readFileToByteArray(imageChambre);
                     base64ImageChambre = Base64.encodeBase64String(imageBytes);
                 }
                 Chambre chambre = new Chambre(j, prix, nombreLits, identifiantHotel, base64ImageChambre);
