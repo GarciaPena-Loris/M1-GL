@@ -2,24 +2,16 @@ package m1.archi.main;
 
 import m1.archi.agence.*;
 
-import javax.swing.*;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
-import org.jdatepicker.impl.JDatePanelImpl;
-import org.jdatepicker.impl.JDatePickerImpl;
-import org.jdatepicker.impl.UtilDateModel;
 
 public class UtilisationAgences {
     private User userConnecte;
@@ -44,12 +36,10 @@ public class UtilisationAgences {
             if (gestionnaireUser.getUser(login, motdepasse) != null) {
                 userConnecte = gestionnaireUser.getUser(login, motdepasse);
                 System.out.println("Vous êtes connecté en tant que " + userConnecte.getLogin());
-            }
-            else {
+            } else {
                 System.out.println("Mot de passe incorrect !");
             }
-        }
-        else {
+        } else {
             System.out.println("Vous n'avez pas de compte, voulez-vous en créer un ? (oui/non)");
             String reponse = scanner.nextLine();
             if (reponse.equals("oui")) {
@@ -57,8 +47,7 @@ public class UtilisationAgences {
                 userConnecte = new User(login, motdepasse);
                 gestionnaireUser.addUser(userConnecte);
                 System.out.println("Votre compte a bien été créé !");
-            }
-            else {
+            } else {
                 System.out.println("Vous n'avez pas de compte, vous ne pouvez pas utiliser l'application");
             }
         }
@@ -315,7 +304,6 @@ public class UtilisationAgences {
             String CCV = scanner.nextLine();
             Reservation reservation = proxyReservation.reserverChambresHotel(userConnecte.getLogin(), userConnecte.getPassword(), offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, dateExpiration, CCV);
             System.out.println("La Chambre a bien été réservé \n");
-
             userConnecte.addReservation(reservation);
         }
     }
