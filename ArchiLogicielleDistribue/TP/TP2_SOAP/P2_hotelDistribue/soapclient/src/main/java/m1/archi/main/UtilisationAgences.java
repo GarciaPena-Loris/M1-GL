@@ -3,6 +3,7 @@ package m1.archi.main;
 import m1.archi.agence.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeListener;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -20,6 +21,7 @@ import java.util.*;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
+import org.jdatepicker.impl.UtilCalendarModel;
 
 public class UtilisationAgences {
     private static String loginUser = "";
@@ -314,62 +316,82 @@ public class UtilisationAgences {
 
     private static class SearchDialog extends JDialog {
         private JTextField villeField;
-        private JTextField etoilesField;
-        private JTextField litsField;
+        private JTextField nbEtoilesField;
+        private JTextField nbPersonneField;
         private JDatePickerImpl dateArriveePicker;
         private JDatePickerImpl dateDepartPicker;
-
         private JTextField prixMinField;
-
         private JTextField prixMaxField;
-
-        private JTextField loginUserField;
 
         public SearchDialog(JFrame parent) throws MalformedURLException {
             super(parent, "Rechercher une Offre", true);
 
             // Initialisation des composants
             villeField = new JTextField(10);
-            etoilesField = new JTextField(10);
-            litsField = new JTextField(10);
-            UtilDateModel dateArriveeModel = new UtilDateModel();
-            JDatePanelImpl dateArriveePanel = new JDatePanelImpl(dateArriveeModel, new Properties());
-            dateArriveePicker = new JDatePickerImpl(dateArriveePanel, new DateLabelFormatter());
+            nbEtoilesField = new JTextField(10);
+            nbPersonneField = new JTextField(10);
 
-            // Configurer le date picker pour la date de départ
+            UtilDateModel dateArriveeModel = new UtilDateModel();
             UtilDateModel dateDepartModel = new UtilDateModel();
-            JDatePanelImpl dateDepartPanel = new JDatePanelImpl(dateDepartModel, new Properties());
-            dateDepartPicker = new JDatePickerImpl(dateDepartPanel, new DateLabelFormatter());
+
+            dateArriveePicker = new JDatePickerImpl(new JDatePanelImpl(dateArriveeModel, new Properties()), new DateLabelFormatter());
+            dateDepartPicker = new JDatePickerImpl(new JDatePanelImpl(dateDepartModel, new Properties()), new DateLabelFormatter());
 
             prixMinField = new JTextField(10);
             prixMaxField = new JTextField(10);
-            loginUserField = new JTextField(10);
 
             URL url = new URL("http://localhost:8090/agencesservice/" + selectedAgence + "/consultation");
             AgenceServiceConsultationImplService agenceServiceConsultation = new AgenceServiceConsultationImplService(url);
             AgenceServiceConsultation proxyConsultation = agenceServiceConsultation.getAgenceServiceConsultationImplPort();
 
             JButton searchButton = new JButton("Rechercher");
+
             searchButton.addActionListener(e -> {
                 // Récupérer les valeurs saisies
                 String ville = villeField.getText();
-                int nombreEtoiles = Integer.parseInt(etoilesField.getText());
-                int nombrePersonnes = Integer.parseInt(litsField.getText());
+                int nombreEtoiles = Integer.parseInt(nbEtoilesField.getText());
+                int nombrePersonnes = Integer.parseInt(nbPersonneField.getText());
                 int prixMin = Integer.parseInt(prixMinField.getText());
                 int prixMax = Integer.parseInt(prixMaxField.getText());
-                String loginUser = loginUserField.getText();
 
                 // Convertir les champs de date en XMLGregorianCalendar
-                Date dateArrivee = (Date) dateArriveePicker.getModel().getValue();
-                Date dateDepart = (Date) dateDepartPicker.getModel().getValue();
+                Date dateArrivee = dateArriveeModel.getValue();
+                Date dateDepart = dateDepartModel.getValue();
 
-
-                // Appeler la fonction de recherche avec ces valeurs
+                //Convertir les date en XMLGregorianCalendar
+                GregorianCalendar greg = GregorianCalendar.from(ZonedDateTime.of(dateArrivee.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(), ZoneId.systemDefault()));
+                XMLGregorianCalendar xmlDateArrivee = null;
                 try {
-                    rechercherOffre(proxyConsultation, ville, nombreEtoiles, nombrePersonnes, dateArrivee, dateDepart, prixMin, prixMax, loginUser);
-                } catch (DateNonValideException_Exception | UserNotFoundException_Exception |
-                         DatatypeConfigurationException ex) {
-                    throw new RuntimeException(ex);
+                    xmlDateArrivee = DatatypeFactory.newInstance().newXMLGregorianCalendar(greg);
+                } catch (DatatypeConfigurationException ex) {
+                    ex.printStackTrace();
+                }
+                greg = GregorianCalendar.from(ZonedDateTime.of(dateDepart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate().atStartOfDay(), ZoneId.systemDefault()));
+                XMLGregorianCalendar xmlDateDepart = null;
+                try {
+                    xmlDateDepart = DatatypeFactory.newInstance().newXMLGregorianCalendar(greg);
+                } catch (DatatypeConfigurationException ex) {
+                    ex.printStackTrace();
+                }
+
+                System.out.println("La date d'arrivée est :  " + xmlDateArrivee);
+                System.out.println("La date de départ est :  " + xmlDateDepart);
+
+
+                // Faire la recherche
+                ArrayList<Offres> listeOffress = new ArrayList<>();
+                try {
+                    listeOffress = (ArrayList<Offres>) proxyConsultation.listeChoisOffresHotelCriteres(loginUser, passwordUser, ville, xmlDateArrivee, xmlDateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonnes);
+                    System.out.println(listeOffress.size());
+
+                    // Afficher les résultats
+                    new ResultatsFrame(listeOffress);
+                } catch (DateNonValideException_Exception ex) {
+                    System.out.println("⚠\uFE0F Vous n'avez pas renseigné de date valide.");
+                } catch (UserNotFoundException_Exception ex) {
+                    System.out.println("⚠\uFE0F Vous n'avez pas de compte dans cette agence.");
+                } catch (Exception ex) {
+                    System.out.println("⚠\uFE0F Probleme lors de la chercher de chambres :" + ex.getMessage());
                 }
 
                 // Fermer la fenêtre après la recherche
@@ -381,9 +403,9 @@ public class UtilisationAgences {
             panel.add(new JLabel("Ville:"));
             panel.add(villeField);
             panel.add(new JLabel("Nombre d'étoiles:"));
-            panel.add(etoilesField);
+            panel.add(nbEtoilesField);
             panel.add(new JLabel("Nombre de lits:"));
-            panel.add(litsField);
+            panel.add(nbPersonneField);
             panel.add(new JLabel("Date d'arrivée:"));
             panel.add(dateArriveePicker);
             panel.add(new JLabel("Date de départ:"));
@@ -402,28 +424,37 @@ public class UtilisationAgences {
             setSize(400, 400);
             setLocationRelativeTo(parent);
         }
+    }
 
-        private void rechercherOffre(AgenceServiceConsultation proxyConsultation, String ville, int nombreEtoiles, int nombrePersonnes, Date dateArrivee, Date dateDepart, int prixMin, int prixMax, String loginUser) throws DateNonValideException_Exception, UserNotFoundException_Exception, DatatypeConfigurationException {
-            // Appeler la fonction de recherche ici en utilisant les paramètres fournis
-            XMLGregorianCalendar dateArriveeXml = toXMLGregorianCalendar(dateArrivee);
-            XMLGregorianCalendar dateDepartXml = toXMLGregorianCalendar(dateDepart);
+    public static class ResultatsFrame extends JFrame {
 
-            ArrayList<Offres> listeOffress = new ArrayList<>();
-            listeOffress = (ArrayList<Offres>) proxyConsultation.listeChoisOffresHotelCriteres(loginUser, passwordUser, ville, dateArriveeXml, dateDepartXml, prixMin, prixMax, nombreEtoiles, nombrePersonnes);
+        public ResultatsFrame(ArrayList<Offres> listeOffres) {
+            setTitle("Résultats de la recherche");
+            setSize(800, 600);
 
-            JOptionPane.showMessageDialog(this, "Recherche d'offres pour " + ville + " avec " + nombreEtoiles + " étoiles, " + nombrePersonnes + " lits, arrivée le " + dateArrivee + ", départ le " + dateDepart + ", prix entre " + prixMin + " et " + prixMax + ", pour l'utilisateur " + loginUser + ".");
+            // Créez un modèle de liste pour afficher les offres
+            DefaultListModel<String> offresListModel = new DefaultListModel<>();
+            JList<String> offresList = new JList<>(offresListModel);
+
+            // Ajoutez les offres au modèle de liste
+            for (Offres offre : listeOffres) {
+                offresListModel.addElement(offre.toString()); // Remplacez cela par la représentation souhaitée de l'offre
+            }
+
+            // Ajoutez la liste au panneau de contenu
+            JScrollPane scrollPane = new JScrollPane(offresList);
+            getContentPane().add(scrollPane);
+
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLocationRelativeTo(null);
+            setVisible(true);
         }
     }
 
-    private static XMLGregorianCalendar toXMLGregorianCalendar(Date date) throws DatatypeConfigurationException {
-        GregorianCalendar cal = new GregorianCalendar();
-        cal.setTime(date);
-        return DatatypeFactory.newInstance().newXMLGregorianCalendar(cal);
-    }
 
     private static class DateLabelFormatter extends JFormattedTextField.AbstractFormatter {
-        private final String datePattern = "yyyy-MM-dd";
-        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern);
+        private final String datePattern = "dd MMMM yyyy";
+        private final SimpleDateFormat dateFormatter = new SimpleDateFormat(datePattern, Locale.getDefault());
 
         @Override
         public Object stringToValue(String text) throws ParseException {
@@ -431,11 +462,74 @@ public class UtilisationAgences {
         }
 
         @Override
-        public String valueToString(Object value) throws ParseException {
+        public String valueToString(Object value) {
             if (value != null) {
-                return dateFormatter.format(value);
+                if (value instanceof Date) {
+                    return dateFormatter.format((Date) value);
+                } else if (value instanceof GregorianCalendar) {
+                    return dateFormatter.format(((GregorianCalendar) value).getTime());
+                } else {
+                    return "Erreur...";
+                }
+            } else {
+                return "Selectionnez une date..."; // ou une représentation par défault
             }
-            return "";
+        }
+    }
+
+    private static class InscriptionDialog extends JDialog {
+        private JTextField loginField;
+        private JTextField passwordField;
+
+        public InscriptionDialog(JFrame parent) throws MalformedURLException {
+            super(parent, "Inscription", true);
+            loginField = new JTextField(10);
+            passwordField = new JTextField(10);
+
+            URL url = new URL("http://localhost:8090/agencesservice/" + selectedAgence + "/inscription");
+            UserServiceInscriptionImplService userServiceInscription = new UserServiceInscriptionImplService(url);
+            UserServiceInscription proxyInscription = userServiceInscription.getUserServiceInscriptionImplPort();
+
+            // Initialisation des composants
+            loginField = new JTextField(10);
+            passwordField = new JTextField(10);
+
+            JButton inscriptionButton = new JButton("S'inscrire");
+
+            inscriptionButton.addActionListener(e -> {
+                // Récupérer les valeurs saisies
+                String login = loginField.getText();
+                String password = passwordField.getText();
+
+                // Faire l'inscription
+                try {
+                    proxyInscription.inscription(login, password);
+                } catch (UserAlreadyExistsException_Exception ex) {
+                    System.out.println("⚠️ Vous avez déjà un compte dans cette agence.");
+                } catch (Exception ex) {
+                    System.out.println("⚠️ Erreur lors de la création de votre compte.");
+                }
+
+                // Fermer la fenêtre après la recherche
+                dispose();
+            });
+
+            // Disposition des composants dans le panneau
+            JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));  // Augmenter l'espacement entre les composants
+            panel.add(new JLabel("Login:"));
+            panel.add(loginField);
+            panel.add(new JLabel("Mot de passe:"));
+            panel.add(passwordField);
+            panel.add(new JLabel(""));
+            panel.add(inscriptionButton);
+
+            // Ajouter le panneau à la fenêtre
+            add(panel);
+
+            // Définir la taille et la position de la fenêtre
+            setSize(400, 400);
+            setLocationRelativeTo(parent);
+
         }
     }
 
@@ -481,6 +575,10 @@ public class UtilisationAgences {
             JButton searchButton = new JButton("Effectuer une recherche");
             bottomPanel.add(searchButton, BorderLayout.SOUTH);
 
+            // Étape 4 : S'incrire dans une agence
+            JButton inscriptionButton = new JButton("S'inscrire à l'agence");
+            bottomPanel.add(inscriptionButton, BorderLayout.NORTH);
+
             // Événement de sélection de l'agence
             agenceComboBox.addActionListener(e -> {
                 selectedAgence = mapAgenceNomIdentifiant.get(agenceComboBox.getSelectedItem());
@@ -511,7 +609,7 @@ public class UtilisationAgences {
                         hotelsPartenaires.sort(Comparator.comparing((Hotel hotel) -> hotel.getAdresse().getPays()).thenComparing(hotel -> hotel.getAdresse().getVille()).thenComparing(Hotel::getNombreEtoiles));
                         for (Hotel hotel : hotelsPartenaires) {
                             StringBuilder hotelString = new StringBuilder();
-                            hotelString.append("L'hotel '").append(hotel.getNom()).append("' (");
+                            hotelString.append("- L'hotel '").append(hotel.getNom()).append("' (");
                             for (int i = 0; i < hotel.getNombreEtoiles(); i++) {
                                 hotelString.append("⭐");
                             }
@@ -530,42 +628,99 @@ public class UtilisationAgences {
                         Hotel selectedHotel = hotelsPartenaires.get(selectedIndex);
 
                         // Créez un panneau pour afficher les informations de l'hôtel
-                        JPanel hotelInfoPanel = new JPanel(new BorderLayout());
+                        JPanel hotelInfoPanel = new JPanel();
+                        hotelInfoPanel.setLayout(new BoxLayout(hotelInfoPanel, BoxLayout.Y_AXIS));
 
-                        // Ajoutez les détails de l'hôtel à un composant JTextArea
-                        StringBuilder res = new StringBuilder("L'hotel '" + selectedHotel.getNom() + "' (");
+                        // Ajoutez les détails de l'hôtel à un composant JTextPane avec HTML
+                        StringBuilder res = new StringBuilder("<html><b>L'hotel '" + selectedHotel.getNom() + "' (");
                         for (int i = 0; i < selectedHotel.getNombreEtoiles(); i++) {
                             res.append("⭐");
                         }
-                        res.append("situé au ").append(selectedHotel.getAdresse()).append(", possède ").append(selectedHotel.getChambres().size()).append(" chambres :\n");
-                        JTextArea hotelInfoTextArea = new JTextArea(res.toString());
-                        hotelInfoTextArea.setWrapStyleWord(true);
-                        hotelInfoTextArea.setLineWrap(true);
-                        hotelInfoTextArea.setEditable(false);
-                        hotelInfoPanel.add(new JScrollPane(hotelInfoTextArea), BorderLayout.CENTER);
+                        res.append(") situé au ").append(selectedHotel.getAdresse().getNumero()).append(" ").append(selectedHotel.getAdresse().getRue()).append(" en ").append(selectedHotel.getAdresse().getPays())
+                                .append(", possède ").append(selectedHotel.getChambres().size()).append(" chambres :</b><br>");
+
+                        // Ajoutez le texte en gras au JTextPane
+                        JTextPane hotelInfoTextPane = new JTextPane();
+                        hotelInfoTextPane.setContentType("text/html");
+                        hotelInfoTextPane.setEditable(false);
+                        hotelInfoTextPane.setText(res.toString());
+
+                        // Ajoutez le JTextPane à un JScrollPane et au panneau
+                        JScrollPane scrollPaneHotel = new JScrollPane(hotelInfoTextPane);
+                        hotelInfoPanel.add(scrollPaneHotel);
 
                         // Créez un JLabel pour afficher l'image
                         JLabel hotelImageLabel = new JLabel();
                         String base64Image = selectedHotel.getImageHotel();
                         byte[] imageBytes = Base64.getDecoder().decode(base64Image);
                         ImageIcon hotelImageIcon = new ImageIcon(imageBytes);
+                        // Redimensionnez l'image pour harmoniser la taille
+                        Image scaledImage = hotelImageIcon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+                        hotelImageIcon = new ImageIcon(scaledImage);
                         hotelImageLabel.setIcon(hotelImageIcon);
-                        hotelInfoPanel.add(hotelImageLabel, BorderLayout.WEST);
+                        hotelInfoPanel.add(hotelImageLabel);
 
                         // Créez une liste pour afficher les détails des chambres
                         DefaultListModel<String> chambreListModel = new DefaultListModel<>();
                         JList<String> chambreList = new JList<>(chambreListModel);
                         for (Chambre chambre : selectedHotel.getChambres()) {
-                            chambreListModel.addElement(chambre.toString());
+                            chambreListModel.addElement("- Chambre n°" + chambre.getNumero() + " pour " + chambre.getNombreLits() + " personnes, coûte " + chambre.getPrix() + "€ la nuit.");
                         }
-                        hotelInfoPanel.add(new JScrollPane(chambreList), BorderLayout.SOUTH);
+
+                        chambreList.addListSelectionListener(c -> {
+                            if (!c.getValueIsAdjusting()) {
+                                int selectedChambreIndex = chambreList.getSelectedIndex();
+                                if (selectedChambreIndex != -1) {
+                                    Chambre selectedChambre = selectedHotel.getChambres().get(selectedChambreIndex);
+
+                                    // Créez un panneau pour afficher les informations de la chambre
+                                    JPanel chambreInfoPanel = new JPanel();
+                                    chambreInfoPanel.setLayout(new BoxLayout(chambreInfoPanel, BoxLayout.Y_AXIS));
+
+                                    // Ajoutez les détails de la chambre à un composant JTextPane avec HTML
+                                    String resChambre = "<html><b>Chambre n°" + selectedChambre.getNumero() + "</b><br>" + "Prix : " + selectedChambre.getPrix() + "€<br>" +
+                                            "Nombre de lits : " + selectedChambre.getNombreLits() + "<br>" +
+                                            "Image de la chambre : </html>";
+
+                                    // Ajoutez le texte au JTextPane
+                                    JTextPane chambreInfoTextPane = new JTextPane();
+                                    chambreInfoTextPane.setContentType("text/html");
+                                    chambreInfoTextPane.setEditable(false);
+                                    chambreInfoTextPane.setText(resChambre);
+                                    chambreInfoPanel.add(chambreInfoTextPane);
+
+                                    // Ajoutez l'image de la chambre
+                                    JLabel chambreImageLabel = new JLabel();
+                                    String base64ImageChambre = selectedChambre.getImageChambre();
+                                    byte[] imageBytesChambre = Base64.getDecoder().decode(base64ImageChambre);
+                                    ImageIcon chambreImageIcon = new ImageIcon(imageBytesChambre);
+                                    // Redimensionnez l'image pour harmoniser la taille
+                                    Image scaledImageChambre = chambreImageIcon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+                                    chambreImageIcon = new ImageIcon(scaledImageChambre);
+                                    chambreImageLabel.setIcon(chambreImageIcon);
+                                    chambreInfoPanel.add(chambreImageLabel);
+
+                                    // Affichez le panneau d'informations de la chambre dans une fenêtre
+                                    JFrame chambreInfoFrame = new JFrame("Détails de la chambre " + selectedChambre.getNumero());
+                                    chambreInfoFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                                    chambreInfoFrame.getContentPane().add(chambreInfoPanel);
+                                    chambreInfoFrame.pack();
+                                    chambreInfoFrame.setLocationRelativeTo(null);
+                                    chambreInfoFrame.setVisible(true);
+
+                                    System.out.println("Chambre sélectionnée : " + selectedChambre.getNumero());
+                                }
+                            }
+                        });
+
+                        hotelInfoPanel.add(new JScrollPane(chambreList));
 
                         // Affichez le panneau d'informations de l'hôtel dans une boîte de dialogue
-                        JOptionPane.showMessageDialog(null, hotelInfoPanel, "Détails de l'hôtel", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showMessageDialog(frame, hotelInfoPanel, "Détails de l'hôtel " + selectedHotel.getIdentifiant() + " : ", JOptionPane.PLAIN_MESSAGE);
+
                     }
                 }
             });
-
 
             // Événement pour rechercher des offres
             searchButton.addActionListener(e -> {
@@ -578,6 +733,22 @@ public class UtilisationAgences {
                         throw new RuntimeException(ex);
                     }
                     searchDialog.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Sélectionnez d'abord une agence.");
+                }
+            });
+
+            // Événement pour s'inscrire dans une agence
+            inscriptionButton.addActionListener(e -> {
+                if (selectedAgence != null) {
+                    // Ouvrir la fenêtre de recherche
+                    InscriptionDialog inscriptionDialog = null;
+                    try {
+                        inscriptionDialog = new InscriptionDialog(frame);
+                    } catch (MalformedURLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    inscriptionDialog.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(frame, "Sélectionnez d'abord une agence.");
                 }

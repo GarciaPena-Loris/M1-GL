@@ -74,7 +74,7 @@ public class HotelRepositoryImpl implements HotelRepository {
         if (!(imageHotel == null)) {
             byte[] imageBytes = readFileToByteArray(imageHotel);
             // Encoder l'image en base64
-            String base64Image = Base64.encodeBase64String(imageBytes);
+            base64ImageHotel = Base64.encodeBase64String(imageBytes);
         }
 
         Hotel hotel = new Hotel(identifiantHotel, nomHotel, adresseHotel, nombreEtoiles, base64ImageHotel);
