@@ -1,6 +1,11 @@
 package m1.archi.resthotel.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+@Entity
 public class Chambre {
+    @Id
     private int numero;
     private double prix;
     private int nombreLits;
@@ -43,5 +48,4 @@ public class Chambre {
         String res = "Chambre " + this.numero + " (" + this.nombreLits + " lits), coute " + this.prix + " euros";
         return res;
     }
-
 }

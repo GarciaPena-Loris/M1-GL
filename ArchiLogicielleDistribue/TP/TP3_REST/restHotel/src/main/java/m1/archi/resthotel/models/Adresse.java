@@ -1,6 +1,15 @@
 package m1.archi.resthotel.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+
+@Entity
 public class Adresse {
+
+    @Id
+    @GeneratedValue
+    private Long idAdresse;
     private String pays;
     private String ville;
     private String rue;
@@ -62,5 +71,13 @@ public class Adresse {
     public String toString() {
         String res = this.numero + " " + this.rue + " à " + this.ville + " (" + this.pays + ")";
         return res;
+    }
+
+    public void setIdAdresse(Long idAdresse) {
+        this.idAdresse = idAdresse;
+    }
+
+    public Long getIdAdresse() {
+        return idAdresse;
     }
 }

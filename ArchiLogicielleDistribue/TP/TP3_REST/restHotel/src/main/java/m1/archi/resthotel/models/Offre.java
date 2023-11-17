@@ -1,15 +1,24 @@
 package m1.archi.resthotel.models;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.Date;
 
+@Entity
 public class Offre {
+
+    @Id
+    @GeneratedValue
+    private Long idOffre;
     private int identifiant;
     private int nombreLitsTotal;
     private double prix;
     private Date dateArrivee;
     private Date dateDepart;
+    @ManyToMany
     private ArrayList<Chambre> chambres;
+    @ManyToOne
     private Hotel hotel;
 
     public Offre() {
@@ -79,5 +88,13 @@ public class Offre {
 
     public void setHotel(Hotel hotel) {
         this.hotel = hotel;
+    }
+
+    public void setIdOffre(Long idOffre) {
+        this.idOffre = idOffre;
+    }
+
+    public Long getIdOffre() {
+        return idOffre;
     }
 }

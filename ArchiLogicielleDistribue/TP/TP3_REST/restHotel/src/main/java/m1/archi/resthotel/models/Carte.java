@@ -1,12 +1,14 @@
 package m1.archi.resthotel.models;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
 @Entity
 public class Carte {
     @Id
-    private Long id;
+    @GeneratedValue
+    private Long idCarte;
     private String nom;
     private String numero;
     private String dateExpiration;
@@ -54,11 +56,11 @@ public class Carte {
         CCV = cCV;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdCarte(Long idCarte) {
+        this.idCarte = idCarte;
     }
 
-    public Long getId() {
-        return id;
+    public Long getIdCarte() {
+        return idCarte;
     }
 }

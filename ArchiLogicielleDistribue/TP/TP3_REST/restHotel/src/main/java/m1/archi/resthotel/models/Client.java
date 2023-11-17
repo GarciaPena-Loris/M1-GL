@@ -1,14 +1,21 @@
 package m1.archi.resthotel.models;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 
+@Entity
 public class Client {
+    @Id
+    @GeneratedValue
+    private Long idClient;
     private String nom;
     private String prenom;
     private String email;
     private String telephone;
+    @OneToOne
     private Carte carte;
-
+    @OneToMany
     private ArrayList<Reservation> historiqueReservations;
 
     public Client() {
@@ -83,7 +90,6 @@ public class Client {
     public String toString() {
         String res = this.nom + " " + this.prenom + " (" + this.email + ")\n";
         res += "Carte " + this.carte.getNumero() + "\n";
-        res += "Réservations en cours : ";
         res += "\nHistorique des réservations : ";
         if (this.historiqueReservations.size() == 0) {
             res += "aucune";
@@ -93,5 +99,13 @@ public class Client {
             }
         }
         return res;
+    }
+
+    public void setIdClient(Long idClient) {
+        this.idClient = idClient;
+    }
+
+    public Long getIdClient() {
+        return idClient;
     }
 }

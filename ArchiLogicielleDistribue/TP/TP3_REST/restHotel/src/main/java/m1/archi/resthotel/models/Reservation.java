@@ -1,15 +1,24 @@
 package m1.archi.resthotel.models;
 
-import m1.archi.exception.DateNonValideException;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import m1.archi.resthotel.exception.DateNonValideException;
 
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Random;
 
+@Entity
 public class Reservation {
+    @Id
     private String numero;
+    @ManyToOne
     private Hotel hotel;
+    @ManyToMany
     private ArrayList<Chambre> chambresReservees;
+    @ManyToOne
     private Client clientPrincipal;
     private Date dateArrivee;
     private Date dateDepart;

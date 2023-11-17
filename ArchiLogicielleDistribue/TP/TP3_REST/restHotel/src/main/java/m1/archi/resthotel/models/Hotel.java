@@ -1,16 +1,26 @@
 package m1.archi.resthotel.models;
 
-import m1.archi.exception.DateNonValideException;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import m1.archi.resthotel.exception.DateNonValideException;
 
 import java.util.*;
 
+@Entity
 public class Hotel {
+    @Id
     private String identifiant;
     private String nom;
+    @OneToOne
     private Adresse adresse;
     private int nombreEtoiles;
+    @OneToMany
     private ArrayList<Chambre> chambres;
+    @OneToMany
     private ArrayList<Reservation> reservations;
+    @OneToMany
     private ArrayList<Offre> offres;
 
     public Hotel() {
