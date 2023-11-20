@@ -4,11 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 
+import java.util.Objects;
+
 @Entity
 public class Carte {
     @Id
     @GeneratedValue
-    private Long idCarte;
+    private long idCarte;
     private String nom;
     private String numero;
     private String dateExpiration;
@@ -16,12 +18,20 @@ public class Carte {
 
     public Carte() {
     }
-    
+
     public Carte(String nom, String numero, String dateExpiration, String CCV) {
         this.nom = nom;
         this.numero = numero;
         this.dateExpiration = dateExpiration;
         this.CCV = CCV;
+    }
+
+    public long getIdCarte() {
+        return idCarte;
+    }
+
+    public void setIdCarte(long idCarte) {
+        this.idCarte = idCarte;
     }
 
     public String getNom() {
@@ -56,11 +66,27 @@ public class Carte {
         CCV = cCV;
     }
 
-    public void setIdCarte(Long idCarte) {
-        this.idCarte = idCarte;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Carte carte = (Carte) o;
+        return getIdCarte() == carte.getIdCarte() && Objects.equals(getNom(), carte.getNom()) && Objects.equals(getNumero(), carte.getNumero()) && Objects.equals(getDateExpiration(), carte.getDateExpiration()) && Objects.equals(getCCV(), carte.getCCV());
     }
 
-    public Long getIdCarte() {
-        return idCarte;
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdCarte(), getNom(), getNumero(), getDateExpiration(), getCCV());
+    }
+
+    @Override
+    public String toString() {
+        return "Carte{" +
+                "idCarte=" + idCarte +
+                ", nom='" + nom + '\'' +
+                ", numero='" + numero + '\'' +
+                ", dateExpiration='" + dateExpiration + '\'' +
+                ", CCV='" + CCV + '\'' +
+                '}';
     }
 }

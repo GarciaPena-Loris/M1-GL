@@ -3,12 +3,13 @@ package m1.archi.resthotel.models;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @Entity
 public class Client {
     @Id
     @GeneratedValue
-    private Long idClient;
+    private long idClient;
     private String nom;
     private String prenom;
     private String email;
@@ -20,7 +21,7 @@ public class Client {
 
     public Client() {
     }
-    
+
     public Client(String nom, String prenom, String email, String telephone, Carte carte) {
         this.nom = nom;
         this.prenom = prenom;
@@ -29,6 +30,14 @@ public class Client {
         this.carte = carte;
 
         this.historiqueReservations = new ArrayList<Reservation>();
+    }
+
+    public long getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(long idClient) {
+        this.idClient = idClient;
     }
 
     public String getNom() {
@@ -85,27 +94,31 @@ public class Client {
         this.historiqueReservations.add(reservation);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Client client = (Client) o;
+        return Objects.equals(getIdClient(), client.getIdClient()) && Objects.equals(getNom(), client.getNom()) && Objects.equals(getPrenom(), client.getPrenom()) && Objects.equals(getEmail(), client.getEmail()) && Objects.equals(getTelephone(), client.getTelephone()) && Objects.equals(getCarte(), client.getCarte()) && Objects.equals(getHistoriqueReservations(), client.getHistoriqueReservations());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdClient(), getNom(), getPrenom(), getEmail(), getTelephone(), getCarte(), getHistoriqueReservations());
+    }
 
     @Override
     public String toString() {
-        String res = this.nom + " " + this.prenom + " (" + this.email + ")\n";
-        res += "Carte " + this.carte.getNumero() + "\n";
-        res += "\nHistorique des réservations : ";
-        if (this.historiqueReservations.size() == 0) {
-            res += "aucune";
+        StringBuilder res = new StringBuilder(this.nom + " " + this.prenom + " (" + this.email + ")\n");
+        res.append("Carte ").append(this.carte.getNumero()).append("\n");
+        res.append("\nHistorique des réservations : ");
+        if (this.historiqueReservations.isEmpty()) {
+            res.append("aucune");
         } else {
             for (Reservation reservation : this.historiqueReservations) {
-                res += reservation.getNumero() + " ";
+                res.append(reservation.getIdReservation()).append(" ");
             }
         }
-        return res;
-    }
-
-    public void setIdClient(Long idClient) {
-        this.idClient = idClient;
-    }
-
-    public Long getIdClient() {
-        return idClient;
+        return res.toString();
     }
 }

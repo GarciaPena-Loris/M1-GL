@@ -1,23 +1,21 @@
 package m1.archi.resthotel.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import m1.archi.resthotel.exception.DateNonValideException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import m1.archi.resthotel.exceptions.DateNonValideException;
 
-import java.util.Date;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 @Entity
 public class Reservation {
     @Id
-    private String numero;
+    @GeneratedValue
+    private long idReservation;
     @ManyToOne
+    @JsonIgnore
     private Hotel hotel;
     @ManyToMany
-    private ArrayList<Chambre> chambresReservees;
+    private List<Chambre> chambresReservees;
     @ManyToOne
     private Client clientPrincipal;
     private Date dateArrivee;
@@ -29,19 +27,18 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(String numero, Hotel hotel, ArrayList<Chambre> chambresReservees, Client clientPrincipal,
+    public Reservation(Hotel hotel, List<Chambre> chambresReservees, Client clientPrincipal,
                        Date dateArrivee, Date dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
         if (dateArrivee.after(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
-        this.numero = numero;
         this.hotel = hotel;
         this.chambresReservees = chambresReservees;
         this.clientPrincipal = clientPrincipal;
         this.dateArrivee = dateArrivee;
         this.dateDepart = dateDepart;
         this.nombrePersonnes = nombrePersonnes;
-        int montantReservation = 0;
+        double montantReservation = 0;
 
         long millisecondsPerDay = 24 * 60 * 60 * 1000;
         long daysDifference = (dateDepart.getTime() - dateArrivee.getTime()) / millisecondsPerDay;
@@ -50,7 +47,7 @@ public class Reservation {
             montantReservation += chambre.getPrix() * daysDifference;
         }
         if (petitDejeuner) {
-            montantReservation += (hotel.getNombreEtoiles() * (new Random().nextInt(3) + 5)) * nombrePersonnes
+            montantReservation += ((long) hotel.getNombreEtoiles() * (new Random().nextInt(3) + 5)) * nombrePersonnes
                     * daysDifference;
         }
         this.montantReservation = montantReservation;
@@ -58,12 +55,12 @@ public class Reservation {
     }
 
     // #region Getters and Setters
-    public String getNumero() {
-        return numero;
+    public long getIdReservation() {
+        return idReservation;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public void setIdReservation(long idReservation) {
+        this.idReservation = idReservation;
     }
 
     public Hotel getHotel() {
@@ -74,19 +71,27 @@ public class Reservation {
         this.hotel = hotel;
     }
 
-    public ArrayList<Chambre> getChambresReservees() {
+    public List<Chambre> getChambresReservees() {
         return chambresReservees;
     }
 
-    public void setChambresReservees(ArrayList<Chambre> chambresReservees) {
+    public void setChambresReservees(List<Chambre> chambresReservees) {
         this.chambresReservees = chambresReservees;
     }
 
-    public Date getdateArrivee() {
+    public Client getClientPrincipal() {
+        return clientPrincipal;
+    }
+
+    public void setClientPrincipal(Client clientPrincipal) {
+        this.clientPrincipal = clientPrincipal;
+    }
+
+    public Date getDateArrivee() {
         return dateArrivee;
     }
 
-    public void setdateArrivee(Date dateArrivee) {
+    public void setDateArrivee(Date dateArrivee) {
         this.dateArrivee = dateArrivee;
     }
 
@@ -106,14 +111,6 @@ public class Reservation {
         this.nombrePersonnes = nombrePersonnes;
     }
 
-    public boolean isPetitDejeuner() {
-        return petitDejeuner;
-    }
-
-    public void setPetitDejeuner(boolean petitDejeuner) {
-        this.petitDejeuner = petitDejeuner;
-    }
-
     public double getMontantReservation() {
         return montantReservation;
     }
@@ -122,29 +119,44 @@ public class Reservation {
         this.montantReservation = montantReservation;
     }
 
-    public Client getclientPrincipal() {
-        return clientPrincipal;
+    public boolean isPetitDejeuner() {
+        return petitDejeuner;
     }
 
-    public void setclientPrincipal(Client clientPrincipal) {
-        this.clientPrincipal = clientPrincipal;
+    public void setPetitDejeuner(boolean petitDejeuner) {
+        this.petitDejeuner = petitDejeuner;
     }
+
     // #endregion
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Reservation that = (Reservation) o;
+        return getNombrePersonnes() == that.getNombrePersonnes() && Double.compare(getMontantReservation(), that.getMontantReservation()) == 0 && isPetitDejeuner() == that.isPetitDejeuner() && Objects.equals(getIdReservation(), that.getIdReservation()) && Objects.equals(getHotel(), that.getHotel()) && Objects.equals(getChambresReservees(), that.getChambresReservees()) && Objects.equals(getClientPrincipal(), that.getClientPrincipal()) && Objects.equals(getDateArrivee(), that.getDateArrivee()) && Objects.equals(getDateDepart(), that.getDateDepart());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdReservation(), getHotel(), getChambresReservees(), getClientPrincipal(), getDateArrivee(), getDateDepart(), getNombrePersonnes(), getMontantReservation(), isPetitDejeuner());
+    }
 
     @Override
     public String toString() {
-        String res = "Reservation " + numero + " : " + hotel.getNom() + " (" + hotel.getAdresse().getVille() + ")\n";
-        res += "Chambres réservées : ";
+        StringBuilder res = new StringBuilder("Reservation " + idReservation + " : " + hotel.getNom() + " (" + hotel.getAdresse().getVille() + ")\n");
+        res.append("Chambres réservées : ");
         for (Chambre chambre : chambresReservees) {
-            res += chambre.getNumero() + " ";
+            res.append(chambre.getNumero()).append(" ");
         }
-        res += "\n";
-        res += "Client principal : " + clientPrincipal.getNom() + " " + clientPrincipal.getPrenom() + "\n";
-        res += "Du " + dateArrivee + " au " + dateDepart + "\n";
-        res += "Nombre de personnes : " + nombrePersonnes + "\n";
-        res += "Petit déjeuner : " + petitDejeuner + "\n";
-        res += "Montant de la réservation : " + montantReservation + "€\n";
-        return res;
+        res.append("\n");
+        res.append("Client principal : ").append(clientPrincipal.getNom()).append(" ").append(clientPrincipal.getPrenom()).append("\n");
+        res.append("Du ").append(dateArrivee).append(" au ").append(dateDepart).append("\n");
+        res.append("Nombre de personnes : ").append(nombrePersonnes).append("\n");
+        res.append("Petit déjeuner : ").append(petitDejeuner).append("\n");
+        res.append("Montant de la réservation : ").append(montantReservation).append("€\n");
+        return res.toString();
     }
 
 }

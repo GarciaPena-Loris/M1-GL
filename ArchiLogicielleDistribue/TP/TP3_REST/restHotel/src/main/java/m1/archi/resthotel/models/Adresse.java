@@ -6,14 +6,13 @@ import jakarta.persistence.Id;
 
 @Entity
 public class Adresse {
-
     @Id
     @GeneratedValue
-    private Long idAdresse;
-    private String pays;
-    private String ville;
-    private String rue;
+    private long idAdresse;
     private String numero;
+    private String rue;
+    private String ville;
+    private String pays;
     private String position;
 
     public Adresse() {
@@ -25,6 +24,14 @@ public class Adresse {
         this.rue = rue;
         this.numero = numero;
         this.position = position;
+    }
+
+    public long getIdAdresse() {
+        return idAdresse;
+    }
+
+    public void setIdAdresse(long idAdresse) {
+        this.idAdresse = idAdresse;
     }
 
     public String getPays() {
@@ -69,15 +76,6 @@ public class Adresse {
 
     @Override
     public String toString() {
-        String res = this.numero + " " + this.rue + " à " + this.ville + " (" + this.pays + ")";
-        return res;
-    }
-
-    public void setIdAdresse(Long idAdresse) {
-        this.idAdresse = idAdresse;
-    }
-
-    public Long getIdAdresse() {
-        return idAdresse;
+        return this.numero + " " + this.rue + " à " + this.ville + " (" + this.pays + ")";
     }
 }
