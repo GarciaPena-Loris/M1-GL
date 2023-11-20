@@ -1,7 +1,6 @@
 package m1.archi.main.swingInterface;
 
 import m1.archi.agence.*;
-import m1.archi.main.User;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
@@ -20,6 +19,7 @@ import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.List;
 
 public class SearchDialog extends JFrame {
     private final JComboBox<String> villeField;
@@ -31,7 +31,7 @@ public class SearchDialog extends JFrame {
     private final JDatePickerImpl dateDepartPicker;
     private final JButton searchButton;
 
-    public SearchDialog(JFrame parent, String selectedAgence, User user, AgenceServiceIdentification proxyAgence, ArrayList<String> listeVilles) throws MalformedURLException {
+    public SearchDialog(JFrame parent, String selectedAgence, AgenceServiceIdentification proxyAgence, ArrayList<String> listeVilles) throws MalformedURLException {
         setTitle("Effcetuer une recherche");
         // Initialisation des composants
         String[] listeVillesArray = new String[listeVilles.size()];
@@ -61,6 +61,11 @@ public class SearchDialog extends JFrame {
         dateDepartPicker.addActionListener(e -> updateButtonState());
 
         searchButton.addActionListener(e -> {
+            if (Interface.userConnecte == null) {
+                JOptionPane.showMessageDialog(parent, "Vous devez vous connecter pour effectuer une recherche.", "Non connecté", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             // Récupérer les valeurs saisies
             String ville = (String) villeField.getSelectedItem();
             int nombreEtoiles = (int) nbEtoilesField.getValue();
@@ -89,11 +94,11 @@ public class SearchDialog extends JFrame {
             }
 
             // Faire la recherche
-            ArrayList<Offres> listeOffress;
+            List<Offres> listeOffress;
             try {
-                listeOffress = (ArrayList<Offres>) proxyConsultation.listeChoisOffresHotelCriteres(user.getLogin(), user.getPassword(), ville, xmlDateArrivee, xmlDateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonnes);
+                listeOffress = proxyConsultation.listeChoisOffresHotelCriteres(Interface.userConnecte.getLogin(), Interface.userConnecte.getMotDePasse(), ville, xmlDateArrivee, xmlDateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonnes);
                 // Vérifier si la liste d'offres n'est pas vide avant de créer ResultatsFrame
-                if (!listeOffress.isEmpty()) {
+                if (listeOffress != null  && !listeOffress.isEmpty()) {
                     // Afficher les résultats
                     ResultatsFrame resultatsFrame = new ResultatsFrame(listeOffress, parent, proxyAgence);
                     resultatsFrame.setVisible(true);

@@ -39,7 +39,8 @@ public class HotelListSelectionListener implements ListSelectionListener {
         for (int i = 0; i < selectedHotel.getNombreEtoiles(); i++) {
             res.append("⭐");
         }
-        res.append(") situé au ").append(selectedHotel.getAdresse().getNumero()).append(" ").append(selectedHotel.getAdresse().getRue()).append(" en ").append(selectedHotel.getAdresse().getPays())
+        res.append(") situé au ").append(selectedHotel.getAdresse().getNumero()).append(" ").append(selectedHotel.getAdresse().getRue()).append(" à ")
+                .append(selectedHotel.getAdresse().getVille()).append(" (").append(selectedHotel.getAdresse().getPays()).append(")")
                 .append(", possède ").append(selectedHotel.getChambres().size()).append(" chambres :</b><br>");
 
         // Ajoutez le texte en gras au JTextPane

@@ -9,6 +9,7 @@ import java.net.URL;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReserverOffreFrame extends JFrame {
@@ -104,7 +105,7 @@ public class ReserverOffreFrame extends JFrame {
 
         // Appelez la méthode de réservation avec les paramètres nécessaires
         try {
-            Reservation reservation = proxyReservation.reserverChambresHotel(Interface.userConnecte.getLogin(), Interface.userConnecte.getPassword(), offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
+            Reservation reservation = proxyReservation.reserverChambresHotel(Interface.userConnecte.getLogin(), Interface.userConnecte.getMotDePasse(), offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
             StringBuilder message = new StringBuilder();
             message.append("✅ Référence de la réservation : ").append(reservation.getNumero()).append("\n\n");
             message.append("La réservation au nom de ").append(reservation.getClientPrincipal().getNom()).append(" ").append(reservation.getClientPrincipal().getPrenom()).append(" a été effectuée avec succès !\n");
@@ -116,7 +117,12 @@ public class ReserverOffreFrame extends JFrame {
             message.append("pour un montant total de ").append(reservation.getMontantReservation()).append("€.\n\n");
             Date dateArrivee = reservation.getDateArrivee().toGregorianCalendar().getTime();
             Date dateDepart = reservation.getDateDepart().toGregorianCalendar().getTime();
-            message.append("La reservation a été effectuée du ").append(dateArrivee).append(" au ").append(dateDepart).append("\n");
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy");
+            String formattedDateArrivee = sdf.format(dateArrivee);
+            String formattedDateDepart = sdf.format(dateDepart);
+
+            message.append("La reservation a été effectuée du ").append(formattedDateArrivee).append(" au ").append(formattedDateDepart).append("\n");
 
             JOptionPane.showMessageDialog(this, message.toString(), "Réservation effectuée", JOptionPane.INFORMATION_MESSAGE);
             parent.dispose();

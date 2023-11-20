@@ -10,8 +10,6 @@
   <packaging>jar</packaging>
 
   <name>soaphotel</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -54,6 +52,11 @@
       <artifactId>commons-io</artifactId>
       <version>2.7</version> <!-- La version peut varier -->
     </dependency>
+      <dependency>
+        <groupId>javax.xml.ws</groupId>
+        <artifactId>jaxws-api</artifactId>
+        <version>2.3.1</version> <!-- Utilisez la version la plus récente disponible -->
+      </dependency>
   </dependencies>
 
   <build>
@@ -97,6 +100,17 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.1.0</version> <!-- Assurez-vous de spécifier la version appropriée -->
+          <configuration>
+            <archive>
+              <manifest>
+                <mainClass>m1/archi/server/HotelServicePublisher</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

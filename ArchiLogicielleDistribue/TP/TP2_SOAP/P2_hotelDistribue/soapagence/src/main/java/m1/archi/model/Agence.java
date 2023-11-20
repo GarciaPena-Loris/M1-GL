@@ -27,7 +27,7 @@ public class Agence {
         this.listeUsers = new ArrayList<User>();
     }
 
-    public boolean inscriptionUser(String login, String motDePasse) throws UserAlreadyExistsException {
+    public User inscriptionUser(String login, String motDePasse) throws UserAlreadyExistsException {
         // Check if user already exists
         for (User u : listeUsers) {
             if (u.getLogin().equals(login)) {
@@ -37,20 +37,33 @@ public class Agence {
         try {
             User user = new User(login, motDePasse);
             this.addUser(user);
-            return true;
+            return user;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void connectionUser(String login, String motDePasse) throws UserNotFoundException {
+    public User connectionUser(String login, String motDePasse) throws UserNotFoundException {
         for (User u : listeUsers) {
             if (u.getLogin().equals(login) && u.getMotDePasse().equals(motDePasse)) {
-                return;
+                return u;
             }
         }
         throw new UserNotFoundException("Error: User " + login + " not found");
+    }
+
+    public boolean addReservation(String login, String motDePasse, Reservation reservation) throws UserNotFoundException {
+        // Essayer de se connecter
+        connectionUser(login, motDePasse);
+
+        for (User u : listeUsers) {
+            if (u.getLogin().equals(login)) {
+                u.addReservation(reservation);
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getIdentifiant() {
@@ -131,6 +144,12 @@ public class Agence {
                 Offres offres = new Offres();
                 ArrayList<Offre> listeOffres = (ArrayList<Offre>) proxy.getChambreDisponibleCriteres(ville, xmlDateArrivee, xmlDateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne);
 
+                // Pour chaque offres de la liste on change le momant total avec la reduction de l'hotel
+                for (Offre offre : listeOffres) {
+                    int reduction = mapIdentifiantsHotelsPartenairesReduction.get(identifiantHotel);
+                    offre.setPrix(Math.round(offre.getPrix() * (1 - reduction / 100.0) * 100.0) / 100.0);
+                }
+
                 offres.setOffres(listeOffres);
 
                 if (!listeOffres.isEmpty())
@@ -155,10 +174,7 @@ public class Agence {
             HotelServiceReservationImplService hotelServiceReservation = new HotelServiceReservationImplService(url);
             HotelServiceReservation proxy = hotelServiceReservation.getHotelServiceReservationImplPort();
 
-            Reservation reservation = proxy.reserverChambres(offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
-            reservation.setMontantReservation(reservation.getMontantReservation() * ((double) mapIdentifiantsHotelsPartenairesReduction.get(offre.getIdHotel()) / 100));
-
-            return reservation;
+            return proxy.reserverChambres(offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         } catch (DateNonValideException_Exception e) {
@@ -171,7 +187,7 @@ public class Agence {
 
     public String getAgenceInfo() {
         String res = "L'agence '" + this.nom + "' (" + this.identifiant + ") possède " + this.mapIdentifiantsHotelsPartenairesReduction.keySet().size() + " hotels partenaires :\n";
-        
+
         int compteur = 1;
         for (String hotel : this.mapIdentifiantsHotelsPartenairesReduction.keySet()) {
             res += "\t" + compteur + "- L'hotel (" + hotel + ") avec une reduction de " + this.mapIdentifiantsHotelsPartenairesReduction.get(hotel) + "% sur les chambres.\n";

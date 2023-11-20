@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ResultatsFrame extends JFrame {
 
-    public ResultatsFrame(ArrayList<Offres> listeOffres, JFrame parent, AgenceServiceIdentification proxyAgence) throws HotelNotFoundExceptionException {
+    public ResultatsFrame(List<Offres> listeOffres, JFrame parent, AgenceServiceIdentification proxyAgence) throws HotelNotFoundExceptionException {
         setTitle("Résultats de la recherche");
 
         // Créez un modèle de liste pour afficher les offres

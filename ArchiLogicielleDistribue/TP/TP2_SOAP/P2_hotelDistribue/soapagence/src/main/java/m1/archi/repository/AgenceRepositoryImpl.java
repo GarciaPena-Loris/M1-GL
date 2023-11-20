@@ -13,8 +13,8 @@ import java.util.*;
 public class AgenceRepositoryImpl implements AgenceRepository {
 
     /* ATTRIBUTES */
-    private ArrayList<Agence> agences = new ArrayList<>();
-    private HotelServiceIdentification proxy;
+    private final ArrayList<Agence> agences = new ArrayList<>();
+    private final HotelServiceIdentification proxy;
 
     /* CONSTRUCTORS */
     public AgenceRepositoryImpl() throws MalformedURLException {
@@ -45,10 +45,10 @@ public class AgenceRepositoryImpl implements AgenceRepository {
             System.out.println("Adresse du service de réservation : " + adresse);
 
             // Créez et publiez le service d'inscription
-            UserServiceInscriptionImpl inscriptionSericeUser = new UserServiceInscriptionImpl(agence);
-            adresse = "http://localhost:8090/agencesservice/" + agence.getIdentifiant() + "/inscription";
-            Endpoint.publish(adresse, inscriptionSericeUser);
-            System.out.println("Adresse du service d'inscription : " + adresse);
+            UserServiceConnectionInscriptionImpl connectionInscriptionSericeUser = new UserServiceConnectionInscriptionImpl(agence);
+            adresse = "http://localhost:8090/agencesservice/" + agence.getIdentifiant() + "/connectionInscription";
+            Endpoint.publish(adresse, connectionInscriptionSericeUser);
+            System.out.println("Adresse du service de connection et d'inscription : " + adresse);
 
             System.out.println("\n");
 

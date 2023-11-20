@@ -185,14 +185,15 @@ public class Hotel {
             }
 
             // On supprime les chambre déja reservées
+            List<Chambre> chambresARetirer = new ArrayList<>();
+
             for (Reservation reservation : this.reservations) {
                 if (reservation.getDateArrivee().before(dateDepart)
                         && reservation.getDateDepart().after(dateArrivee)) {
-                    for (Chambre chambre : reservation.getChambresReservees()) {
-                        chambresDisponibles.remove(chambre);
-                    }
+                    chambresARetirer.addAll(reservation.getChambresReservees());
                 }
             }
+            chambresDisponibles.removeIf(chambre -> chambresARetirer.stream().anyMatch(ch -> ch.getNumero() == chambre.getNumero()));
 
             if (!chambresDisponibles.isEmpty()) {
                 // Vérifier si il y a une chambre avec le nombre de lits correspondant

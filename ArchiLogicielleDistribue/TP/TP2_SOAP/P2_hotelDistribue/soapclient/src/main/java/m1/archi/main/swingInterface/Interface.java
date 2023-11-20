@@ -1,8 +1,6 @@
 package m1.archi.main.swingInterface;
 
 import m1.archi.agence.*;
-import m1.archi.main.GestionnaireUser;
-import m1.archi.main.User;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +11,6 @@ import java.net.URL;
 import java.util.*;
 
 public class Interface {
-    private final GestionnaireUser gestionnaireUser;
     private final HashMap<String, String> mapAgenceNomIdentifiant = new HashMap<>();
     private final HashMap<String, ArrayList<Hotel>> mapAgenceHotelPartenaire = new HashMap<>();
     private final HashMap<String, Integer> mapIdentifiantsHotelsPartenairesReduction = new HashMap<>();
@@ -24,10 +21,9 @@ public class Interface {
     public static User userConnecte;
     public static ArrayList<Hotel> hotelsPartenaires = new ArrayList<Hotel>();
 
-    public Interface(AgenceServiceIdentification proxyAgences, GestionnaireUser gestionnaireUser) throws MalformedURLException {
+    public Interface(AgenceServiceIdentification proxyAgences) throws MalformedURLException {
         // Récupération des identifiants des agences
         listeIdentifiantAgence = (ArrayList<String>) proxyAgences.getListeAgence();
-        this.gestionnaireUser = gestionnaireUser;
 
         // Création de l'interface graphique
         createAndShowGUI(proxyAgences);
@@ -81,8 +77,9 @@ public class Interface {
             JPanel connectionPanel = new JPanel();
             connectionPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-            JButton connectionButton = new JButton("Connexion");
-            connectionPanel.add(connectionButton);
+            JButton deconnectionButton = new JButton("Deconnection");
+            deconnectionButton.setEnabled(false);
+            connectionPanel.add(deconnectionButton);
 
             topPanel.setLayout(new BorderLayout());
             topPanel.add(agencePanel, BorderLayout.WEST);
@@ -98,6 +95,9 @@ public class Interface {
                 selectedAgence = mapAgenceNomIdentifiant.get(agenceComboBox.getSelectedItem());
 
                 // Affichage du message de chargement
+                userConnecte = null;
+                deconnectionButton.setEnabled(false);
+
                 hotelListModel.clear();
                 hotelListModel.addElement("Chargement en cours...");
 
@@ -148,23 +148,9 @@ public class Interface {
             hotelListUI.addListSelectionListener(hotelListSelectionListener);
 
             // Événement pour la connection d'un utilisateur
-            connectionButton.addActionListener(e -> {
-                if (userConnecte != null) {
-                    userConnecte = null;
-                    connectionButton.setText("Connection");
-                } else {
-                    LoginDialog loginDialog = new LoginDialog(frame, gestionnaireUser);
-                    loginDialog.addWindowListener(new WindowAdapter() {
-                        @Override
-                        public void windowClosed(WindowEvent e) {
-                            userConnecte = loginDialog.getUserConnecte();
-                            if (userConnecte != null) {
-                                connectionButton.setText("Déconnexion");
-                            }
-                        }
-                    });
-                    loginDialog.setVisible(true);
-                }
+            deconnectionButton.addActionListener(e -> {
+                userConnecte = null;
+                deconnectionButton.setEnabled(false);
             });
 
             // Événement pour rechercher des offres
@@ -173,7 +159,7 @@ public class Interface {
                     // Ouvrir la fenêtre de recherche
                     SearchDialog searchDialog = null;
                     try {
-                        searchDialog = new SearchDialog(frame, selectedAgence, userConnecte, proxyAgences, listeVilles);
+                        searchDialog = new SearchDialog(frame, selectedAgence, proxyAgences, listeVilles);
                     } catch (MalformedURLException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -187,22 +173,22 @@ public class Interface {
             inscriptionButton.addActionListener(e -> {
                 if (selectedAgence == null) {
                     JOptionPane.showMessageDialog(frame, "Sélectionnez d'abord une agence.");
-                } else if (userConnecte == null) {
-                    JOptionPane.showMessageDialog(frame, "Connectez vous d'abord.");
                 } else {
                     // Ouvrir la fenêtre de recherche
                     try {
-                        URL url = new URL("http://localhost:8090/agencesservice/" + selectedAgence + "/inscription");
-                        UserServiceInscriptionImplService userServiceInscription = new UserServiceInscriptionImplService(url);
-                        UserServiceInscription proxyInscription = userServiceInscription.getUserServiceInscriptionImplPort();
-
-                        proxyInscription.inscription(userConnecte.getLogin(), userConnecte.getPassword());
-
-                        JOptionPane.showMessageDialog(frame, "Vous êtes maintenant inscrit dans l'agence " + agenceComboBox.getSelectedItem() + " !");
+                        LoginDialog loginDialog = new LoginDialog(frame, (String) agenceComboBox.getSelectedItem());
+                        loginDialog.addWindowListener(new WindowAdapter() {
+                            @Override
+                            public void windowClosed(WindowEvent e) {
+                                userConnecte = loginDialog.getUserConnecte();
+                                if (userConnecte != null) {
+                                    deconnectionButton.setEnabled(true);
+                                }
+                            }
+                        });
+                        loginDialog.setVisible(true);
                     } catch (MalformedURLException ex) {
                         throw new RuntimeException(ex);
-                    } catch (UserAlreadyExistsException_Exception ex) {
-                        JOptionPane.showMessageDialog(frame, "Vous êtes déja inscrit dans cette agence.");
                     }
                 }
             });

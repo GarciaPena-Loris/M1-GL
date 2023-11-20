@@ -31,7 +31,7 @@ public class DetailsOffreFrame extends JFrame {
 
             // Ajoutez les détails de chaque chambre
             for (Chambre chambre : offre.getChambres()) {
-                offreDetails.append("<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Une chambre pour ").append(chambre.getNombreLits()).append(" personnes à ").append(chambre.getPrix()).append("€.</p>");
+                offreDetails.append("<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Chambre n°").append(chambre.getNumero()).append(" pour ").append(chambre.getNombreLits()).append(" personnes à ").append(chambre.getPrix()).append("€.</p>");
             }
 
             // Ajoutez l'offre complète à la liste
