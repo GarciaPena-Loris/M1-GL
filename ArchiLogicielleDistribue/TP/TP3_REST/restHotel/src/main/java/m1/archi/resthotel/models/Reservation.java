@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import m1.archi.resthotel.exceptions.DateNonValideException;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Entity
@@ -18,8 +20,8 @@ public class Reservation {
     private List<Chambre> chambresReservees;
     @ManyToOne
     private Client clientPrincipal;
-    private Date dateArrivee;
-    private Date dateDepart;
+    private LocalDateTime dateArrivee;
+    private LocalDateTime dateDepart;
     private int nombrePersonnes;
     private double montantReservation;
     private boolean petitDejeuner;
@@ -28,8 +30,8 @@ public class Reservation {
     }
 
     public Reservation(Hotel hotel, List<Chambre> chambresReservees, Client clientPrincipal,
-                       Date dateArrivee, Date dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
-        if (dateArrivee.after(dateDepart)) {
+                       LocalDateTime dateArrivee, LocalDateTime dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
+        if (dateArrivee.isAfter(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
         this.hotel = hotel;
@@ -40,8 +42,7 @@ public class Reservation {
         this.nombrePersonnes = nombrePersonnes;
         double montantReservation = 0;
 
-        long millisecondsPerDay = 24 * 60 * 60 * 1000;
-        long daysDifference = (dateDepart.getTime() - dateArrivee.getTime()) / millisecondsPerDay;
+        long daysDifference = ChronoUnit.DAYS.between(dateArrivee, dateDepart);
 
         for (Chambre chambre : chambresReservees) {
             montantReservation += chambre.getPrix() * daysDifference;
@@ -87,19 +88,19 @@ public class Reservation {
         this.clientPrincipal = clientPrincipal;
     }
 
-    public Date getDateArrivee() {
+    public LocalDateTime getDateArrivee() {
         return dateArrivee;
     }
 
-    public void setDateArrivee(Date dateArrivee) {
+    public void setDateArrivee(LocalDateTime dateArrivee) {
         this.dateArrivee = dateArrivee;
     }
 
-    public Date getDateDepart() {
+    public LocalDateTime getDateDepart() {
         return dateDepart;
     }
 
-    public void setDateDepart(Date dateDepart) {
+    public void setDateDepart(LocalDateTime dateDepart) {
         this.dateDepart = dateDepart;
     }
 
@@ -135,7 +136,7 @@ public class Reservation {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Reservation that = (Reservation) o;
-        return getNombrePersonnes() == that.getNombrePersonnes() && Double.compare(getMontantReservation(), that.getMontantReservation()) == 0 && isPetitDejeuner() == that.isPetitDejeuner() && Objects.equals(getIdReservation(), that.getIdReservation()) && Objects.equals(getHotel(), that.getHotel()) && Objects.equals(getChambresReservees(), that.getChambresReservees()) && Objects.equals(getClientPrincipal(), that.getClientPrincipal()) && Objects.equals(getDateArrivee(), that.getDateArrivee()) && Objects.equals(getDateDepart(), that.getDateDepart());
+        return getIdReservation() == that.getIdReservation() && getNombrePersonnes() == that.getNombrePersonnes() && Double.compare(getMontantReservation(), that.getMontantReservation()) == 0 && isPetitDejeuner() == that.isPetitDejeuner() && Objects.equals(getHotel(), that.getHotel()) && Objects.equals(getChambresReservees(), that.getChambresReservees()) && Objects.equals(getClientPrincipal(), that.getClientPrincipal()) && Objects.equals(getDateArrivee(), that.getDateArrivee()) && Objects.equals(getDateDepart(), that.getDateDepart());
     }
 
     @Override

@@ -3,8 +3,7 @@ package m1.archi.resthotel.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,8 +14,10 @@ public class Offre {
     private long idOffre;
     private int nombreLitsTotal;
     private double prix;
-    private Date dateArrivee;
-    private Date dateDepart;
+    private LocalDateTime dateArrivee;
+    private LocalDateTime dateDepart;
+
+    private LocalDateTime dateExpiration;
     @ManyToMany
     private List<Chambre> chambres;
     @ManyToOne
@@ -26,13 +27,14 @@ public class Offre {
     public Offre() {
     }
 
-    public Offre(int nombreLitsTotal, double prix, Date dateArrivee, Date dateDepart, List<Chambre> chambres, Hotel hotel) {
+    public Offre(int nombreLitsTotal, double prix, LocalDateTime dateArrivee, LocalDateTime dateDepart, List<Chambre> chambres, Hotel hotel) {
         this.nombreLitsTotal = nombreLitsTotal;
         this.prix = prix;
         this.dateArrivee = dateArrivee;
         this.dateDepart = dateDepart;
         this.chambres = chambres;
         this.hotel = hotel;
+        this.dateExpiration = LocalDateTime.now().plusHours(1);
     }
 
     public long getIdOffre() {
@@ -59,20 +61,28 @@ public class Offre {
         this.prix = prix;
     }
 
-    public Date getDateArrivee() {
+    public LocalDateTime getDateArrivee() {
         return dateArrivee;
     }
 
-    public void setDateArrivee(Date dateArrivee) {
+    public void setDateArrivee(LocalDateTime dateArrivee) {
         this.dateArrivee = dateArrivee;
     }
 
-    public Date getDateDepart() {
+    public LocalDateTime getDateDepart() {
         return dateDepart;
     }
 
-    public void setDateDepart(Date dateDepart) {
+    public void setDateDepart(LocalDateTime dateDepart) {
         this.dateDepart = dateDepart;
+    }
+
+    public LocalDateTime getDateExpiration() {
+        return dateExpiration;
+    }
+
+    public void setDateExpiration(LocalDateTime dateExpiration) {
+        this.dateExpiration = dateExpiration;
     }
 
     public List<Chambre> getChambres() {
@@ -96,12 +106,12 @@ public class Offre {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Offre offre = (Offre) o;
-        return getNombreLitsTotal() == offre.getNombreLitsTotal() && Double.compare(getPrix(), offre.getPrix()) == 0 && Objects.equals(getIdOffre(), offre.getIdOffre()) && Objects.equals(dateArrivee, offre.dateArrivee) && Objects.equals(dateDepart, offre.dateDepart) && Objects.equals(getChambres(), offre.getChambres()) && Objects.equals(getHotel(), offre.getHotel());
+        return getIdOffre() == offre.getIdOffre() && getNombreLitsTotal() == offre.getNombreLitsTotal() && Double.compare(getPrix(), offre.getPrix()) == 0 && Objects.equals(getDateArrivee(), offre.getDateArrivee()) && Objects.equals(getDateDepart(), offre.getDateDepart()) && Objects.equals(getDateExpiration(), offre.getDateExpiration()) && Objects.equals(getChambres(), offre.getChambres()) && Objects.equals(getHotel(), offre.getHotel());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdOffre(), getNombreLitsTotal(), getPrix(), dateArrivee, dateDepart, getChambres(), getHotel());
+        return Objects.hash(getIdOffre(), getNombreLitsTotal(), getPrix(), getDateArrivee(), getDateDepart(), getDateExpiration(), getChambres(), getHotel());
     }
 
     @Override
@@ -112,6 +122,7 @@ public class Offre {
                 ", prix=" + prix +
                 ", dateArrivee=" + dateArrivee +
                 ", dateDepart=" + dateDepart +
+                ", dateExpiration=" + dateExpiration +
                 ", chambres=" + chambres +
                 ", hotel=" + hotel +
                 '}';

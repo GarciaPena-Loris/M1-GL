@@ -3,6 +3,7 @@ package m1.archi.resthotel.models;
 import jakarta.persistence.*;
 import m1.archi.resthotel.exceptions.DateNonValideException;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,10 +40,6 @@ public class Hotel {
 
     public long getIdHotel() {
         return idHotel;
-    }
-
-    public void setIdHotel(long idHotel) {
-        this.idHotel = idHotel;
     }
 
     public String getNom() {
@@ -110,14 +107,6 @@ public class Hotel {
         return null;
     }
 
-    public void addOffre(Offre offre) {
-        this.offres.add(offre);
-    }
-
-    public void removeOffre(Offre offre) {
-        this.offres.remove(offre);
-    }
-
     public void addChambre(Chambre chambre) {
         this.chambres.add(chambre);
     }
@@ -134,17 +123,25 @@ public class Hotel {
         this.reservations.remove(reservation);
     }
 
+    public void addOffre(Offre offre) {
+        this.offres.add(offre);
+    }
+
+    public void removeOffre(Offre offre) {
+        this.offres.remove(offre);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Hotel hotel = (Hotel) o;
-        return getNombreEtoiles() == hotel.getNombreEtoiles() && Objects.equals(getIdHotel(), hotel.getIdHotel()) && Objects.equals(getNom(), hotel.getNom()) && Objects.equals(getAdresse(), hotel.getAdresse()) && Objects.equals(getImageHotel(), hotel.getImageHotel()) && Objects.equals(getChambres(), hotel.getChambres()) && Objects.equals(getReservations(), hotel.getReservations()) && Objects.equals(getOffres(), hotel.getOffres());
+        return getNombreEtoiles() == hotel.getNombreEtoiles() && Objects.equals(getIdHotel(), hotel.getIdHotel()) && Objects.equals(getNom(), hotel.getNom()) && Objects.equals(getAdresse(), hotel.getAdresse()) && Objects.equals(getImageHotel(), hotel.getImageHotel()) && Objects.equals(getChambres(), hotel.getChambres()) && Objects.equals(getReservations(), hotel.getReservations());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdHotel(), getNom(), getAdresse(), getNombreEtoiles(), getImageHotel(), getChambres(), getReservations(), getOffres());
+        return Objects.hash(getIdHotel(), getNom(), getAdresse(), getNombreEtoiles(), getImageHotel(), getChambres(), getReservations());
     }
 
     // Fonction récursive pour trouver des combinaisons de chambres
@@ -179,12 +176,12 @@ public class Hotel {
     }
 
     // functions
-    public ArrayList<Offre> getChambreDisponibleCriteres(String ville, Date dateArrivee,
-                                                         Date dateDepart,
+    public ArrayList<Offre> rechercheChambres(String ville, LocalDateTime dateArrivee,
+                                                         LocalDateTime dateDepart,
                                                          int prixMin,
                                                          int prixMax, int nombreEtoiles, int nombrePersonne) throws DateNonValideException {
 
-        if (dateArrivee.after(dateDepart)) {
+        if (dateArrivee.isAfter(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
 
@@ -205,8 +202,8 @@ public class Hotel {
             List<Chambre> chambresARetirer = new ArrayList<>();
 
             for (Reservation reservation : this.reservations) {
-                if (reservation.getDateArrivee().before(dateDepart)
-                        && reservation.getDateDepart().after(dateArrivee)) {
+                if (reservation.getDateArrivee().isBefore(dateDepart)
+                        && reservation.getDateDepart().isAfter(dateArrivee)) {
                     chambresARetirer.addAll(reservation.getChambresReservees());
                 }
             }
@@ -218,7 +215,6 @@ public class Hotel {
                     if (chambre.getNombreLits() == nombrePersonne) {
                         Offre offre = new Offre(chambre.getNombreLits(), chambre.getPrix(), dateArrivee, dateDepart, new ArrayList<>(Collections.singletonList(chambre)), this);
                         offres.add(offre);
-                        this.addOffre(offre);
                         return offres;
                     }
                 }
@@ -234,26 +230,12 @@ public class Hotel {
                 for (ArrayList<Chambre> combinaisonChambresDisponibles : listeCombinaisonsChambres) {
                     Offre offre = new Offre(nombrePersonne, combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum(), dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
                     offres.add(offre);
-                    this.addOffre(offre);
                 }
 
                 return offres;
             }
         }
         return null;
-    }
-
-    public Reservation reserverChambres(Offre offre, boolean petitDejeuner, String nomClient, String prenomClient, String email, String telephone, String nomCarte, String numeroCarte, String expirationCarte, String CCVCarte) throws DateNonValideException {
-        if (offre.getDateArrivee().after(offre.getDateDepart())) {
-            throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
-        }
-        Carte carte = new Carte(nomCarte, numeroCarte, expirationCarte, CCVCarte);
-        Client clientPrincipal = new Client(nomClient, prenomClient, email, telephone, carte);
-        Reservation reservation = new Reservation(this, offre.getChambres(), clientPrincipal, offre.getDateArrivee(), offre.getDateDepart(), offre.getNombreLitsTotal(), petitDejeuner);
-        this.addReservation(reservation);
-        clientPrincipal.addReservationToHistorique(reservation);
-        this.removeOffre(offre);
-        return reservation;
     }
 
     public String afficherHotelInfo() {
