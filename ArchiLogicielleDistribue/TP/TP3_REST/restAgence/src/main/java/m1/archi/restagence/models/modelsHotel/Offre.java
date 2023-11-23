@@ -1,16 +1,11 @@
-package m1.archi.resthotel.models;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+package m1.archi.restagence.models.modelsHotel;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
+
 public class Offre {
-    @Id
-    @GeneratedValue
     private long idOffre;
     private int nombreLitsTotal;
     private double prix;
@@ -18,9 +13,7 @@ public class Offre {
     private LocalDateTime dateArrivee;
     private LocalDateTime dateDepart;
     private LocalDateTime dateExpiration;
-    @ManyToMany
     private List<Chambre> chambres;
-    @ManyToOne
     private Hotel hotel;
 
     public Offre() {

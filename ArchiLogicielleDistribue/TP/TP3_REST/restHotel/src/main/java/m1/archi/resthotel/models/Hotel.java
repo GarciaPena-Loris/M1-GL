@@ -1,5 +1,6 @@
 package m1.archi.resthotel.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import m1.archi.resthotel.exceptions.DateNonValideException;
 
@@ -16,13 +17,17 @@ public class Hotel {
     @OneToOne
     private Adresse adresse;
     private int nombreEtoiles;
+    @JsonIgnore
     @Column(length = 10000000)
     private String imageHotel;
     @OneToMany
+    @JsonIgnore
     private List<Chambre> chambres;
     @OneToMany
+    @JsonIgnore
     private List<Reservation> reservations;
     @OneToMany
+    @JsonIgnore
     private List<Offre> offres;
 
     public Hotel() {
@@ -177,17 +182,17 @@ public class Hotel {
 
     // functions
     public ArrayList<Offre> rechercheChambres(String ville, LocalDateTime dateArrivee,
-                                                         LocalDateTime dateDepart,
-                                                         int prixMin,
-                                                         int prixMax, int nombreEtoiles, int nombrePersonne) throws DateNonValideException {
+                                              LocalDateTime dateDepart,
+                                              int prixMin,
+                                              int prixMax, int nombreEtoiles, int nombrePersonne) throws DateNonValideException {
 
         if (dateArrivee.isAfter(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
 
+        ArrayList<Offre> offres = new ArrayList<>();
         if (this.adresse.getVille().equals(ville) && this.nombreEtoiles == nombreEtoiles) {
 
-            ArrayList<Offre> offres = new ArrayList<>();
             ArrayList<Chambre> chambresDisponibles = new ArrayList<>();
 
             // On ajoute toute les chambre qui correspondent aux critères
@@ -235,7 +240,7 @@ public class Hotel {
                 return offres;
             }
         }
-        return null;
+        return offres;
     }
 
     public String afficherHotelInfo() {

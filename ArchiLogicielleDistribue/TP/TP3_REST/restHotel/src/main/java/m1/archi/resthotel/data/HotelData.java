@@ -27,20 +27,20 @@ public class HotelData {
 
             for (int i = 0; i < nombreHotels; i++) {
                 // Génération des adresses
-                Adresse adresse = RandomDonneStockage.generateRandomAdresse();
+                Adresse adresse = RandomDonneesHotel.generateRandomAdresse();
                 adresse = adresseRepository.save(adresse);
 
                 // Génération de l'hôtels
-                Hotel hotel = RandomDonneStockage.generateRandomHotel(adresse);
+                Hotel hotel = RandomDonneesHotel.generateRandomHotel(adresse);
 
                 // Sauvegarde de l'hôtel
                 hotel = hotelRepository.save(hotel);
 
                 // Génération des chambres
-                int nombreChambres = RandomDonneStockage.randomNombreChambres();
+                int nombreChambres = RandomDonneesHotel.randomNombreChambres();
                 for (int j = 1; j <= nombreChambres; j++) {
                     if (j != 13) {
-                        Chambre chambre = RandomDonneStockage.generateRandomChambres(hotel, j);
+                        Chambre chambre = RandomDonneesHotel.generateRandomChambres(hotel, j);
                         chambre = chambreRepository.save(chambre);
 
                         hotel.addChambre(chambre);

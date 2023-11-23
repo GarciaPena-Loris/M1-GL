@@ -2,6 +2,7 @@ package m1.archi.resthotel.controllers;
 
 import m1.archi.resthotel.exceptions.DateNonValideException;
 import m1.archi.resthotel.exceptions.HotelNotFoundException;
+import m1.archi.resthotel.exceptions.NoRoomAvailableException;
 import m1.archi.resthotel.exceptions.OffreNotFoundException;
 import m1.archi.resthotel.models.*;
 import m1.archi.resthotel.repositories.*;
@@ -10,8 +11,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class HotelController {
@@ -38,6 +44,34 @@ public class HotelController {
         return hotelRepository.findAll();
     }
 
+    @GetMapping("${base-uri}/idHotels")
+    public List<Long> getAllIdHotels() {
+        return hotelRepository.findAll().stream().map(Hotel::getIdHotel).collect(Collectors.toList());
+    }
+
+    @GetMapping("${base-uri}/hotels/{id}/image")
+    public String getHotelImage(@PathVariable long id) throws HotelNotFoundException {
+        return hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id)).getImageHotel();
+    }
+
+    @GetMapping("${base-uri}/hotels/{id}/chambres")
+    public List<Chambre> getHotelChambres(@PathVariable long id) throws HotelNotFoundException {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
+        return new ArrayList<>(hotel.getChambres());
+    }
+
+    @GetMapping("${base-uri}/hotels/{id}/offres")
+    public List<Offre> getHotelOffres(@PathVariable long id) throws HotelNotFoundException {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
+        return new ArrayList<>(hotel.getOffres());
+    }
+
+    @GetMapping("${base-uri}/hotels/{id}/reservations")
+    public List<Reservation> getHotelReservations(@PathVariable long id) throws HotelNotFoundException {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
+        return new ArrayList<>(hotel.getReservations());
+    }
+
     @GetMapping("${base-uri}/hotels/count")
     public String count() {
         return String.format("{\"%s\": %d}", "count", hotelRepository.count());
@@ -51,21 +85,22 @@ public class HotelController {
     @GetMapping("${base-uri}/hotels/{id}/recherche")
     public List<Offre> rechercheChambreById(@PathVariable long id, @RequestParam String ville, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateArrivee,
                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateDepart, @RequestParam int prixMin,
-                                            @RequestParam int prixMax, @RequestParam int nombreEtoiles, @RequestParam int nombrePersonne) throws HotelNotFoundException, DateNonValideException {
+                                            @RequestParam int prixMax, @RequestParam int nombreEtoiles, @RequestParam int nombrePersonne) throws HotelNotFoundException, DateNonValideException, NoRoomAvailableException {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
-        List<Offre> offres = hotel.rechercheChambres(ville, dateArrivee, dateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne);
-        if (offres.isEmpty()) {
-            throw new HotelNotFoundException("No rooms available for the given criteria");
+        String villeDecode = URLDecoder.decode(ville, StandardCharsets.UTF_8);
+        List<Offre> offers = hotel.rechercheChambres(villeDecode, dateArrivee, dateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne);
+        if (offers.isEmpty()) {
+            return offers;
         }
-        for (Offre offre : offres) {
+        for (Offre offre : offers) {
             offreRepository.save(offre);
             hotel.addOffre(offre);
         }
         hotelRepository.save(hotel);
-        return offres;
+        return offers;
     }
 
-    @GetMapping("${base-uri}/hotels/{id}/reservation")
+    @PostMapping("${base-uri}/hotels/{id}/reservation")
     public Reservation reserverChambreById(@PathVariable long id, @RequestBody Offre offre, @RequestBody boolean petitDejeuner, @RequestBody String nomClient,
                                            @RequestBody String prenomClient, @RequestBody String email, @RequestBody String telephone, @RequestBody String nomCarte,
                                            @RequestBody String numeroCarte, @RequestBody String expirationCarte, @RequestBody String CCVCarte) throws HotelNotFoundException, DateNonValideException, OffreNotFoundException {

@@ -14,7 +14,6 @@ public class Reservation {
     @GeneratedValue
     private long idReservation;
     @ManyToOne
-    @JsonIgnore
     private Hotel hotel;
     @ManyToMany
     private List<Chambre> chambresReservees;

@@ -1,31 +1,14 @@
-package m1.archi.resthotel.models;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+package m1.archi.restagence.models.modelsHotel;
 
 import java.util.Objects;
 
-@Entity
 public class Chambre {
-    @Id
-    @GeneratedValue
     private long idChambre;
     private int numero;
     private double prix;
     private int nombreLits;
-    @ManyToOne
     private Hotel hotel;
-    @JsonIgnore
-    @Column(length = 10000000)
     private String imageChambre;
-
-    public Hotel getHotel() {
-        return hotel;
-    }
-
-    public void setHotel(Hotel hotel) {
-        this.hotel = hotel;
-    }
 
     public Chambre() {
     }
@@ -76,6 +59,14 @@ public class Chambre {
 
     public void setImageChambre(String imageChambre) {
         this.imageChambre = imageChambre;
+    }
+
+    public Hotel getHotel() {
+        return hotel;
+    }
+
+    public void setHotel(Hotel hotel) {
+        this.hotel = hotel;
     }
 
     @Override

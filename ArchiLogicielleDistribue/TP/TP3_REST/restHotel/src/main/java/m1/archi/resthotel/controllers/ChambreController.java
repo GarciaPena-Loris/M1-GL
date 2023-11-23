@@ -1,6 +1,7 @@
 package m1.archi.resthotel.controllers;
 
 import m1.archi.resthotel.exceptions.ChambreNotFoundException;
+import m1.archi.resthotel.exceptions.HotelNotFoundException;
 import m1.archi.resthotel.models.Chambre;
 import m1.archi.resthotel.repositories.ChambreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ public class ChambreController {
     @GetMapping("${base-uri}/chambres/{id}")
     public Chambre getChambreById(@PathVariable long id) throws ChambreNotFoundException {
         return repository.findById(id).orElseThrow(() -> new ChambreNotFoundException("Chambre not found with id " + id));
+    }
+
+    @GetMapping("${base-uri}/chambres/{id}/image")
+    public String getImageHotel(@PathVariable long id) throws ChambreNotFoundException {
+        return repository.findById(id).orElseThrow(() -> new ChambreNotFoundException("Chambre not found with id " + id)).getImageChambre();
     }
 
     @ResponseStatus(HttpStatus.CREATED)

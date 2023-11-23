@@ -9,12 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import static org.apache.commons.io.FileUtils.readFileToByteArray;
 
-public class RandomDonneStockage {
+public class RandomDonneesHotel {
     private static final String[] listeRues = {
             "Avenue des Orangers", "Rue des Étoiles Filantes", "Boulevard des Lumières", "Chemin de la Cascade", "Allée des Cerisiers",
             "Rue de la Sérénité", "Avenue des Trois Chênes", "Boulevard de l'Horizon", "Chemin des Roses", "Allée des Mélodies",
@@ -167,28 +166,28 @@ public class RandomDonneStockage {
 
     /* Hotel */
     public static Hotel generateRandomHotel(Adresse adresse) throws IOException {
-        String nomHotel = RandomDonneStockage.randomNomHotel();
-        int nombreEtoiles = RandomDonneStockage.randomNombreEtoiles();
-        File imageHotel = RandomDonneStockage.randomImagePays(adresse.getPays());
+        String nomHotel = RandomDonneesHotel.randomNomHotel();
+        int nombreEtoiles = RandomDonneesHotel.randomNombreEtoiles();
+        File imageHotel = RandomDonneesHotel.randomImagePays(adresse.getPays());
         String base64ImageHotel = getImageBase64(imageHotel);
 
         return new Hotel(nomHotel, adresse, nombreEtoiles, base64ImageHotel);
     }
 
     public static Adresse generateRandomAdresse() {
-        String pays = RandomDonneStockage.randomPays();
-        String ville = RandomDonneStockage.randomVille(pays);
-        String rue = RandomDonneStockage.randomRue();
-        String numero = RandomDonneStockage.randomNumero();
-        String position = RandomDonneStockage.randomPositionGPS();
+        String pays = RandomDonneesHotel.randomPays();
+        String ville = RandomDonneesHotel.randomVille(pays);
+        String rue = RandomDonneesHotel.randomRue();
+        String numero = RandomDonneesHotel.randomNumero();
+        String position = RandomDonneesHotel.randomPositionGPS();
 
         return new Adresse(pays, ville, rue, numero, position);
     }
 
     public static Chambre generateRandomChambres(Hotel hotel, int numero) throws IOException {
-        int nombreLits = RandomDonneStockage.randomNombreLits();
-        int prix = RandomDonneStockage.randomPrix(hotel.getNombreEtoiles(), nombreLits);
-        File imageChambre = RandomDonneStockage.randomImageChambre(hotel.getNombreEtoiles());
+        int nombreLits = RandomDonneesHotel.randomNombreLits();
+        int prix = RandomDonneesHotel.randomPrix(hotel.getNombreEtoiles(), nombreLits);
+        File imageChambre = RandomDonneesHotel.randomImageChambre(hotel.getNombreEtoiles());
         String base64ImageChambre = getImageBase64(imageChambre);
 
         return new Chambre(numero, prix, nombreLits, hotel, base64ImageChambre);
