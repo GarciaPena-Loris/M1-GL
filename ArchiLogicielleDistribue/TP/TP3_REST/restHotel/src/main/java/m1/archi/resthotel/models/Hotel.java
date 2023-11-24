@@ -191,7 +191,7 @@ public class Hotel {
         }
 
         ArrayList<Offre> offres = new ArrayList<>();
-        if (this.adresse.getVille().equals(ville) && this.nombreEtoiles == nombreEtoiles) {
+        if (this.adresse.getVille().equals(ville) && this.nombreEtoiles >= nombreEtoiles) {
 
             ArrayList<Chambre> chambresDisponibles = new ArrayList<>();
 
@@ -241,28 +241,6 @@ public class Hotel {
             }
         }
         return offres;
-    }
-
-    public String afficherHotelInfo() {
-        StringBuilder res = new StringBuilder("L'hotel '" + this.nom + "' (" + this.nombreEtoiles
-                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres :\n");
-
-        for (Chambre chambre : this.chambres) {
-            res.append("\t- ").append(chambre.toString()).append("\n");
-        }
-        return res.toString();
-    }
-
-    public String afficherReservationHotel() {
-        StringBuilder res = new StringBuilder();
-        int compteur = 1;
-        if (this.reservations.isEmpty()) {
-            return "Aucune réservation";
-        }
-        for (Reservation reservation : this.reservations) {
-            res.append("Reservation n°").append(compteur).append(" : ").append(reservation.toString()).append("\n");
-        }
-        return res.toString();
     }
 
     @Override

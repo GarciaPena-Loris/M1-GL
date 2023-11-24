@@ -2,7 +2,6 @@ package m1.archi.resthotel.controllers;
 
 import m1.archi.resthotel.exceptions.DateNonValideException;
 import m1.archi.resthotel.exceptions.HotelNotFoundException;
-import m1.archi.resthotel.exceptions.NoRoomAvailableException;
 import m1.archi.resthotel.exceptions.OffreNotFoundException;
 import m1.archi.resthotel.models.*;
 import m1.archi.resthotel.repositories.*;
@@ -11,7 +10,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -85,7 +83,7 @@ public class HotelController {
     @GetMapping("${base-uri}/hotels/{id}/recherche")
     public List<Offre> rechercheChambreById(@PathVariable long id, @RequestParam String ville, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateArrivee,
                                             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateDepart, @RequestParam int prixMin,
-                                            @RequestParam int prixMax, @RequestParam int nombreEtoiles, @RequestParam int nombrePersonne) throws HotelNotFoundException, DateNonValideException, NoRoomAvailableException {
+                                            @RequestParam int prixMax, @RequestParam int nombreEtoiles, @RequestParam int nombrePersonne) throws HotelNotFoundException, DateNonValideException {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
         String villeDecode = URLDecoder.decode(ville, StandardCharsets.UTF_8);
         List<Offre> offers = hotel.rechercheChambres(villeDecode, dateArrivee, dateDepart, prixMin, prixMax, nombreEtoiles, nombrePersonne);

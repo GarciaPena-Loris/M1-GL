@@ -31,8 +31,7 @@ public class AgenceData {
     public CommandLineRunner initDatabase(AgenceRepository agenceRepository, ReductionHotelRepository reductionHotelRepository) {
         return args -> {
             // Génération de plusieurs agences aléatoire
-            //int nombreAgences = (int) (Math.random() * 100) + 50;
-            int nombreAgences = 5;
+            int nombreAgences = (int) (Math.random() * 10) + 5;
 
             System.out.println("\nGénération de " + nombreAgences + " agences aléatoires...");
 

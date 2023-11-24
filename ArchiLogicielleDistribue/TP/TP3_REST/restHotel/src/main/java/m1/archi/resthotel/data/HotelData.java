@@ -21,8 +21,7 @@ public class HotelData {
     public CommandLineRunner initDatabase(HotelRepository hotelRepository, AdresseRepository adresseRepository, ChambreRepository chambreRepository) {
         return args -> {
             // Génération de plusieurs hotel aléatoire
-            //int nombreHotels = (int) (Math.random() * 100) + 50;
-            int nombreHotels = 5;
+            int nombreHotels = (int) (Math.random() * 100) + 50;
             System.out.println("\nGénération de " + nombreHotels + " hôtels aléatoires...");
 
             for (int i = 0; i < nombreHotels; i++) {

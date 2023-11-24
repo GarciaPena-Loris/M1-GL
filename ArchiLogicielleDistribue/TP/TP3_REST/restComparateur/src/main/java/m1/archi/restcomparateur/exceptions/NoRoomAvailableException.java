@@ -1,6 +1,6 @@
-package m1.archi.resthotel.exceptions;
+package m1.archi.restcomparateur.exceptions;
 
-public class NoRoomAvailableException extends HotelException {
+public class NoRoomAvailableException extends AgenceException {
     public NoRoomAvailableException() {
     }
 

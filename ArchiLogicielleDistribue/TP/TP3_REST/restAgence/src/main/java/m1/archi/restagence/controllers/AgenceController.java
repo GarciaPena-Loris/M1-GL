@@ -19,7 +19,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -113,49 +112,54 @@ public class AgenceController {
     public Reservation reserverChambresHotel(@PathVariable long id, @RequestParam String email, @RequestParam String motDePasse, @RequestParam Offre offre,
                                              @RequestParam boolean petitDejeuner, @RequestParam String nomClient, @RequestParam String prenomClient,
                                              @RequestParam String telephone, @RequestParam String nomCarte, @RequestParam String numeroCarte,
-                                             @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws AgenceNotFoundException, UtilisateurWrongPasswordException, UtilisateurNotRegisteredException, ReservationProblemeException {
+                                             @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws AgenceNotFoundException, UtilisateurWrongPasswordException, UtilisateurNotRegisteredException, ReservationProblemeException, HotelException {
         // On recupere l'agence
         Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agency not found with id " + id));
 
-        // Essaye de recuperer l'utilisateur avec le login et le mot de passe
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElseThrow(() -> new AgenceNotFoundException("Utilisateur not found with email " + email));
-        if (!utilisateur.getMotDePasse().equals(motDePasse)) {
-            throw new UtilisateurWrongPasswordException("Wrong password");
+        try {
+            // Essaye de recuperer l'utilisateur avec le login et le mot de passe
+            Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElseThrow(() -> new AgenceNotFoundException("Utilisateur not found with email " + email));
+            if (!utilisateur.getMotDePasse().equals(motDePasse)) {
+                throw new UtilisateurWrongPasswordException("Wrong password");
+            }
+            if (utilisateur.getAgence().getIdAgence() == agence.getIdAgence()) {
+                throw new UtilisateurNotRegisteredException("Utilisateur not registered in this agency");
+            }
+
+            // Construire l'URI de l'hôtel
+            String hotelUri = baseUri + "/hotels/{id}/reservation";
+
+            // Construire les paramètres de la requête
+            Map<String, Object> params = new HashMap<>();
+            params.put("id", offre.getHotel().getIdHotel());
+            params.put("offre", offre);
+            params.put("petitDejeuner", petitDejeuner);
+            params.put("nomClient", nomClient);
+            params.put("prenomClient", prenomClient);
+            params.put("email", email);
+            params.put("telephone", telephone);
+            params.put("nomCarte", nomCarte);
+            params.put("numeroCarte", numeroCarte);
+            params.put("expirationCarte", expirationCarte);
+            params.put("CCVCarte", CCVCarte);
+
+            ParameterizedTypeReference<Reservation> typeReference = new ParameterizedTypeReference<>() {
+            };
+
+            // Appel à la méthode de reservation d'offres de l'hôtel via le proxyHotel
+            ResponseEntity<Reservation> responseEntity = proxyHotel.exchange(hotelUri, HttpMethod.POST, null, typeReference, params);
+
+            Reservation reservation = responseEntity.getBody();
+            if (reservation == null) {
+                throw new ReservationProblemeException("Reservation problem");
+            }
+            utilisateur.addReservation(reservation.getIdReservation());
+            utilisateurRepository.save(utilisateur);
+            return reservation;
+
+        } catch (HttpClientErrorException ex) {
+            throw new HotelException("problem Agence : " + ex.getMessage());
         }
-        if (utilisateur.getAgence().getIdAgence() == agence.getIdAgence()) {
-            throw new UtilisateurNotRegisteredException("Utilisateur not registered in this agency");
-        }
-
-        // Construire l'URI de l'hôtel
-        String hotelUri = baseUri + "/hotels/{id}/reservation";
-
-        // Construire les paramètres de la requête
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", offre.getHotel().getIdHotel());
-        params.put("offre", offre);
-        params.put("petitDejeuner", petitDejeuner);
-        params.put("nomClient", nomClient);
-        params.put("prenomClient", prenomClient);
-        params.put("email", email);
-        params.put("telephone", telephone);
-        params.put("nomCarte", nomCarte);
-        params.put("numeroCarte", numeroCarte);
-        params.put("expirationCarte", expirationCarte);
-        params.put("CCVCarte", CCVCarte);
-
-        ParameterizedTypeReference<Reservation> typeReference = new ParameterizedTypeReference<>() {
-        };
-
-        // Appel à la méthode de reservation d'offres de l'hôtel via le proxyHotel
-        ResponseEntity<Reservation> responseEntity = proxyHotel.exchange(hotelUri, HttpMethod.POST, null, typeReference, params);
-
-        Reservation reservation = responseEntity.getBody();
-        if (reservation == null) {
-            throw new ReservationProblemeException("Reservation problem");
-        }
-        utilisateur.addReservation(reservation.getIdReservation());
-        utilisateurRepository.save(utilisateur);
-        return reservation;
     }
 
 
