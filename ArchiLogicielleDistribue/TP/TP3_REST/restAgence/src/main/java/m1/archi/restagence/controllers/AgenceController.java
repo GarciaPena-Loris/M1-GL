@@ -194,6 +194,15 @@ public class AgenceController {
         return agence.getListeUtilisateurs();
     }
 
+    @GetMapping("${base-uri}/agences/utilisateur")
+    public Utilisateur getUtilisateurByEmailMotDePasse(@RequestParam String email, @RequestParam String motDePasse) throws UtilisateurWrongPasswordException, UtilisateurNotFoundException {
+        Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElseThrow(() -> new UtilisateurNotFoundException("Utilisateur not found with email " + email));
+        if (!utilisateur.getMotDePasse().equals(motDePasse)) {
+            throw new UtilisateurWrongPasswordException("Wrong password");
+        }
+        return utilisateur;
+    }
+
     @GetMapping("${base-uri}/agences/{id}/utilisateurs/{idUtilisateur}")
     public Utilisateur getUtilisateurById(@PathVariable long id, @PathVariable long idUtilisateur) throws AgenceNotFoundException, UtilisateurNotFoundException {
         Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agency not found with id " + id));
