@@ -12,7 +12,11 @@ public class ComparateurRestClientInterface implements CommandLineRunner {
     private RestTemplate proxy;
 
     @Override
-    public void run(String... args) throws Exception {
-        new Interface(proxy);
+    public void run(String... args) {
+        try {
+            new Interface(proxy);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

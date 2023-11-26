@@ -69,6 +69,8 @@ public class AgenceData {
                 // Sauvegarde de l'hôtel
                 logger.info("\n[" + (i + 1) + "] Preloading database with " + agence);
             }
+            System.err.println("Server agence ready!");
+
         };
     }
 }

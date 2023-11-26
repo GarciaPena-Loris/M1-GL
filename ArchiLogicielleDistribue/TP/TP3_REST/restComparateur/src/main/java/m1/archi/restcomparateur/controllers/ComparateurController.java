@@ -1,9 +1,6 @@
 package m1.archi.restcomparateur.controllers;
 
-import m1.archi.restcomparateur.exceptions.ComparateurNotFoundException;
-import m1.archi.restcomparateur.exceptions.AgenceException;
-import m1.archi.restcomparateur.exceptions.NoRoomAvailableException;
-import m1.archi.restcomparateur.exceptions.ReservationProblemeException;
+import m1.archi.restcomparateur.exceptions.*;
 import m1.archi.restcomparateur.models.Comparateur;
 import m1.archi.restcomparateur.models.modelsAgence.Agence;
 import m1.archi.restcomparateur.models.modelsHotel.Offre;
@@ -63,12 +60,22 @@ public class ComparateurController {
         return comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found"));
     }
 
+    @GetMapping("/comparateur/idAgences")
+    public List<Long> getAllIdAgences() throws ComparateurNotFoundException {
+        return comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found")).getIdAgences();
+    }
+
+    @GetMapping("/comparateur/idAgences/count")
+    public int countAgence() throws ComparateurNotFoundException {
+        return comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found")).getIdAgences().size();
+    }
+
     @GetMapping("/idComparateur")
     public Long getFirstIdComparateur() throws ComparateurNotFoundException {
         return comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found")).getIdComparateur();
     }
 
-    @GetMapping("/comparateurs/recherche")
+    @GetMapping("/comparateur/recherche")
     public Map<String, List<List<Offre>>> rechercheChambreById(@RequestParam String ville, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateArrivee,
                                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateDepart, @RequestParam int prixMin,
                                                                @RequestParam int prixMax, @RequestParam int nombreEtoiles, @RequestParam int nombrePersonne) throws AgenceException, ComparateurNotFoundException {
@@ -194,5 +201,11 @@ public class ComparateurController {
     public void deleteComparateur() throws ComparateurNotFoundException {
         Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found"));
         comparateurRepository.delete(comparateur);
+    }
+
+    // Gestion d'erreur
+    @RequestMapping("/error")
+    public void handleError() throws ComparateurException {
+        throw new ComparateurException("An error occurred while processing your request :");
     }
 }

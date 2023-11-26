@@ -54,6 +54,7 @@ public class ComparateurData {
             comparateurRepository.save(comparateur);
 
             logger.info("Preloading database with " + comparateur);
+            logger.info("Server comparateur ready!");
         };
     }
 }

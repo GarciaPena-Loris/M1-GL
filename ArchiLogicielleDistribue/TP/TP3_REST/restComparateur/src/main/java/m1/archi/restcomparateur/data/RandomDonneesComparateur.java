@@ -4,7 +4,7 @@ import java.util.*;
 
 public class RandomDonneesComparateur {
     private static final String[] listeNomAgenceSansDoublons = {
-            "Trivago", "Booking", "Expedia", "Kayak", "Hotels.com", "TripAdvisor", "Agoda", "Priceline", "Orbitz", "Airbnb"
+            "Trivago", "Booking.com", "Expedia", "Kayak", "Hotels.com", "TripAdvisor", "Airbnb"
     };
 
     private static <T> T getElementListeAleatoire(T[] liste) {
