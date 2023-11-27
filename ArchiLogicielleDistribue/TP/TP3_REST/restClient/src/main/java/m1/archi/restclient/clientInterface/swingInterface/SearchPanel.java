@@ -15,7 +15,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -25,7 +24,7 @@ import java.util.Properties;
 
 public class SearchPanel extends JPanel {
     private final RestTemplate proxyComparateur;
-    private final JPanel mainPanel;
+    private final CustomContentPane customContentPane;
     // Pickers
     private final JComboBox<String> villeField;
     private final JDatePickerImpl dateDepartPicker;
@@ -37,12 +36,11 @@ public class SearchPanel extends JPanel {
     private static final String font = "Palatino Linotype";
     private static final String[] listeVilles = {"Paris", "Toulouse", "Nice", "Madrid", "Barcelone", "Valence", "Athènes", "Rhodes", "Toronto", "Montréal"};
 
-    public SearchPanel(JPanel mainPanel, RestTemplate proxyComparateur) {
-        this.mainPanel = mainPanel;
+    public SearchPanel(CustomContentPane customContentPane, RestTemplate proxyComparateur) {
+        this.customContentPane = customContentPane;
         this.proxyComparateur = proxyComparateur;
 
         setBorder(new EmptyBorder(10, 15, 10, 15));
-        setBackground(new Color(0, 0, 255, 179));
         setOpaque(false);
 
         Integer nombreAgencePartenaire;
@@ -69,7 +67,6 @@ public class SearchPanel extends JPanel {
         JLabel villeLabel = new JLabel("Ville d'hébergement :");
         villeField.setFont(new Font(font, Font.PLAIN, 14));
         villeLabel.setFont(new Font(font, Font.PLAIN, 14));
-        villeField.setBorder(new EmptyBorder(0, 0, 0, 15));
         searchPanel.add(villeLabel);
         searchPanel.add(villeField);
 
@@ -82,13 +79,13 @@ public class SearchPanel extends JPanel {
 
         JLabel dateArriveeLabel = new JLabel("Arrivée :");
         dateArriveeLabel.setFont(new Font(font, Font.PLAIN, 14));
-        dateArriveeLabel.setBorder(new EmptyBorder(2, 15, 0, 0));
+        dateArriveeLabel.setBorder(new EmptyBorder(5, 15, 0, 0));
         searchPanel.add(dateArriveeLabel);
         searchPanel.add(dateArriveePicker);
 
         JLabel dateDepartLabel = new JLabel("Départ :");
         dateDepartLabel.setFont(new Font(font, Font.PLAIN, 14));
-        dateDepartLabel.setBorder(new EmptyBorder(2, 15, 0, 0));
+        dateDepartLabel.setBorder(new EmptyBorder(5, 15, 0, 0));
         searchPanel.add(dateDepartLabel);
         searchPanel.add(dateDepartPicker);
 
@@ -97,6 +94,7 @@ public class SearchPanel extends JPanel {
         JLabel peopleLabel = new JLabel("Nombre de personnes :");
         peopleLabel.setFont(new Font(font, Font.PLAIN, 14));
         peopleLabel.setBorder(new EmptyBorder(2, 15, 0, 0));
+        peopleSpinner.setFont(new Font(font, Font.BOLD, 18));
         searchPanel.add(peopleLabel);
         searchPanel.add(peopleSpinner);
 
@@ -105,12 +103,20 @@ public class SearchPanel extends JPanel {
         JLabel starsLabel = new JLabel("Étoiles minimum :");
         starsLabel.setFont(new Font(font, Font.PLAIN, 14));
         starsLabel.setBorder(new EmptyBorder(2, 15, 0, 0));
+        starsSpinner.setFont(new Font(font, Font.BOLD, 18));
+        starsSpinner.setBorder(new EmptyBorder(0, 0, 0, 20));
         searchPanel.add(starsLabel);
         searchPanel.add(starsSpinner);
 
+        searchPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+
         // Bouton de recherche
-        searchButton = new JButton("Rechercher");
-        searchButton.setFont(new Font(font, Font.BOLD, 16));
+        searchButton = new CustomButton();
+        searchButton.setText("Rechercher");
+        searchButton.setToolTipText("Veuillez renseigner les informations de recherche");
+        ((CustomButton) searchButton).setRadius(20);
+        searchButton.setFont(new Font(font, Font.BOLD, 20));
+        searchButton.setBorder(new EmptyBorder(10, 20, 0, 20));
         searchButton.addActionListener(e -> {
             // Action à effectuer lors du clic sur le bouton de recherche
             performSearch((String) villeField.getSelectedItem(), dateArriveeModel.getValue(), dateDepartModel.getValue(),
@@ -152,6 +158,11 @@ public class SearchPanel extends JPanel {
         }
         boolean isValid = isDateArriveeValid && isDateDepartValid && isVilleValid && isDateOrderValid;
         searchButton.setEnabled(isValid);
+        if (!isValid) {
+            ((CustomButton) searchButton).setColorOver(Color.WHITE);
+        } else {
+            ((CustomButton) searchButton).setColorOver(Color.GREEN);
+        }
     }
 
     private void performSearch(String ville, Date dateArrivee, Date dateDepart, int nombrePersonne, int nombreEtoilesMin) {
@@ -184,15 +195,10 @@ public class SearchPanel extends JPanel {
             if (mapAgenceOffres == null || mapAgenceOffres.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Résultat", JOptionPane.ERROR_MESSAGE);
             } else {
-                ResultPanel resultPanel = new ResultPanel(mainPanel, mapAgenceOffres);
-                mainPanel.add(resultPanel);
-
-                // Assurez-vous que le mainPanel est actualisé
-                mainPanel.revalidate();
-                mainPanel.repaint();
+                customContentPane.rebuild(mapAgenceOffres, proxyComparateur);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Résultat", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Erreur", JOptionPane.ERROR_MESSAGE);
             throw e;
         }
     }

@@ -10,9 +10,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Interface {
-    private final Comparateur comparateur;
+    private final Comparateur comparateurService;
     private final RestTemplate proxyComparateur;
-    private final String baseUri = "http://localhost:8100/comparateurService/api";
+    private static final String BASE_URI = "http://localhost:8100/comparateurService/api";
 
     public Interface(RestTemplate proxyComparateur) throws InterfaceException {
         if (proxyComparateur == null)
@@ -20,9 +20,9 @@ public class Interface {
 
         this.proxyComparateur = proxyComparateur;
         // Récupération le comparateur
-        comparateur = proxyComparateur.getForObject(baseUri + "/comparateur", Comparateur.class);
+        comparateurService = proxyComparateur.getForObject(BASE_URI + "/comparateur", Comparateur.class);
 
-        if (comparateur == null)
+        if (comparateurService == null)
             throw new InterfaceException("Problème lors de la récupération du comparateur");
 
         // Création de l'interface graphique
@@ -31,19 +31,17 @@ public class Interface {
 
     private void createAndShowGUI() {
         SwingUtilities.invokeLater(() -> {
-            String nomComparateur = comparateur.getNom();
+            String nomComparateur = comparateurService.getNom();
             JFrame frame = new JFrame("Bienvenue sur le comparateur d'agences " + nomComparateur + " :");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            JPanel mainPanel = new JPanel();
-            mainPanel.setLayout(new BorderLayout());
-            mainPanel.setBackground(new Color(0, 0, 255, 179));
+            CustomContentPane customContentPane = new CustomContentPane(frame);
+            frame.setContentPane(customContentPane);
 
             // Création de la barre de recherche
-            JPanel searchPanel = new SearchPanel(mainPanel, proxyComparateur);
-            mainPanel.add(searchPanel, BorderLayout.NORTH);
+            JPanel searchPanel = new SearchPanel(customContentPane, proxyComparateur);
+            customContentPane.add(searchPanel, BorderLayout.NORTH);
 
-            frame.getContentPane().add(mainPanel);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setVisible(true);
         });
