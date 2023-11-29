@@ -4,16 +4,16 @@ import java.util.*;
 
 public class RandomDonneesAgence {
     private static final String[] listeNomAgenceSansDoublons = {
-            "Agence du Voyage Étoilé", "Agence Horizon Sans Limite", "Aventure Sans Frontières", "Agence du Monde Magique",
-            "Explorateurs Intrépides", "Agence Terres Lointaines", "Voyages en Émeraude", "Agence des Rêves Exotiques",
-            "Oasis de Découvertes", "Agence de l'Aventure Cachée", "Voyages au Paradis Terrestre", "Agence des Merveilles Naturelles",
-            "Découvertes au Clair de Lune", "Agence de l'Exploration Ensoleillée", "Voyages en Terres Inconnues",
-            "Agence de l'Aventure Enchantée", "Légendes de Voyages", "Agence des Horizons Infinis", "Explorations Mystérieuses",
-            "Agence du Monde Insolite", "Évasions Secrètes", "Agence des Voyages Surnaturels", "Rêves d'Ailleurs",
-            "Agence des Voyages Fantastiques", "Odyssées Inoubliables", "Agence des Rêves Inexplorés",
-            "Aventures Magiques", "Voyages de l'Imagination", "Agence des Trésors Cachés", "Lumières de l'Aventure",
-            "Voyages au Royaume des Merveilles", "Agence de l'Exploration Insoupçonnée", "Rêves d'Évasion",
-            "Agence de l'Aventure Infinie", "Mystères du Monde", "Voyages Vers l'Inconnu", "Agence des Expériences Uniques"
+            "Agence du Voyage Étoilé", "Agence Horizon Sans Limite", "Agence de l'Aventure Sans Frontières", "Agence du Monde Magique",
+            "Agence des Explorateurs Intrépides", "Agence Terres Lointaines", "Agence des Voyages en Émeraude", "Agence des Rêves Exotiques",
+            "Agence de l'Oasis de Découvertes", "Agence de l'Aventure Cachée", "Agence de Voyages au Paradis Terrestre", "Agence des Merveilles Naturelles",
+            "Agence de la Découvertes au Clair de Lune", "Agence de l'Exploration Ensoleillée", "Agence des Voyages en Terres Inconnues",
+            "Agence de l'Aventure Enchantée", "Agence des Légendes de Voyages", "Agence des Horizons Infinis", "Agence des Explorations Mystérieuses",
+            "Agence du Monde Insolite", "Agence des Évasions Secrètes", "Agence des Voyages Surnaturels", "Agence des Rêves d'Ailleurs",
+            "Agence des Voyages Fantastiques", "Agence Odyssées Inoubliables", "Agence des Rêves Inexplorés",
+            "Agence de l' Aventures Magiques", "Agence de Voyages de l'Imagination", "Agence des Trésors Cachés", "Agence des Lumières de l'Aventure",
+            "Agence des Voyages au Royaume des Merveilles", "Agence de l'Exploration Insoupçonnée", "Agence des Rêves d'Évasion",
+            "Agence de l'Aventure Infinie", "Agence de Mystères du Monde", "Agence des Voyages Vers l'Inconnu", "Agence des Expériences Uniques"
     };
 
     private static <T> T getElementListeAleatoire(T[] liste) {
@@ -26,7 +26,8 @@ public class RandomDonneesAgence {
 
 
     public static int randomNombreHotelPartenaire(int nombreHotel) {
-        return new Random().nextInt(nombreHotel) + 1; // +1 pour éviter le 0 et avoir un nombre entre 1 et nombreHotel
+        // Entre 30 et le nombre d'hotel
+        return new Random().nextInt(nombreHotel - 30) + 30;
     }
 
     public static List<Long> randomHotelPartenaire(List<Long> listeHotel, int nombreHotel) {

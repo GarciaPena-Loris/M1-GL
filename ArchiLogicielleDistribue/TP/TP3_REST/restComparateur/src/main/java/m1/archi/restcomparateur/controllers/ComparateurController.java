@@ -127,13 +127,11 @@ public class ComparateurController {
         }
     }
 
-    @PostMapping("${base-uri}/comparateur/{id}/reservation")
+    @PostMapping("${base-uri}/comparateur/reservation")
     public Reservation reserverChambresHotel(@RequestParam String email, @RequestParam String motDePasse, @RequestParam Offre offre,
                                              @RequestParam boolean petitDejeuner, @RequestParam String nomClient, @RequestParam String prenomClient,
                                              @RequestParam String telephone, @RequestParam String nomCarte, @RequestParam String numeroCarte,
-                                             @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws ComparateurNotFoundException, ReservationProblemeException, AgenceException {
-        // On recupere l'agence
-        Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found"));
+                                             @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws ReservationProblemeException, AgenceException {
         try {
             // Construire l'URI de l'agence
             String agenceUri = baseUri + "/agences/{id}/reservation";

@@ -30,18 +30,18 @@ public class RandomDonneesHotel {
     };
 
     private static final String[] listeNomHotel = {
-            "Hôtel Lumière d'Étoile", "Le Château Doré", "Auberge de la Brise Marine", "Lodge en Montagne", "Suites de la Vie Urbaine", "Hôtel de la Rivière",
-            "Hôtel Paradis des Palmiers", "Lodge des Plages d'Or", "Couronne Royale", "Auberge des Eaux Azurées", "Manoir de la Vallée", "Retraite au Bord du Lac",
-            "Suites Ciel Étoilé", "Hôtel Spa Sérénité", "Hôtel Vue sur le Port", "Auberge de l'Oasis Exotique", "Lodge des Pins Tranquilles",
-            "Maison du Bois Rouge", "Refuge en Bord de Mer", "Lodge Montagneux", "Auberge des Pins Sereins", "Hôtel Ciel Azur",
-            "Auberge de la Baie de Corail", "Auberge des Rives d'Argent", "Plaza Royale", "Hôtel de l'Émeraude Île", "Retraite au Bord de la Rivière",
+            "Lumière d'Étoile", "Le Château Doré", "Auberge de la Brise Marine", "Lodge en Montagne", "Suites de la Vie Urbaine", "Vue sur la Rivière",
+            "Paradis des Palmiers", "Lodge des Plages d'Or", "Couronne Royale", "Auberge des Eaux Azurées", "Manoir de la Vallée", "Retraite au Bord du Lac",
+            "Suites Ciel Étoilé", "Spa Sérénité", "Vue sur le Port", "Auberge de l'Oasis Exotique", "Lodge des Pins Tranquilles",
+            "Maison du Bois Rouge", "Refuge en Bord de Mer", "Lodge Montagneux", "Auberge des Pins Sereins", "Ciel Azur",
+            "Auberge de la Baie de Corail", "Auberge des Rives d'Argent", "Plaza Royale", "Émeraude Île", "Retraite au Bord de la Rivière",
             "Auberge Vue sur le Port", "Palais Doré", "Auberge du Charme Cottage", "Suites Prestige", "Auberge au Bord du Lac",
-            "Manoir des Bois Murmureurs", "Hôtel de la Porte Impériale", "Auberge de la Brise Côtière", "Villa Étoilée", "Retraite de Plage aux Palmiers",
-            "Lodge au Bord du Lac", "Palais de Saphir", "Hôtel de la Rive de la Rivière", "Auberge de la Campagne Tranquille", "Hôtel Port de Lumière",
+            "Manoir des Bois Murmureurs", "Porte Impériale", "Auberge de la Brise Côtière", "Villa Étoilée", "Retraite de Plage aux Palmiers",
+            "Lodge au Bord du Lac", "Palais de Saphir", "Rive de la Rivière", "Auberge de la Campagne Tranquille", "Port de Lumière",
             "Manoir Clair de Lune Mirage", "Auberge Vue sur le Soleil Couchant", "Lodge Vue sur la Mer", "Auberge au Paradis Tropical",
-            "Retraite Impériale", "Hôtel de la Majesté Montagnarde", "Suites du Centre-Ville", "Auberge de la Baie de Corail", "Auberge de l'Île d'Émeraude",
+            "Retraite Impériale", "Majesté Montagnarde", "Suites du Centre-Ville", "Auberge de la Baie de Corail", "Auberge de l'Île d'Émeraude",
             "Auberge au Bord de la Rivière", "Retraite au Port de Marina", "Palais aux Palmiers Dorés", "Retraite au Bord de la Rivière Tranquille",
-            "Oasis de Luxe", "Hôtel au Bord du Port Harmonieux", "Printemps de l'Émeraude", "Retraite au Bord du Lac Scintillant", "Vue sur le Soleil Couchant Paradisiaque",
+            "Oasis de Luxe", "Bord du Port Harmonieux", "Printemps de l'Émeraude", "Retraite au Bord du Lac Scintillant", "Vue sur le Soleil Couchant Paradisiaque",
             "Retraite au Bord du Lac Paisible", "Retraite au Port de Marina", "Château d'Émeraude", "Lodge du Charme Cottage", "Plaza Prestige",
             "Auberge de Sérénité au Bord du Lac Tranquille", "Auberge de la Campagne Chuchotante"
     };

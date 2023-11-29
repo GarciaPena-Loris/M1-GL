@@ -73,10 +73,9 @@ public class AgenceController {
             for (ReductionHotel reductionHotel : reductionHotels) {
                 // Construire l'URI de l'hôtel
                 String hotelUri = baseUri + "/hotels/{id}/recherche";
-                String villeEncodee = URLEncoder.encode(ville, StandardCharsets.UTF_8);
 
                 UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(hotelUri)
-                        .queryParam("ville", villeEncodee)
+                        .queryParam("ville", ville)
                         .queryParam("dateArrivee", dateArrivee)
                         .queryParam("dateDepart", dateDepart)
                         .queryParam("prixMin", prixMin)

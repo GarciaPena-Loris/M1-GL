@@ -17,10 +17,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 public class SearchPanel extends JPanel {
     private final RestTemplate proxyComparateur;
@@ -63,6 +61,7 @@ public class SearchPanel extends JPanel {
         searchPanel.setOpaque(false);
 
         // Ville d'hébergement
+        Arrays.sort(listeVilles);
         villeField = new JComboBox<>(listeVilles);
         JLabel villeLabel = new JLabel("Ville d'hébergement :");
         villeField.setFont(new Font(font, Font.PLAIN, 14));
@@ -199,7 +198,6 @@ public class SearchPanel extends JPanel {
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Erreur", JOptionPane.ERROR_MESSAGE);
-            throw e;
         }
     }
 }

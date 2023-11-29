@@ -107,11 +107,18 @@ public class Hotel {
     }
 
 
-
     @Override
     public String toString() {
-        return "L'hotel '" + this.nom + "' (" + this.nombreEtoiles
-                + " étoiles) situé au " + this.adresse + ", possède " + this.chambres.size() + " chambres.";
+        return "Hotel{" +
+                "idHotel=" + idHotel +
+                ", nom='" + nom + '\'' +
+                ", adresse=" + adresse +
+                ", nombreEtoiles=" + nombreEtoiles +
+                ", imageHotel='" + imageHotel + '\'' +
+                ", chambres=" + chambres +
+                ", reservations=" + reservations +
+                ", offres=" + offres +
+                '}';
     }
 
     public void setIdHotel(long idHotel) {
