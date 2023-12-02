@@ -1,5 +1,6 @@
 package m1.archi.restclient.clientInterface.swingInterface;
 
+import m1.archi.restclient.models.modelsAgence.Agence;
 import m1.archi.restclient.models.modelsHotel.Offre;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,7 +16,7 @@ public class CustomContentPane extends JPanel {
         setLayout(new BorderLayout());
 
     }
-    public void rebuild(Map<String, List<List<Offre>>> mapAgenceOffres, RestTemplate proxyComparateur) {
+    public void rebuild(Map<Long, List<List<Offre>>> mapAgenceOffres, RestTemplate proxyComparateur) {
         Component[] components = getComponents();
         if (components.length > 1) {
             remove(components[1]);

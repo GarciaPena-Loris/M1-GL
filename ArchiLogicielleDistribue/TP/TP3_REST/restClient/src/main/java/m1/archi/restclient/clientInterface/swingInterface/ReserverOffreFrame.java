@@ -1,5 +1,9 @@
 package m1.archi.restclient.clientInterface.swingInterface;
 
+import m1.archi.restclient.models.modelsAgence.Utilisateur;
+import m1.archi.restclient.models.modelsHotel.Offre;
+import org.springframework.web.client.RestTemplate;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -10,51 +14,39 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ReserverOffreFrame extends JFrame {
-    /*
     private final JCheckBox petitDejeunerCheckBox;
     private final JTextField nomClientField;
     private final JTextField prenomClientField;
-    private final JTextField emailField;
     private final JTextField telephoneField;
     private final JTextField nomCarteField;
     private final JTextField numeroCarteField;
     private final JTextField expirationCarteField;
     private final JTextField CCVCarteField;
-    
+
     private final Offre offre;
-    private final JFrame parent;
+    private final RestTemplate proxyReservation;
 
-    public ReserverOffreFrame(Offre offre, JFrame parent) throws MalformedURLException {
-        super("Réservation d'offre");
-
-        URL url = new URL("http://localhost:8090/agencesservice/" + Interface.selectedAgence + "/reservation");
-        AgenceServiceReservationImplService agenceServiceReservation = new AgenceServiceReservationImplService(url);
-
-        this.proxyReservation = agenceServiceReservation.getAgenceServiceReservationImplPort();
+    public ReserverOffreFrame(Offre offre, Utilisateur utilisateur, RestTemplate proxyComparateur) {
+        super("Réservation de l'offre à l'hotel " + offre.getHotel().getNom() + " :");
         this.offre = offre;
-        this.parent = parent;
+        this.proxyReservation = proxyComparateur;
 
         nomClientField = createFormattedTextField(30);
         prenomClientField = createFormattedTextField(30);
-        emailField = createFormattedTextField(50);
         telephoneField = createFormattedTextField(10);
+        // -- Carte
         nomCarteField = createFormattedTextField(30);
         numeroCarteField = createFormattedTextField(16);
         expirationCarteField = createFormattedTextField(5);
         CCVCarteField = createFormattedTextField(3);
-        petitDejeunerCheckBox = new JCheckBox("Petit déjeuner inclus");
+        // -- Petit déjeuner
+        petitDejeunerCheckBox = new JCheckBox("Souhaitez-vous prendre le petit déjeuner ?");
 
         JButton reserverButton = new JButton("Réserver");
         reserverButton.setEnabled(false);
-        reserverButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reserverOffre();
-            }
-        });
+        reserverButton.addActionListener(e -> reserverOffre());
 
-        // Créez une instance de votre classe InputDocumentListener pour activer/désactiver le bouton
-        InputDocumentListener inputDocumentListener = new InputDocumentListener(reserverButton, nomClientField, prenomClientField, emailField, telephoneField, nomCarteField, numeroCarteField, expirationCarteField, CCVCarteField);
+        new InputDocumentListener(reserverButton, nomClientField, prenomClientField, telephoneField, nomCarteField, numeroCarteField, expirationCarteField, CCVCarteField);
 
         // Ajoutez les composants au panneau
         JPanel panel = new JPanel(new GridLayout(10, 2, 10, 10));
@@ -62,8 +54,6 @@ public class ReserverOffreFrame extends JFrame {
         panel.add(nomClientField);
         panel.add(new JLabel("  Prénom du client principal :"));
         panel.add(prenomClientField);
-        panel.add(new JLabel("  Email :"));
-        panel.add(emailField);
         panel.add(new JLabel("  Téléphone :"));
         panel.add(telephoneField);
         panel.add(new JLabel("  Petit déjeuner inclus :"));
@@ -83,8 +73,6 @@ public class ReserverOffreFrame extends JFrame {
         add(panel);
 
         // Définissez la taille et la position de la fenêtre
-        setSize(400, 400);
-        setLocationRelativeTo(parent);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }
@@ -94,7 +82,6 @@ public class ReserverOffreFrame extends JFrame {
         boolean petitDejeuner = petitDejeunerCheckBox.isSelected();
         String nomClient = nomClientField.getText();
         String prenomClient = prenomClientField.getText();
-        String email = emailField.getText();
         String telephone = telephoneField.getText();
         String nomCarte = nomCarteField.getText();
         String numeroCarte = numeroCarteField.getText();
@@ -102,6 +89,7 @@ public class ReserverOffreFrame extends JFrame {
         String CCVCarte = CCVCarteField.getText();
 
         // Appelez la méthode de réservation avec les paramètres nécessaires
+            /*
         try {
             Reservation reservation = proxyReservation.reserverChambresHotel(Interface.userConnecte.getLogin(), Interface.userConnecte.getMotDePasse(), offre, petitDejeuner, nomClient, prenomClient, email, telephone, nomCarte, numeroCarte, expirationCarte, CCVCarte);
             StringBuilder message = new StringBuilder();
@@ -128,8 +116,8 @@ public class ReserverOffreFrame extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Erreur lors de la réservation : " + ex.getMessage(), "Erreur de réservation", JOptionPane.ERROR_MESSAGE);
         }
+        */
     }
-    */
 
     private JTextField createFormattedTextField(int columns) {
         // Ajoutez le DocumentListener ici si nécessaire

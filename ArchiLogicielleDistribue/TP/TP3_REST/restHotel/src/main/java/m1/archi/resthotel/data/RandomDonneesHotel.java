@@ -116,12 +116,12 @@ public class RandomDonneesHotel {
     public static String randomNumero() {
         Random random = new Random();
         String numeroRue = String.valueOf(random.nextInt(100) + 1); // Numéro de rue entre 1 et 100
-        if (random.nextInt(4) == 0) {
-            numeroRue += "bis"; // Ajoute "bis" avec une chance sur 4
-        } else if (random.nextInt(10) == 0) {
-            numeroRue += "ter"; // Ajoute "ter" avec une chance sur 10
+        if (random.nextInt(8) == 0) {
+            numeroRue += "bis"; // Ajoute "bis" avec une chance sur 8
+        } else if (random.nextInt(15) == 0) {
+            numeroRue += "ter"; // Ajoute "ter" avec une chance sur 15
         } else if (random.nextInt(100) == 0) {
-            numeroRue += "shrek";
+            numeroRue += "shrek"; // Ajoute "shrek" avec une chance sur 100
         }
         return numeroRue;
     }

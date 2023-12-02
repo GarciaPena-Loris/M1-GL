@@ -20,9 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -76,24 +74,23 @@ public class ComparateurController {
     }
 
     @GetMapping("/comparateur/recherche")
-    public Map<String, List<List<Offre>>> rechercheChambreById(@RequestParam String ville, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateArrivee,
+    public Map<Long, List<List<Offre>>> rechercheChambresHotel(@RequestParam String ville, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateArrivee,
                                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDateTime dateDepart, @RequestParam int prixMin,
                                                                @RequestParam int prixMax, @RequestParam int nombreEtoiles, @RequestParam int nombrePersonne) throws AgenceException, ComparateurNotFoundException {
 
         Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new ComparateurNotFoundException("Comparator not found"));
 
         try {
-            Map<String, List<List<Offre>>> mapOffresParAgences = new HashMap<>();
+            Map<Long, List<List<Offre>>> mapOffresParAgences = new HashMap<>();
 
             List<Long> idAgences = comparateur.getIdAgences();
 
             for (long idAgence : idAgences) {
                 String agenceUri = baseUri + "/agences/{id}/recherche";
-                String villeEncodee = URLEncoder.encode(ville, StandardCharsets.UTF_8);
 
                 // Construire l'URI de la requête avec les paramètres
                 UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(agenceUri)
-                        .queryParam("ville", villeEncodee)
+                        .queryParam("ville", ville)
                         .queryParam("dateArrivee", dateArrivee)
                         .queryParam("dateDepart", dateDepart)
                         .queryParam("prixMin", prixMin)
@@ -109,12 +106,17 @@ public class ComparateurController {
                 ResponseEntity<List<List<Offre>>> responseEntity = proxyAgence.exchange(builder.buildAndExpand(idAgence).toUri(), HttpMethod.GET, null, typeReference);
                 List<List<Offre>> offresParAgences = responseEntity.getBody();
 
+
                 if (offresParAgences != null && !offresParAgences.isEmpty()) {
-                    Agence agence = proxyAgence.getForObject(baseUri + "/agences/{id}", Agence.class, idAgence);
-                    if (agence != null) {
-                        String nomAgence = agence.getNom();
-                        mapOffresParAgences.put(nomAgence, offresParAgences);
+                    // Trier par hotel (nombre étoiles)
+                    offresParAgences.sort(Comparator.comparing(o -> o.get(0).getHotel().getNombreEtoiles()));
+
+                    // Trier les offres par prix
+                    for (List<Offre> offres : offresParAgences) {
+                        offres.sort(Comparator.comparing(Offre::getPrixAvecReduction));
                     }
+
+                    mapOffresParAgences.put(idAgence, offresParAgences);
                 }
             }
 

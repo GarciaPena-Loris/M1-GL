@@ -59,8 +59,13 @@ public class Agence {
         this.listeUtilisateurs = listeUtilisateurs;
     }
 
+    public void addUtilisateur(Utilisateur utilisateur) {
+        this.listeUtilisateurs.add(utilisateur);
+    }
+
+    @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("L'agence '" + this.nom + "' (" + this.getIdAgence() + ") possède " + this.getReductionHotels().size() + " hotels partenaires :\n");
+        StringBuilder res = new StringBuilder("L'" + this.nom + " (" + this.getIdAgence() + ") possède " + this.getReductionHotels().size() + " hotels partenaires :\n");
 
         int compteur = 1;
         for (ReductionHotel reductionHotel : this.getReductionHotels()) {

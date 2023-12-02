@@ -12,7 +12,6 @@ public class Utilisateur {
     private String motDePasse;
     private String nom;
     private String prenom;
- 
     private Agence agence;
  
     private List<Long> idReservations;

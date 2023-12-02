@@ -1,16 +1,22 @@
 package m1.archi.restcomparateur.models.modelsAgence;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.*;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class Agence {
-   
+    @JsonProperty("idAgence")
     private long idAgence;
+
+    @JsonProperty("nom")
     private String nom;
-    
+
+    @JsonProperty("reductionHotels")
     private List<ReductionHotel> reductionHotels;
 
+    @JsonProperty("listeUtilisateurs")
     private List<Utilisateur> listeUtilisateurs;
 
     public Agence() {
@@ -58,15 +64,17 @@ public class Agence {
         this.listeUtilisateurs = listeUtilisateurs;
     }
 
+    public void addUtilisateur(Utilisateur utilisateur) {
+        this.listeUtilisateurs.add(utilisateur);
+    }
+
     @Override
     public String toString() {
-        StringBuilder res = new StringBuilder("L'agence '" + this.nom + "' (" + this.getIdAgence() + ") possède " + this.getReductionHotels().size() + " hotels partenaires :\n");
-
-        int compteur = 1;
-        for (ReductionHotel reductionHotel : this.getReductionHotels()) {
-            res.append("\t").append(compteur).append("- L'hotel (").append(reductionHotel.getIdHotel()).append(") avec une reduction de ").append(reductionHotel.getReduction()).append("% sur les chambres.\n");
-            compteur++;
-        }
-        return res.toString();
+        return "Agence{" +
+                "idAgence=" + getIdAgence() +
+                ", nom='" + getNom() + '\'' +
+                ", reductionHotels=" + getReductionHotels() +
+                ", listeUtilisateurs=" + getListeUtilisateurs() +
+                '}';
     }
 }

@@ -193,7 +193,7 @@ public class AgenceController {
         return agence.getListeUtilisateurs();
     }
 
-    @GetMapping("${base-uri}/agences/utilisateur")
+    @GetMapping("${base-uri}/agences/utilisateurs")
     public Utilisateur getUtilisateurByEmailMotDePasse(@RequestParam String email, @RequestParam String motDePasse) throws UtilisateurWrongPasswordException, UtilisateurNotFoundException {
         Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElseThrow(() -> new UtilisateurNotFoundException("Utilisateur not found with email " + email));
         if (!utilisateur.getMotDePasse().equals(motDePasse)) {
@@ -203,28 +203,23 @@ public class AgenceController {
     }
 
     @GetMapping("${base-uri}/agences/{id}/utilisateurs/{idUtilisateur}")
-    public Utilisateur getUtilisateurById(@PathVariable long id, @PathVariable long idUtilisateur) throws AgenceNotFoundException, UtilisateurNotFoundException {
+    public Utilisateur getUtilisateurById(@PathVariable long id, @PathVariable long idUtilisateur) throws AgenceNotFoundException, UtilisateurNotRegisteredException {
         Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agency not found with id " + id));
-        return agence.getListeUtilisateurs().stream().filter(utilisateur -> utilisateur.getIdUtilisateur() == idUtilisateur).findFirst().orElseThrow(() -> new UtilisateurNotFoundException("Utilisateur not found with id " + idUtilisateur));
+        return agence.getListeUtilisateurs().stream().filter(utilisateur -> utilisateur.getIdUtilisateur() == idUtilisateur).findFirst().orElseThrow(() -> new UtilisateurNotRegisteredException("Utilisateur with id " + idUtilisateur + " not registered in this agency"));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("${base-uri}/agences/{id}/utilisateurs")
-    public Utilisateur addUtilisateur(@PathVariable long id, @RequestBody String email, @RequestBody String motDePasse,
-                                      @RequestBody String nom, @RequestBody String prenom) throws AgenceNotFoundException {
+    public Utilisateur addUtilisateur(@PathVariable long id, @RequestBody Utilisateur utilisateur) throws AgenceNotFoundException, UtilisateurAlreadyRegisteredException {
         Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agence not found with id " + id));
 
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElseGet(() -> {
-            Utilisateur utilisateurSaved = utilisateurRepository.save(new Utilisateur(email, motDePasse, nom, prenom, agence));
-            agence.getListeUtilisateurs().add(utilisateurSaved);
-            agenceRepository.save(agence);
-            return utilisateurSaved;
-        });
-        if (utilisateur.getAgence().getIdAgence() != agence.getIdAgence()) {
-            agence.getListeUtilisateurs().add(utilisateur);
-            agenceRepository.save(agence);
-        }
+        if (agence.getListeUtilisateurs().stream().anyMatch(utilisateurAgence -> utilisateurAgence.getEmail().equals(utilisateur.getEmail())))
+            throw new UtilisateurAlreadyRegisteredException("Utilisateur " + utilisateur.getEmail() + " already registered in this agency");
+
+        utilisateur.setAgence(agence);
+        utilisateurRepository.save(utilisateur);
+        agence.addUtilisateur(utilisateur);
+        agenceRepository.save(agence);
         return utilisateur;
     }
-
 }
