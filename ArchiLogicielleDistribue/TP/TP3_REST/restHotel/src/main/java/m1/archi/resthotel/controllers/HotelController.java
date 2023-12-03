@@ -1,6 +1,7 @@
 package m1.archi.resthotel.controllers;
 
 import m1.archi.resthotel.exceptions.DateNonValideException;
+import m1.archi.resthotel.exceptions.HotelException;
 import m1.archi.resthotel.exceptions.HotelNotFoundException;
 import m1.archi.resthotel.exceptions.OffreNotFoundException;
 import m1.archi.resthotel.models.*;
@@ -8,6 +9,7 @@ import m1.archi.resthotel.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLDecoder;
@@ -15,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
@@ -99,33 +102,53 @@ public class HotelController {
     }
 
     @PostMapping("${base-uri}/hotels/{id}/reservation")
-    public Reservation reserverChambreById(@PathVariable long id, @RequestBody Offre offre, @RequestBody boolean petitDejeuner, @RequestBody String nomClient,
-                                           @RequestBody String prenomClient, @RequestBody String email, @RequestBody String telephone, @RequestBody String nomCarte,
-                                           @RequestBody String numeroCarte, @RequestBody String expirationCarte, @RequestBody String CCVCarte) throws HotelNotFoundException, DateNonValideException, OffreNotFoundException {
+    @Transactional
+    public Reservation reserverChambreById(@PathVariable long id, @RequestParam long idOffre, @RequestParam boolean petitDejeuner, @RequestParam String nomClient,
+                                           @RequestParam String prenomClient, @RequestParam String email, @RequestParam String telephone, @RequestParam String nomCarte,
+                                           @RequestParam String numeroCarte, @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws HotelException, DateNonValideException, OffreNotFoundException {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
-        Offre storedOffre = offreRepository.findById(offre.getIdOffre()).orElseThrow(() -> new OffreNotFoundException("Offre not found"));
-        if (storedOffre.getDateExpiration().isBefore(LocalDateTime.now())) {
-            throw new DateNonValideException("Offre expired");
+        Offre storedOffre = offreRepository.findById(idOffre).orElseThrow(() -> new OffreNotFoundException("Offre not found"));
+        try {
+            if (storedOffre.getDateExpiration().isBefore(LocalDateTime.now())) {
+                throw new DateNonValideException("Offre expired");
+            }
+
+            // Créer une carte si elle n'existe pas déjà
+            Carte carte = carteRepository.findByNumero(numeroCarte).orElseGet(() -> carteRepository.save(new Carte(nomCarte, numeroCarte, expirationCarte, CCVCarte)));
+            carteRepository.save(carte);
+
+            // Créer un client si il n'existe pas déjà
+            Client clientPrincipal = clientRepository.findByEmail(email).orElseGet(() -> clientRepository.save(new Client(nomClient, prenomClient, email, telephone, carte)));
+            clientRepository.save(clientPrincipal);
+
+            // Créer la réservation
+            double montantReservation = storedOffre.getPrixAvecReduction();
+            if (petitDejeuner) {
+                int nombreNuits = (int) (storedOffre.getDateDepart().toLocalDate().toEpochDay() - storedOffre.getDateArrivee().toLocalDate().toEpochDay());
+                double montantPetitDejeuner = (storedOffre.getHotel().getNombreEtoiles() * 5) * storedOffre.getNombreLitsTotal() * nombreNuits;
+                montantReservation += montantPetitDejeuner;
+            }
+            Reservation reservation = new Reservation(hotel, clientPrincipal, storedOffre.getDateArrivee(), storedOffre.getDateDepart(), storedOffre.getNombreLitsTotal(), montantReservation, petitDejeuner);
+            reservationRepository.save(reservation);
+
+            for (Chambre chambre : storedOffre.getChambres()) {
+                reservation.addChambreReservee(chambre);
+            }
+            reservationRepository.save(reservation);
+
+            // Ajouter la réservation à l'hotel et a l'historique du client
+            hotel.addReservation(reservation);
+            hotelRepository.save(hotel);
+
+            clientPrincipal.addReservationToHistorique(reservation);
+            clientRepository.save(clientPrincipal);
+
+            return reservation;
         }
-
-        // Créer une carte si elle n'existe pas déjà
-        Carte carte = carteRepository.findByNumero(numeroCarte).orElseGet(() -> carteRepository.save(new Carte(nomCarte, numeroCarte, expirationCarte, CCVCarte)));
-
-        // Créer un client si il n'existe pas déjà
-        Client clientPrincipal = clientRepository.findByEmail(email).orElseGet(() -> clientRepository.save(new Client(nomClient, prenomClient, email, telephone, carte)));
-
-        // Créer la réservation
-        Reservation reservation = new Reservation(hotel, storedOffre.getChambres(), clientPrincipal, storedOffre.getDateArrivee(), storedOffre.getDateDepart(), storedOffre.getNombreLitsTotal(), petitDejeuner);
-        reservationRepository.save(reservation);
-
-        // Ajouter la réservation à l'hotel et a l'historique du client
-        hotel.addReservation(reservation);
-        hotelRepository.save(hotel);
-
-        clientPrincipal.addReservationToHistorique(reservation);
-        clientRepository.save(clientPrincipal);
-
-        return reservation;
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new HotelException("Une erreur est survenue lors de la réservation " + e.getMessage());
+        }
     }
 
     @ResponseStatus(HttpStatus.CREATED)

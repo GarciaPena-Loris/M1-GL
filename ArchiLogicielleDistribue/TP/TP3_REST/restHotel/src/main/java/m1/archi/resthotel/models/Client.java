@@ -1,8 +1,10 @@
 package m1.archi.resthotel.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,7 +19,8 @@ public class Client {
     @OneToOne
     private Carte carte;
     @OneToMany
-    private ArrayList<Reservation> historiqueReservations;
+    @JsonIgnore
+    private List<Reservation> historiqueReservations;
 
     public Client() {
     }
@@ -29,7 +32,7 @@ public class Client {
         this.telephone = telephone;
         this.carte = carte;
 
-        this.historiqueReservations = new ArrayList<Reservation>();
+        this.historiqueReservations = new ArrayList<>();
     }
 
     public long getIdClient() {
@@ -82,7 +85,7 @@ public class Client {
 
     // Historique des réservations
 
-    public ArrayList<Reservation> getHistoriqueReservations() {
+    public List<Reservation> getHistoriqueReservations() {
         return historiqueReservations;
     }
 

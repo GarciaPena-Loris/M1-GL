@@ -54,7 +54,8 @@ public class HotelData {
                 // Sauvegarde de l'hôtel
                 logger.info("[" + (i+1) + "] Preloading database with " + hotel);
             }
-            System.err.println("Server hotel ready!");
+            logger.info("Server hotel ready!");
+
         };
     }
 }

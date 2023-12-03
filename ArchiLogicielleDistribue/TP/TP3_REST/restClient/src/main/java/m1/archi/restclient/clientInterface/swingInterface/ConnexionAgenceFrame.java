@@ -13,18 +13,20 @@ import java.util.Map;
 public class ConnexionAgenceFrame extends JFrame {
     private final Agence agence;
     private final Offre offre;
+    private final CustomContentPane customContentPane;
     private final RestTemplate proxyReservation;
     private final String font = "Palatino Linotype";
     private final String baseUri = "http://localhost:8090/agenceService/api";
     private final int fontSize = 20; // Définissez la taille de la police ici
 
-    public ConnexionAgenceFrame(Agence agence, Offre offre, RestTemplate proxyComparateur) {
+    public ConnexionAgenceFrame(CustomContentPane customContentPane, Agence agence, Offre offre, RestTemplate proxyComparateur) {
         super("Connexion à l'agence " + agence.getNom() + " :");
+        this.customContentPane = customContentPane;
         this.agence = agence;
         this.offre = offre;
         this.proxyReservation = proxyComparateur;
 
-        Object[] options = {"<html><font size=\"4\">OUI : Se connecter</font></html>", "<html><font size=\"4\">NON : Créer un compte</font></html>"};
+        Object[] options = {"<html><font size=\"4\">✅ : Se connecter</font></html>", "<html><font size=\"4\">❌ : Créer un compte</font></html>"};
         int choice = JOptionPane.showOptionDialog(this,
                 "<html><font size=\"4\">Possédé vous un compte dans cette agence ?</font></html>",
                 "Connexion",
@@ -60,7 +62,7 @@ public class ConnexionAgenceFrame extends JFrame {
             email = emailField.getText();
             String password = new String(passwordField.getPassword());
 
-            String url = baseUri + "/agences/utilisateurs?email={email}&motDePasse={motDePasse}";
+            String url = baseUri + "/utilisateurs/email?email={email}&motDePasse={motDePasse}";
 
             Map<String, String> params = new HashMap<>();
             params.put("email", email);
@@ -78,9 +80,8 @@ public class ConnexionAgenceFrame extends JFrame {
                         showLoginDialog(email);
                         dispose();
                     } else {
-
-                        // Vérifie sio l'utilisateur est bien dans l'agence
-                        url = baseUri + "/agences/{id}/utilisateurs/{idUtilisateur}";
+                        // Vérifier si l'utilisateur est bien dans l'agence
+                        url = baseUri + "/agences/{id}/utilisateur/{idUtilisateur}";
 
                         Map<String, Long> paramsUser;
                         paramsUser = new HashMap<>();
@@ -94,7 +95,7 @@ public class ConnexionAgenceFrame extends JFrame {
                                 showLoginDialog(email);
                                 dispose();
                             } else {
-                                new ReserverOffreFrame(offre, utilisateur, proxyReservation);
+                                new ReserverOffreFrame(customContentPane, agence, offre, utilisateur, proxyReservation);
                                 dispose();
                             }
 
@@ -111,7 +112,7 @@ public class ConnexionAgenceFrame extends JFrame {
                 }
             }
         } else {
-            new ConnexionAgenceFrame(agence, offre, proxyReservation);
+            new ConnexionAgenceFrame(customContentPane, agence, offre, proxyReservation);
             dispose();
         }
     }
@@ -149,33 +150,50 @@ public class ConnexionAgenceFrame extends JFrame {
                 showRegisterDialog();
                 dispose();
             } else {
-                String url = baseUri + "/agences/{id}/utilisateurs";
-
-                Map<String, Long> params = new HashMap<>();
-                params.put("id", agence.getIdAgence());
-
-                Utilisateur utilisateurToSend = new Utilisateur(email, password, name, surname, agence);
+                String url = baseUri + "/utilisateurs";
+                Utilisateur utilisateurToSend = new Utilisateur(email, password, name, surname);
 
                 try {
-                    Utilisateur utilisateur = proxyReservation.postForObject(url, utilisateurToSend, Utilisateur.class, params);
+                    Utilisateur utilisateur = proxyReservation.postForObject(url, utilisateurToSend, Utilisateur.class);
 
                     if (utilisateur == null) {
-                        JOptionPane.showMessageDialog(this, "Erreur lors de votre inscription", "Erreur", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Problème lors de votre inscription", "Erreur", JOptionPane.ERROR_MESSAGE);
                         showRegisterDialog();
                         dispose();
                     } else {
-                        JOptionPane.showMessageDialog(this, "<html><font size=\"5\">Inscription réussie ! Vous pouvez maintenant vous connecter.</font></html>", "Inscription réussie", JOptionPane.INFORMATION_MESSAGE);
-                        showLoginDialog(email);
-                        dispose();
+                        url = baseUri + "/agences/{id}/utilisateur";
+
+                        Map<String, Long> params = new HashMap<>();
+                        params.put("id", agence.getIdAgence());
+
+                        try {
+                            Utilisateur registredUser = proxyReservation.postForObject(url, utilisateur, Utilisateur.class, params);
+
+                            if (registredUser == null) {
+                                JOptionPane.showMessageDialog(this, "Problème lors de votre inscription", "Erreur", JOptionPane.ERROR_MESSAGE);
+                                showRegisterDialog();
+                                dispose();
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(this, "<html><font size=\"5\">✅ Inscription réussie ! Vous pouvez maintenant vous connecter.</font></html>", "Inscription réussie", JOptionPane.INFORMATION_MESSAGE);
+                                showLoginDialog(email);
+                                dispose();
+                            }
+                        }
+                        catch (Exception e) {
+                            JOptionPane.showMessageDialog(this, "Vous possédez déjà un compte dans cette agence ! Connectez vous.", "Inscription impossible !", JOptionPane.ERROR_MESSAGE);
+                            showLoginDialog(email);
+                            dispose();
+                        }
                     }
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "Vous êtes déja inscrit dans cette agence", "Inscription impossible !", JOptionPane.ERROR_MESSAGE);
-                    showLoginDialog(email);
+                    JOptionPane.showMessageDialog(this, "Erreur lors de votre inscription", "Erreur" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
+                    showRegisterDialog();
                     dispose();
                 }
             }
         } else {
-            new ConnexionAgenceFrame(agence, offre, proxyReservation);
+            new ConnexionAgenceFrame(customContentPane, agence, offre, proxyReservation);
             dispose();
         }
     }

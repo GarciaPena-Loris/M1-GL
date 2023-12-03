@@ -15,7 +15,7 @@ public class Reservation {
     private long idReservation;
     @ManyToOne
     private Hotel hotel;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Chambre> chambresReservees;
     @ManyToOne
     private Client clientPrincipal;
@@ -28,28 +28,17 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Hotel hotel, List<Chambre> chambresReservees, Client clientPrincipal,
-                       LocalDateTime dateArrivee, LocalDateTime dateDepart, int nombrePersonnes, boolean petitDejeuner) throws DateNonValideException {
+    public Reservation(Hotel hotel, Client clientPrincipal,
+                       LocalDateTime dateArrivee, LocalDateTime dateDepart, int nombrePersonnes, double montantReservation, boolean petitDejeuner) throws DateNonValideException {
         if (dateArrivee.isAfter(dateDepart)) {
             throw new DateNonValideException("La date d'arrivée doit être avant la date de départ");
         }
         this.hotel = hotel;
-        this.chambresReservees = chambresReservees;
+        this.chambresReservees = new ArrayList<>();
         this.clientPrincipal = clientPrincipal;
         this.dateArrivee = dateArrivee;
         this.dateDepart = dateDepart;
         this.nombrePersonnes = nombrePersonnes;
-        double montantReservation = 0;
-
-        long daysDifference = ChronoUnit.DAYS.between(dateArrivee, dateDepart);
-
-        for (Chambre chambre : chambresReservees) {
-            montantReservation += chambre.getPrix() * daysDifference;
-        }
-        if (petitDejeuner) {
-            montantReservation += ((long) hotel.getNombreEtoiles() * (new Random().nextInt(3) + 5)) * nombrePersonnes
-                    * daysDifference;
-        }
         this.montantReservation = montantReservation;
         this.petitDejeuner = petitDejeuner;
     }
@@ -77,6 +66,10 @@ public class Reservation {
 
     public void setChambresReservees(List<Chambre> chambresReservees) {
         this.chambresReservees = chambresReservees;
+    }
+
+    public void addChambreReservee(Chambre chambre) {
+        this.chambresReservees.add(chambre);
     }
 
     public Client getClientPrincipal() {

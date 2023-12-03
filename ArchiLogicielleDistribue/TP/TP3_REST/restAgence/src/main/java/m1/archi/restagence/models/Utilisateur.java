@@ -12,25 +12,22 @@ public class Utilisateur {
     @Id
     @GeneratedValue
     private long idUtilisateur;
+    @Column(unique = true)
     private String email;
     private String motDePasse;
     private String nom;
     private String prenom;
-    @ManyToOne
-    @JsonIgnore
-    private Agence agence;
     @ElementCollection
     private List<Long> idReservations;
 
     public Utilisateur() {
     }
 
-    public Utilisateur(String email, String motDePasse, String nom, String prenom, Agence agence) {
+    public Utilisateur(String email, String motDePasse, String nom, String prenom) {
         this.email = email;
         this.nom = nom;
         this.prenom = prenom;
         this.motDePasse = motDePasse;
-        this.agence = agence;
         this.idReservations = new ArrayList<>();
     }
 
@@ -86,25 +83,17 @@ public class Utilisateur {
         return idReservations.add(idReservation);
     }
 
-    public Agence getAgence() {
-        return agence;
-    }
-
-    public void setAgence(Agence agence) {
-        this.agence = agence;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Utilisateur utilisateur = (Utilisateur) o;
-        return getIdUtilisateur() == utilisateur.getIdUtilisateur() && Objects.equals(getEmail(), utilisateur.getEmail()) && Objects.equals(getMotDePasse(), utilisateur.getMotDePasse()) && Objects.equals(getNom(), utilisateur.getNom()) && Objects.equals(getPrenom(), utilisateur.getPrenom()) && Objects.equals(getAgence(), utilisateur.getAgence()) && Objects.equals(getIdReservations(), utilisateur.getIdReservations());
+        return getIdUtilisateur() == utilisateur.getIdUtilisateur() && Objects.equals(getEmail(), utilisateur.getEmail()) && Objects.equals(getMotDePasse(), utilisateur.getMotDePasse()) && Objects.equals(getNom(), utilisateur.getNom()) && Objects.equals(getPrenom(), utilisateur.getPrenom()) && Objects.equals(getIdReservations(), utilisateur.getIdReservations());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdUtilisateur(), getEmail(), getMotDePasse(), getNom(), getPrenom(), getAgence(), getIdReservations());
+        return Objects.hash(getIdUtilisateur(), getEmail(), getMotDePasse(), getNom(), getPrenom(), getIdReservations());
     }
 
     @Override

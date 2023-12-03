@@ -108,7 +108,7 @@ public class AgenceController {
 
 
     @PostMapping("${base-uri}/agences/{id}/reservation")
-    public Reservation reserverChambresHotel(@PathVariable long id, @RequestParam String email, @RequestParam String motDePasse, @RequestParam Offre offre,
+    public Reservation reserverChambresHotel(@PathVariable long id, @RequestParam String email, @RequestParam String motDePasse, @RequestParam long idHotel, @RequestParam long idOffre,
                                              @RequestParam boolean petitDejeuner, @RequestParam String nomClient, @RequestParam String prenomClient,
                                              @RequestParam String telephone, @RequestParam String nomCarte, @RequestParam String numeroCarte,
                                              @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws AgenceNotFoundException, UtilisateurWrongPasswordException, UtilisateurNotRegisteredException, ReservationProblemeException, HotelException {
@@ -121,32 +121,32 @@ public class AgenceController {
             if (!utilisateur.getMotDePasse().equals(motDePasse)) {
                 throw new UtilisateurWrongPasswordException("Wrong password");
             }
-            if (utilisateur.getAgence().getIdAgence() == agence.getIdAgence()) {
+            // Verifier que l'utilisateur est bien dans l'agence
+            if (agence.getListeUtilisateurs().stream().noneMatch(utilisateurAgence -> utilisateurAgence.getIdUtilisateur() == utilisateur.getIdUtilisateur())) {
                 throw new UtilisateurNotRegisteredException("Utilisateur not registered in this agency");
             }
 
             // Construire l'URI de l'hôtel
             String hotelUri = baseUri + "/hotels/{id}/reservation";
 
-            // Construire les paramètres de la requête
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", offre.getHotel().getIdHotel());
-            params.put("offre", offre);
-            params.put("petitDejeuner", petitDejeuner);
-            params.put("nomClient", nomClient);
-            params.put("prenomClient", prenomClient);
-            params.put("email", email);
-            params.put("telephone", telephone);
-            params.put("nomCarte", nomCarte);
-            params.put("numeroCarte", numeroCarte);
-            params.put("expirationCarte", expirationCarte);
-            params.put("CCVCarte", CCVCarte);
+            // Construire l'URI de la requête avec les paramètres
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(hotelUri)
+                    .queryParam("idOffre", idOffre)
+                    .queryParam("petitDejeuner", petitDejeuner)
+                    .queryParam("nomClient", nomClient)
+                    .queryParam("prenomClient", prenomClient)
+                    .queryParam("email", email)
+                    .queryParam("telephone", telephone)
+                    .queryParam("nomCarte", nomCarte)
+                    .queryParam("numeroCarte", numeroCarte)
+                    .queryParam("expirationCarte", expirationCarte)
+                    .queryParam("CCVCarte", CCVCarte);
 
             ParameterizedTypeReference<Reservation> typeReference = new ParameterizedTypeReference<>() {
             };
 
             // Appel à la méthode de reservation d'offres de l'hôtel via le proxyHotel
-            ResponseEntity<Reservation> responseEntity = proxyHotel.exchange(hotelUri, HttpMethod.POST, null, typeReference, params);
+            ResponseEntity<Reservation> responseEntity = proxyHotel.exchange(builder.buildAndExpand(idHotel).toUri(), HttpMethod.POST, null, typeReference);
 
             Reservation reservation = responseEntity.getBody();
             if (reservation == null) {
@@ -187,37 +187,20 @@ public class AgenceController {
     }
 
     // PARTIE USER
-    @GetMapping("${base-uri}/agences/{id}/utilisateurs")
-    public List<Utilisateur> getAllUtilisateurs(@PathVariable long id) throws AgenceNotFoundException {
-        Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agency not found with id " + id));
-        return agence.getListeUtilisateurs();
-    }
-
-    @GetMapping("${base-uri}/agences/utilisateurs")
-    public Utilisateur getUtilisateurByEmailMotDePasse(@RequestParam String email, @RequestParam String motDePasse) throws UtilisateurWrongPasswordException, UtilisateurNotFoundException {
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(email).orElseThrow(() -> new UtilisateurNotFoundException("Utilisateur not found with email " + email));
-        if (!utilisateur.getMotDePasse().equals(motDePasse)) {
-            throw new UtilisateurWrongPasswordException("Wrong password");
-        }
-        return utilisateur;
-    }
-
-    @GetMapping("${base-uri}/agences/{id}/utilisateurs/{idUtilisateur}")
-    public Utilisateur getUtilisateurById(@PathVariable long id, @PathVariable long idUtilisateur) throws AgenceNotFoundException, UtilisateurNotRegisteredException {
+    @GetMapping("${base-uri}/agences/{id}/utilisateur/{idUtilisateur}")
+    public Utilisateur findUtilisateurById(@PathVariable long id, @PathVariable long idUtilisateur) throws AgenceNotFoundException, UtilisateurNotRegisteredException {
         Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agency not found with id " + id));
         return agence.getListeUtilisateurs().stream().filter(utilisateur -> utilisateur.getIdUtilisateur() == idUtilisateur).findFirst().orElseThrow(() -> new UtilisateurNotRegisteredException("Utilisateur with id " + idUtilisateur + " not registered in this agency"));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("${base-uri}/agences/{id}/utilisateurs")
-    public Utilisateur addUtilisateur(@PathVariable long id, @RequestBody Utilisateur utilisateur) throws AgenceNotFoundException, UtilisateurAlreadyRegisteredException {
+    @PostMapping("${base-uri}/agences/{id}/utilisateur")
+    public Utilisateur addAgenceUtilisateur(@PathVariable long id, @RequestBody Utilisateur utilisateur) throws AgenceNotFoundException, UtilisateurAlreadyRegisteredException {
         Agence agence = agenceRepository.findById(id).orElseThrow(() -> new AgenceNotFoundException("Agence not found with id " + id));
 
         if (agence.getListeUtilisateurs().stream().anyMatch(utilisateurAgence -> utilisateurAgence.getEmail().equals(utilisateur.getEmail())))
             throw new UtilisateurAlreadyRegisteredException("Utilisateur " + utilisateur.getEmail() + " already registered in this agency");
 
-        utilisateur.setAgence(agence);
-        utilisateurRepository.save(utilisateur);
         agence.addUtilisateur(utilisateur);
         agenceRepository.save(agence);
         return utilisateur;

@@ -16,15 +16,20 @@ import java.util.*;
 import java.util.List;
 
 public class ResultPanel extends JPanel {
-    private final RestTemplate proxyComparateur = new RestTemplate();
+    private final CustomContentPane customContentPane;
+    private final RestTemplate proxyComparateur;
     private final Map<Long, Color> hotelColorMap = new HashMap<>();
     private final Map<Long, ImageIcon> chambreImageMap = new HashMap<>();
     private final Map<Long, Offre> mapOffreHotelPrixMin = new HashMap<>();
     private Offre offreMin;
     private final String font = "Palatino Linotype";
+    private final JScrollPane scrollPane;
     private final Random RANDOM = new Random();
 
-    public ResultPanel(Map<Long, List<List<Offre>>> mapAgenceOffres, RestTemplate proxyComparateur) {
+    public ResultPanel(CustomContentPane customContentPane, Map<Long, List<List<Offre>>> mapAgenceOffres, RestTemplate proxyComparateur) {
+        this.customContentPane = customContentPane;
+        this.proxyComparateur = proxyComparateur;
+
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
@@ -68,14 +73,13 @@ public class ResultPanel extends JPanel {
             agencePanelContainer.add(createSeparator());
         }
 
-        JScrollPane scrollPane = new JScrollPane(agencePanelContainer);
+        scrollPane = new JScrollPane(agencePanelContainer);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
 
         add(scrollPane, BorderLayout.CENTER);
-
     }
 
     private JPanel createAgencePanel(Long idAgence, List<List<Offre>> offres) {
@@ -171,9 +175,9 @@ public class ResultPanel extends JPanel {
         // Texte centré en haut
         JLabel infoLabel;
         if (offre.getChambres().size() == 1)
-            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambre au prix de " + offre.getPrix() + "€, proposé à <b><font color='red'>" + offre.getPrixAvecReduction() + "€ </b> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
+            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambre au prix de <b><font color='red'>" + offre.getPrixAvecReduction() + "€/nuit </b></font> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
         else
-            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambres au prix de " + offre.getPrix() + "€, proposées à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</b> :</div></html>");
+            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambres au prix de <b><font color='red'>" + offre.getPrixAvecReduction() + "€/nuit </b></font> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
         infoLabel.setFont(new Font(font, Font.PLAIN, 15));
         infoLabel.setHorizontalAlignment(JLabel.CENTER);
         infoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -206,9 +210,9 @@ public class ResultPanel extends JPanel {
                 // Créer un label pour le nombre de places dans la chambre
                 JLabel placesLabel;
                 if (chambre.getNombreLits() == 1)
-                    placesLabel = new JLabel("Chambre " + chambre.getNombreLits() + " place, pour " + chambre.getPrix() + "€");
+                    placesLabel = new JLabel("Chambre " + chambre.getNombreLits() + " place, pour " + chambre.getPrix() + "€/nuit");
                 else
-                    placesLabel = new JLabel("Chambre " + chambre.getNombreLits() + " places, pour " + chambre.getPrix() + "€");
+                    placesLabel = new JLabel("Chambre " + chambre.getNombreLits() + " places, pour " + chambre.getPrix() + "€/nuit");
                 placesLabel.setFont(new Font(font, Font.PLAIN, 13));
                 placesLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrer le label
                 placesLabel.setBorder(new EmptyBorder(5, 0, 0, 0));
@@ -257,11 +261,23 @@ public class ResultPanel extends JPanel {
                 JPanel offreResume = new JPanel(new BorderLayout());
                 offreResume.setBorder(new EmptyBorder(10, 10, 10, 10));
 
+                // Calcul montant total
+                int nombreNuits = (int) (offre.getDateDepart().toLocalDate().toEpochDay() - offre.getDateArrivee().toLocalDate().toEpochDay());
+                double montantTotal = Math.round(offre.getPrixAvecReduction() * nombreNuits * 10.0) / 10.0;
+
                 JLabel infoLabelResume;
-                if (offre.getChambres().size() == 1)
-                    infoLabelResume = new JLabel("<html>Voulez-vous vraiment réserver cette offre à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</font></b> avec " + offre.getChambres().size() + " chambre ?</html>");
-                else
-                    infoLabelResume = new JLabel("<html>Voulez-vous vraiment réserver cette offre à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</font></b> avec " + offre.getChambres().size() + " chambres ?</html>");
+                if (offre.getChambres().size() == 1) {
+                    if (nombreNuits == 1)
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuit</b>, avec <i>" + offre.getChambres().size() + " chambre</i> ?</html>");
+                    else
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuits</b>, avec <i>" + offre.getChambres().size() + " chambre</i> ?</html>");
+                }
+                else {
+                    if (nombreNuits == 1)
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuit</b>, avec <i>" + offre.getChambres().size() + " chambres</i> ?</html>");
+                    else
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuits</b>, avec <i>" + offre.getChambres().size() + " chambres</i> ?</html>");
+                }
 
                 infoLabelResume.setFont(new Font(font, Font.PLAIN, 20));
                 infoLabelResume.setHorizontalAlignment(JLabel.CENTER);
@@ -318,7 +334,7 @@ public class ResultPanel extends JPanel {
                 int dialogResult = JOptionPane.showOptionDialog(null, offreResume, "Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
                 if (dialogResult == JOptionPane.YES_OPTION) {
-                    new ConnexionAgenceFrame(agence, offre, proxyComparateur);
+                    new ConnexionAgenceFrame(customContentPane, agence, offre, proxyComparateur);
                 }
             }
         });

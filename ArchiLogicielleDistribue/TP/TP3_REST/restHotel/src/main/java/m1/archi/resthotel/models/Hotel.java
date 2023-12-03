@@ -232,8 +232,10 @@ public class Hotel {
                 chercherCombinaison(chambresDisponibles, nombrePersonne, new ArrayList<>(),
                         combinaisonsDeLits, listeCombinaisonsChambres);
 
+                int nombreNuits = (int) (dateDepart.toLocalDate().toEpochDay() - dateArrivee.toLocalDate().toEpochDay());
+                System.out.println("Nombre de nuits : " + nombreNuits);
                 for (ArrayList<Chambre> combinaisonChambresDisponibles : listeCombinaisonsChambres) {
-                    Offre offre = new Offre(nombrePersonne, combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum(), dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
+                    Offre offre = new Offre(nombrePersonne, Math.round(combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum() * nombreNuits * 10.0) / 10.0, dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
                     offres.add(offre);
                 }
 

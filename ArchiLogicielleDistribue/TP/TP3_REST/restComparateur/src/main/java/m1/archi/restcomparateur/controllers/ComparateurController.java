@@ -129,8 +129,8 @@ public class ComparateurController {
         }
     }
 
-    @PostMapping("${base-uri}/comparateur/reservation")
-    public Reservation reserverChambresHotel(@RequestParam String email, @RequestParam String motDePasse, @RequestParam Offre offre,
+    @PostMapping("/comparateur/reservation")
+    public Reservation reserverChambresHotel(@RequestParam String email, @RequestParam String motDePasse, @RequestParam long idAgence, @RequestParam long idHotel, @RequestParam long idOffre,
                                              @RequestParam boolean petitDejeuner, @RequestParam String nomClient, @RequestParam String prenomClient,
                                              @RequestParam String telephone, @RequestParam String nomCarte, @RequestParam String numeroCarte,
                                              @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws ReservationProblemeException, AgenceException {
@@ -138,26 +138,26 @@ public class ComparateurController {
             // Construire l'URI de l'agence
             String agenceUri = baseUri + "/agences/{id}/reservation";
 
-            // Construire les paramètres de la requête
-            Map<String, Object> params = new HashMap<>();
-            params.put("id", offre.getHotel().getIdHotel());
-            params.put("email", email);
-            params.put("motDePasse", motDePasse);
-            params.put("offre", offre);
-            params.put("petitDejeuner", petitDejeuner);
-            params.put("nomClient", nomClient);
-            params.put("prenomClient", prenomClient);
-            params.put("telephone", telephone);
-            params.put("nomCarte", nomCarte);
-            params.put("numeroCarte", numeroCarte);
-            params.put("expirationCarte", expirationCarte);
-            params.put("CCVCarte", CCVCarte);
+            // Construire l'URI de la requête avec les paramètres
+            UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(agenceUri)
+                    .queryParam("email", email)
+                    .queryParam("motDePasse", motDePasse)
+                    .queryParam("idHotel", idHotel)
+                    .queryParam("idOffre", idOffre)
+                    .queryParam("petitDejeuner", petitDejeuner)
+                    .queryParam("nomClient", nomClient)
+                    .queryParam("prenomClient", prenomClient)
+                    .queryParam("telephone", telephone)
+                    .queryParam("nomCarte", nomCarte)
+                    .queryParam("numeroCarte", numeroCarte)
+                    .queryParam("expirationCarte", expirationCarte)
+                    .queryParam("CCVCarte", CCVCarte);
 
             ParameterizedTypeReference<Reservation> typeReference = new ParameterizedTypeReference<>() {
             };
 
             // Appel à la méthode de reservation d'offres de l'hôtel via le proxyAgence
-            ResponseEntity<Reservation> responseEntity = proxyAgence.exchange(agenceUri, HttpMethod.POST, null, typeReference, params);
+            ResponseEntity<Reservation> responseEntity = proxyAgence.exchange(builder.buildAndExpand(idAgence).toUri(), HttpMethod.POST, null, typeReference);
 
             Reservation reservation = responseEntity.getBody();
             if (reservation == null) {

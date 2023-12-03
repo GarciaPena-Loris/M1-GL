@@ -1,8 +1,5 @@
 package m1.archi.restclient.clientInterface.swingInterface;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import m1.archi.restclient.models.modelsAgence.Agence;
 import m1.archi.restclient.models.modelsHotel.Offre;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -195,15 +192,17 @@ public class SearchPanel extends JPanel {
             ResponseEntity<Map<Long, List<List<Offre>>>> responseEntity = proxyComparateur.exchange(builder.buildAndExpand().toUri(), HttpMethod.GET, null, typeReference);
             Map<Long, List<List<Offre>>> mapAgenceOffres = responseEntity.getBody();
 
-            if (mapAgenceOffres != null && mapAgenceOffres.isEmpty()) {
+            if (mapAgenceOffres == null || mapAgenceOffres.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Résultat", JOptionPane.ERROR_MESSAGE);
             } else {
                 customContentPane.rebuild(mapAgenceOffres, proxyComparateur);
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
-
-            JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Erreur", JOptionPane.ERROR_MESSAGE);
+            if (e.getMessage().contains("No offers found")) {
+                JOptionPane.showMessageDialog(this, "Aucune offre n'est disponible...", "Information", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Problème lors de la recherche...", "Erreur" + e.getMessage(), JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
