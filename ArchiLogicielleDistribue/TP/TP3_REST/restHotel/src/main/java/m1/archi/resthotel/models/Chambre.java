@@ -15,8 +15,6 @@ public class Chambre {
     private int nombreLits;
     @ManyToOne
     private Hotel hotel;
-    //@JsonIgnore
-    @Column(length = 10000000)
     private String imageChambre;
 
     public Hotel getHotel() {

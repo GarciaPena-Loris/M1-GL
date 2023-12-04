@@ -37,7 +37,7 @@ public class ComparateurController {
     }
 
 
-    /* Méthodes */
+    /* Methodes */
     @GetMapping("/comparateurs")
     public List<Comparateur> getComparateur() {
         return comparateurRepository.findAll();
@@ -88,7 +88,7 @@ public class ComparateurController {
             for (long idAgence : idAgences) {
                 String agenceUri = baseUri + "/agences/{id}/recherche";
 
-                // Construire l'URI de la requête avec les paramètres
+                // Construire l'URI de la requete avec les parametres
                 UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(agenceUri)
                         .queryParam("ville", ville)
                         .queryParam("dateArrivee", dateArrivee)
@@ -98,7 +98,7 @@ public class ComparateurController {
                         .queryParam("nombreEtoiles", nombreEtoiles)
                         .queryParam("nombrePersonne", nombrePersonne);
 
-                // Définir le type de retour
+                // Definir le type de retour
                 ParameterizedTypeReference<List<List<Offre>>> typeReference = new ParameterizedTypeReference<>() {
                 };
 
@@ -108,7 +108,7 @@ public class ComparateurController {
 
 
                 if (offresParAgences != null && !offresParAgences.isEmpty()) {
-                    // Trier par hotel (nombre étoiles)
+                    // Trier par hotel (nombre etoiles)
                     offresParAgences.sort(Comparator.comparing(o -> o.get(0).getHotel().getNombreEtoiles()));
 
                     // Trier les offres par prix
@@ -138,7 +138,7 @@ public class ComparateurController {
             // Construire l'URI de l'agence
             String agenceUri = baseUri + "/agences/{id}/reservation";
 
-            // Construire l'URI de la requête avec les paramètres
+            // Construire l'URI de la requete avec les parametres
             UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(agenceUri)
                     .queryParam("email", email)
                     .queryParam("motDePasse", motDePasse)
@@ -156,7 +156,7 @@ public class ComparateurController {
             ParameterizedTypeReference<Reservation> typeReference = new ParameterizedTypeReference<>() {
             };
 
-            // Appel à la méthode de reservation d'offres de l'hôtel via le proxyAgence
+            // Appel a la methode de reservation d'offres de l'hptel via le proxyAgence
             ResponseEntity<Reservation> responseEntity = proxyAgence.exchange(builder.buildAndExpand(idAgence).toUri(), HttpMethod.POST, null, typeReference);
 
             Reservation reservation = responseEntity.getBody();
@@ -188,7 +188,7 @@ public class ComparateurController {
     @PutMapping("/comparateur")
     public Comparateur updateComparateur(@RequestBody Comparateur newComparateur) {
         return comparateurRepository.findFirst().map(comparateur -> {
-            // Mettez à jour les champs nécessaires avec les valeurs de newComparateur
+            // Mettez a jour les champs necessaires avec les valeurs de newComparateur
             comparateur.setNom(newComparateur.getNom());
             comparateur.setIdAgences(newComparateur.getIdAgences());
 

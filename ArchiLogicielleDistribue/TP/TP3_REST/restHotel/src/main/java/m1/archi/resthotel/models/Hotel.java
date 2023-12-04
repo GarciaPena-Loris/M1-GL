@@ -17,8 +17,6 @@ public class Hotel {
     @OneToOne
     private Adresse adresse;
     private int nombreEtoiles;
-    @JsonIgnore
-    @Column(length = 10000000)
     private String imageHotel;
     @OneToMany
     @JsonIgnore

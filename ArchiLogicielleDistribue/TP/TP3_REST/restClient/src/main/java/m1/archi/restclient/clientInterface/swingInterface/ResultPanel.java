@@ -7,11 +7,13 @@ import m1.archi.restclient.models.modelsHotel.Hotel;
 import m1.archi.restclient.models.modelsHotel.Offre;
 import org.springframework.web.client.RestTemplate;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -19,11 +21,9 @@ public class ResultPanel extends JPanel {
     private final CustomContentPane customContentPane;
     private final RestTemplate proxyComparateur;
     private final Map<Long, Color> hotelColorMap = new HashMap<>();
-    private final Map<Long, ImageIcon> chambreImageMap = new HashMap<>();
     private final Map<Long, Offre> mapOffreHotelPrixMin = new HashMap<>();
     private Offre offreMin;
     private final String font = "Palatino Linotype";
-    private final JScrollPane scrollPane;
     private final Random RANDOM = new Random();
 
     public ResultPanel(CustomContentPane customContentPane, Map<Long, List<List<Offre>>> mapAgenceOffres, RestTemplate proxyComparateur) {
@@ -73,7 +73,7 @@ public class ResultPanel extends JPanel {
             agencePanelContainer.add(createSeparator());
         }
 
-        scrollPane = new JScrollPane(agencePanelContainer);
+        JScrollPane scrollPane = new JScrollPane(agencePanelContainer);
         scrollPane.getVerticalScrollBar().setUnitIncrement(20);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
@@ -190,21 +190,13 @@ public class ResultPanel extends JPanel {
 
         for (Chambre chambre : offre.getChambres()) {
             try {
-                String base64ImageChambre = chambre.getImageChambre();
-                if (base64ImageChambre == null || base64ImageChambre.isEmpty())
-                    throw new Exception("Erreur lors de la récupération de la chambre");
-                if (!chambreImageMap.containsKey(chambre.getIdChambre())) {
-                    byte[] imageBytes = Base64.getDecoder().decode(base64ImageChambre);
-                    ImageIcon chambreImageIcon = new ImageIcon(new ImageIcon(imageBytes).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH));
-                    chambreImageMap.put(chambre.getIdChambre(), chambreImageIcon);
-                }
                 // Créer un panel pour chaque chambre
                 JPanel chambrePanel = new JPanel();
                 chambrePanel.setOpaque(false);
                 chambrePanel.setLayout(new BoxLayout(chambrePanel, BoxLayout.Y_AXIS));
 
                 // Ajouter l'image de la chambre au panel
-                JLabel chambreImage = new JLabel(chambreImageMap.get(chambre.getIdChambre()));
+                JLabel chambreImage = new JLabel(new ImageIcon(new ImageIcon((ImageIO.read(new URL(chambre.getImageChambre())))).getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH)));
                 chambreImage.setBorder(BorderFactory.createLineBorder(hotelColor, 2));
                 chambreImage.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrer l'image
                 chambrePanel.add(chambreImage);
@@ -225,7 +217,7 @@ public class ResultPanel extends JPanel {
                 // Ajouter le panel au container
                 photoChambreContainer.add(chambrePanel);
             } catch (Exception e) {
-                System.out.println("Erreur lors de la récupération de la chambre");
+                System.out.println("Erreur lors de la récupération de la chambre " + chambre.getNumero() + " images : '" + chambre.getImageChambre() + "'");
             }
         }
 
@@ -290,20 +282,13 @@ public class ResultPanel extends JPanel {
 
                 for (Chambre chambre : offre.getChambres()) {
                     try {
-                        String base64ImageChambre = chambre.getImageChambre();
-                        if (base64ImageChambre == null || base64ImageChambre.isEmpty())
-                            throw new Exception("Erreur lors de la récupération de la chambre");
-
-                        byte[] imageBytes = Base64.getDecoder().decode(base64ImageChambre);
-                        ImageIcon chambreImageIcon = new ImageIcon(new ImageIcon(imageBytes).getImage().getScaledInstance(350, 260, Image.SCALE_SMOOTH));
-
                         // Créer un panel pour chaque chambre
                         JPanel chambrePanelResume = new JPanel();
                         chambrePanelResume.setOpaque(false);
                         chambrePanelResume.setLayout(new BoxLayout(chambrePanelResume, BoxLayout.Y_AXIS));
 
                         // Ajouter l'image de la chambre au panel
-                        JLabel chambreImageResume = new JLabel(chambreImageIcon);
+                        JLabel chambreImageResume = new JLabel(new ImageIcon(new ImageIcon((ImageIO.read(new URL(chambre.getImageChambre())))).getImage().getScaledInstance(350, 260, Image.SCALE_SMOOTH)));
                         chambreImageResume.setBorder(BorderFactory.createLineBorder(hotelColor, 2));
                         chambreImageResume.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrer l'image
                         chambrePanelResume.add(chambreImageResume);
@@ -324,7 +309,7 @@ public class ResultPanel extends JPanel {
                         // Ajouter le panel au container
                         photoChambreContainerResume.add(chambrePanelResume);
                     } catch (Exception e) {
-                        System.out.println("Erreur lors de la récupération de la chambre");
+                        System.out.println("Erreur lors de la récupération de la chambre " + chambre.getNumero());
                     }
 
                     offreResume.add(infoLabelResume, BorderLayout.NORTH);

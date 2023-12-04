@@ -101,8 +101,8 @@ public class HotelController {
         return offers;
     }
 
-    @PostMapping("${base-uri}/hotels/{id}/reservation")
     @Transactional
+    @PostMapping("${base-uri}/hotels/{id}/reservation")
     public Reservation reserverChambreById(@PathVariable long id, @RequestParam long idOffre, @RequestParam boolean petitDejeuner, @RequestParam String nomClient,
                                            @RequestParam String prenomClient, @RequestParam String email, @RequestParam String telephone, @RequestParam String nomCarte,
                                            @RequestParam String numeroCarte, @RequestParam String expirationCarte, @RequestParam String CCVCarte) throws HotelException, DateNonValideException, OffreNotFoundException {
