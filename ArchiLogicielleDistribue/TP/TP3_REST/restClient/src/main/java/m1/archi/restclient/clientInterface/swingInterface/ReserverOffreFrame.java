@@ -61,11 +61,12 @@ public class ReserverOffreFrame extends JFrame {
         prenomClientField.setText(utilisateur.getPrenom());
 
         // -- Petit déjeuner
-        petitDejeunerCheckBox = new JCheckBox("Petit déjeuner inclus ?");
-        petitDejeunerCheckBox.setFont(new Font(font, Font.PLAIN, 24));
 
         int nombreNuits = (int) (offre.getDateDepart().toLocalDate().toEpochDay() - offre.getDateArrivee().toLocalDate().toEpochDay());
-        double montantPetitDejeuner = (offre.getHotel().getNombreEtoiles() * 5) * offre.getNombreLitsTotal() * nombreNuits;
+        double montantPetitDejeuner = (offre.getHotel().getNombreEtoiles() * 4) * offre.getNombreLitsTotal() * nombreNuits;
+
+        petitDejeunerCheckBox = new JCheckBox("<html> Petit déjeuner inclus ? <i><font color='green'>+" + montantPetitDejeuner + "€ (" + (offre.getHotel().getNombreEtoiles() * 4)+ "€/personne/repas)</font></i></html>");
+        petitDejeunerCheckBox.setFont(new Font(font, Font.PLAIN, 24));
 
         petitDejeunerCheckBox.addItemListener(e -> {
             if (petitDejeunerCheckBox.isSelected()) {
@@ -189,7 +190,6 @@ public class ReserverOffreFrame extends JFrame {
     }
 
     private void reserverOffre() {
-        System.out.println("clic");
         // Récupérez les valeurs saisies
         boolean petitDejeuner = petitDejeunerCheckBox.isSelected();
         String nomClient = nomClientField.getText();
@@ -313,7 +313,7 @@ public class ReserverOffreFrame extends JFrame {
     }
 
     private void updateTotalPriceDisplay() {
-        montantTotalLabel.setText("<html> Montant total de la réservation : <b><font color='red'>" + montantTotal + "€</font></b><html>");
+        montantTotalLabel.setText("<html> Montant total de la réservation : <b><font color='red'>" + Math.round(montantTotal * 10) / 10 + "€</font></b><html>");
     }
 }
 

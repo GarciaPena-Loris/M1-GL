@@ -171,13 +171,15 @@ public class ResultPanel extends JPanel {
 
         //Calculer la reduction en % entre le prix et le prix réduit
         int reduction = (int) ((1 - (offre.getPrixAvecReduction() / offre.getPrix())) * 100);
+        int nombreNuits = (int) (offre.getDateDepart().toLocalDate().toEpochDay() - offre.getDateArrivee().toLocalDate().toEpochDay());
+        double prixParNuit = Math.round(offre.getPrixAvecReduction() / nombreNuits * 10.0) / 10.0;
 
         // Texte centré en haut
         JLabel infoLabel;
         if (offre.getChambres().size() == 1)
-            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambre au prix de <b><font color='red'>" + offre.getPrixAvecReduction() + "€/nuit </b></font> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
+            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambre au prix de <b><font color='red'>" + prixParNuit + "€/nuit </b></font> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
         else
-            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambres au prix de <b><font color='red'>" + offre.getPrixAvecReduction() + "€/nuit </b></font> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
+            infoLabel = new JLabel("<html><div style='text-align: center;'><b>" + offre.getChambres().size() + "</b> chambres au prix de <b><font color='red'>" + prixParNuit + "€/nuit </b></font> grâce à une réduction de <b>" + reduction + "% </b> :</div></html>");
         infoLabel.setFont(new Font(font, Font.PLAIN, 15));
         infoLabel.setHorizontalAlignment(JLabel.CENTER);
         infoLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -263,20 +265,19 @@ public class ResultPanel extends JPanel {
 
                 // Calcul montant total
                 int nombreNuits = (int) (offre.getDateDepart().toLocalDate().toEpochDay() - offre.getDateArrivee().toLocalDate().toEpochDay());
-                double montantTotal = Math.round(offre.getPrixAvecReduction() * nombreNuits * 10.0) / 10.0;
 
                 JLabel infoLabelResume;
                 if (offre.getChambres().size() == 1) {
                     if (nombreNuits == 1)
-                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuit</b>, avec <i>" + offre.getChambres().size() + " chambre</i> ?</html>");
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</font></b> pour <b>" + nombreNuits + " nuit</b>, dans <i>" + offre.getChambres().size() + " chambre</i> ?</html>");
                     else
-                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuits</b>, avec <i>" + offre.getChambres().size() + " chambre</i> ?</html>");
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</font></b> pour <b>" + nombreNuits + " nuits</b>, dans <i>" + offre.getChambres().size() + " chambre</i> ?</html>");
                 }
                 else {
                     if (nombreNuits == 1)
-                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuit</b>, avec <i>" + offre.getChambres().size() + " chambres</i> ?</html>");
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</font></b> pour <b>" + nombreNuits + " nuit</b>, dans <i>" + offre.getChambres().size() + " chambres</i> ?</html>");
                     else
-                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + montantTotal + "€</font></b> pour <b>" + nombreNuits + " nuits</b>, avec <i>" + offre.getChambres().size() + " chambres</i> ?</html>");
+                        infoLabelResume = new JLabel("<html>Voulez-vous réserver cette offre à <b><font color='red'>" + offre.getPrixAvecReduction() + "€</font></b> pour <b>" + nombreNuits + " nuits</b>, dans <i>" + offre.getChambres().size() + " chambres</i> ?</html>");
                 }
 
                 infoLabelResume.setFont(new Font(font, Font.PLAIN, 20));
@@ -310,9 +311,9 @@ public class ResultPanel extends JPanel {
                         // Créer un label pour le nombre de places dans la chambre
                         JLabel placesLabelResume;
                         if (chambre.getNombreLits() == 1)
-                            placesLabelResume = new JLabel("Chambre " + chambre.getNombreLits() + " place, pour " + chambre.getPrix() + "€");
+                            placesLabelResume = new JLabel("Chambre " + chambre.getNombreLits() + " place, pour " + chambre.getPrix() + "€/nuit");
                         else
-                            placesLabelResume = new JLabel("Chambre " + chambre.getNombreLits() + " places, pour " + chambre.getPrix() + "€");
+                            placesLabelResume = new JLabel("Chambre " + chambre.getNombreLits() + " places, pour " + chambre.getPrix() + "€/nuit");
                         placesLabelResume.setFont(new Font(font, Font.PLAIN, 18));
                         placesLabelResume.setAlignmentX(Component.CENTER_ALIGNMENT); // Centrer le label
                         placesLabelResume.setBorder(new EmptyBorder(5, 0, 0, 0));

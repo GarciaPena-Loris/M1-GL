@@ -92,7 +92,7 @@ public class ConnexionAgenceFrame extends JFrame {
                             utilisateur = proxyReservation.getForObject(url, Utilisateur.class, paramsUser);
                             if (utilisateur == null) {
                                 JOptionPane.showMessageDialog(this, "Vous n'etes pas inscrit dans cette agence", "Connection impossible !", JOptionPane.ERROR_MESSAGE);
-                                showLoginDialog(email);
+                                showRegisterDialog();
                                 dispose();
                             } else {
                                 new ReserverOffreFrame(customContentPane, agence, offre, utilisateur, proxyReservation);

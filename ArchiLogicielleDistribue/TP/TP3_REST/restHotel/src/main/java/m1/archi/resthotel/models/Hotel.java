@@ -218,7 +218,9 @@ public class Hotel {
                 // Vérifier si il y a une chambre avec le nombre de lits correspondant
                 for (Chambre chambre : chambresDisponibles) {
                     if (chambre.getNombreLits() == nombrePersonne) {
-                        Offre offre = new Offre(chambre.getNombreLits(), chambre.getPrix(), dateArrivee, dateDepart, new ArrayList<>(Collections.singletonList(chambre)), this);
+                        int nombreNuits = (int) (dateDepart.toLocalDate().toEpochDay() - dateArrivee.toLocalDate().toEpochDay());
+                        double prix = Math.round(chambre.getPrix() * nombreNuits * 10.0) / 10.0;
+                        Offre offre = new Offre(chambre.getNombreLits(), prix, dateArrivee, dateDepart, new ArrayList<>(Collections.singletonList(chambre)), this);
                         offres.add(offre);
                         return offres;
                     }
@@ -232,10 +234,10 @@ public class Hotel {
                 chercherCombinaison(chambresDisponibles, nombrePersonne, new ArrayList<>(),
                         combinaisonsDeLits, listeCombinaisonsChambres);
 
-                int nombreNuits = (int) (dateDepart.toLocalDate().toEpochDay() - dateArrivee.toLocalDate().toEpochDay());
-                System.out.println("Nombre de nuits : " + nombreNuits);
                 for (ArrayList<Chambre> combinaisonChambresDisponibles : listeCombinaisonsChambres) {
-                    Offre offre = new Offre(nombrePersonne, Math.round(combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum() * nombreNuits * 10.0) / 10.0, dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
+                    int nombreNuits = (int) (dateDepart.toLocalDate().toEpochDay() - dateArrivee.toLocalDate().toEpochDay());
+                    double prix = Math.round(combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum() * nombreNuits * 10.0) / 10.0;
+                    Offre offre = new Offre(nombrePersonne, prix, dateArrivee, dateDepart, combinaisonChambresDisponibles, this);
                     offres.add(offre);
                 }
 

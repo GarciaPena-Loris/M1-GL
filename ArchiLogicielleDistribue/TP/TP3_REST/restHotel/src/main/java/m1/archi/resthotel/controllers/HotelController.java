@@ -125,10 +125,10 @@ public class HotelController {
             double montantReservation = storedOffre.getPrixAvecReduction();
             if (petitDejeuner) {
                 int nombreNuits = (int) (storedOffre.getDateDepart().toLocalDate().toEpochDay() - storedOffre.getDateArrivee().toLocalDate().toEpochDay());
-                double montantPetitDejeuner = (storedOffre.getHotel().getNombreEtoiles() * 5) * storedOffre.getNombreLitsTotal() * nombreNuits;
+                double montantPetitDejeuner = (storedOffre.getHotel().getNombreEtoiles() * 4) * storedOffre.getNombreLitsTotal() * nombreNuits;
                 montantReservation += montantPetitDejeuner;
             }
-            Reservation reservation = new Reservation(hotel, clientPrincipal, storedOffre.getDateArrivee(), storedOffre.getDateDepart(), storedOffre.getNombreLitsTotal(), montantReservation, petitDejeuner);
+            Reservation reservation = new Reservation(hotel, clientPrincipal, storedOffre.getDateArrivee(), storedOffre.getDateDepart(), storedOffre.getNombreLitsTotal(), (double) Math.round(montantReservation * 10) / 10, petitDejeuner);
             reservationRepository.save(reservation);
 
             for (Chambre chambre : storedOffre.getChambres()) {
@@ -175,6 +175,23 @@ public class HotelController {
     public void deteleHotel(@PathVariable long id) throws HotelNotFoundException {
         Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
         hotelRepository.delete(hotel);
+    }
+
+    // Modifier une offre
+    @PutMapping("${base-uri}/hotels/{id}/offres/{idOffre}")
+    public Offre updateOffre(@RequestBody Offre newOffre, @PathVariable long id, @PathVariable long idOffre) throws HotelNotFoundException, OffreNotFoundException {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(() -> new HotelNotFoundException("Hotel not found with id " + id));
+        return offreRepository.findById(idOffre).map(offre -> {
+            offre.setNombreLitsTotal(newOffre.getNombreLitsTotal());
+            offre.setPrix(newOffre.getPrix());
+            offre.setPrixAvecReduction(newOffre.getPrixAvecReduction());
+            offre.setDateArrivee(newOffre.getDateArrivee());
+            offre.setDateDepart(newOffre.getDateDepart());
+            offre.setDateExpiration(newOffre.getDateExpiration());
+            offre.setChambres(newOffre.getChambres());
+            offre.setHotel(newOffre.getHotel());
+            return offreRepository.save(offre);
+        }).orElseGet(() -> offreRepository.save(newOffre));
     }
 
 }

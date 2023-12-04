@@ -95,6 +95,17 @@ public class AgenceController {
                 if (offresHotel != null && !offresHotel.isEmpty()) {
                     for (Offre offre : offresHotel) {
                         offre.setPrixAvecReduction(Math.round(offre.getPrix() * (1 - reductionHotel.getReduction() / 100.0) * 100.0) / 100.0);
+
+                        // Sauvegarde de l'offre
+                        try {
+                            String offreUri = baseUri + "/hotels/{id}/offres/{idOffre}";
+                            Map<String, Long> params = new HashMap<>();
+                            params.put("id", reductionHotel.getIdHotel());
+                            params.put("idOffre", offre.getIdOffre());
+                            proxyHotel.put(offreUri, offre, params);
+                        } catch (HttpClientErrorException ex) {
+                            throw new HotelException("problem Hotel : " + ex.getMessage());
+                        }
                     }
                     listeOffresParHotels.add(offresHotel);
                 }
