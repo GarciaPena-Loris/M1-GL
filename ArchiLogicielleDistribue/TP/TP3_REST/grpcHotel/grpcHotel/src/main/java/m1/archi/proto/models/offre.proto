@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package m1.archi.proto.models;
+
+import "hotel.proto";
+import "chambre.proto";
+
+message Offre {
+  int64 idOffre = 1;
+  int32 nombreLitsTotal = 2;
+  double prix = 3;
+  double prixAvecReduction = 4;
+  string dateArrivee = 5;
+  string dateDepart = 6;
+  string dateExpiration = 7;
+  repeated Chambre chambres = 8;
+  Hotel hotel = 9;
+}

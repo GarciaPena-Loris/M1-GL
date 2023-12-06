@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package m1.archi.proto.models;
+
+message Adresse {
+  int64 idAdresse = 1;
+  string numero = 2;
+  string rue = 3;
+  string ville = 4;
+  string pays = 5;
+  string position = 6;
+}
