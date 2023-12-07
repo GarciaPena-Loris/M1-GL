@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package m1.archi.proto.models;
+package proto;
 
 import "carte.proto";
 import "reservation.proto";

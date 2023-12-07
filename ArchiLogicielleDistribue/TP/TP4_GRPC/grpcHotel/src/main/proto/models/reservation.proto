@@ -1,16 +1,14 @@
 syntax = "proto3";
 
-package m1.archi.proto.models;
+package proto;
 
-import "hotel.proto";
 import "chambre.proto";
-import "client.proto";
 
 message Reservation {
   int64 idReservation = 1;
-  Hotel hotel = 2;
+  int64 idHotel = 2;
   repeated Chambre chambresReservees = 3;
-  Client clientPrincipal = 4;
+  int64 idClientPrincipal = 4;
   string dateArrivee = 5;
   string dateDepart = 6;
   int32 nombrePersonnes = 7;

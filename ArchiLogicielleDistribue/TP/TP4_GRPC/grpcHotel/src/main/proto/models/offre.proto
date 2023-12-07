@@ -1,8 +1,7 @@
 syntax = "proto3";
 
-package m1.archi.proto.models;
+package proto;
 
-import "hotel.proto";
 import "chambre.proto";
 
 message Offre {
@@ -14,5 +13,5 @@ message Offre {
   string dateDepart = 6;
   string dateExpiration = 7;
   repeated Chambre chambres = 8;
-  Hotel hotel = 9;
+  int64 idHotel = 9;
 }
