@@ -1,5 +1,5 @@
 package m1.archi;
-
+/*
 import com.google.protobuf.InvalidProtocolBufferException;
 import proto.AdresseOuterClass;
 import proto.HotelOuterClass;
@@ -36,3 +36,4 @@ public class App {
 
     }
 }
+*/

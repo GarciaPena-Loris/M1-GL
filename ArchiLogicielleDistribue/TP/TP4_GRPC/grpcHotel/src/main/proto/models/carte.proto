@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-package proto;
+option java_package = "m1.archi.models";
+package m1.archi;
 
 message Carte {
   int64 idCarte = 1;

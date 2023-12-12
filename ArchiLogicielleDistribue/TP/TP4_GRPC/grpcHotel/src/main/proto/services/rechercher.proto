@@ -1,12 +1,13 @@
 syntax = "proto3";
 
-package proto;
+option java_package = "m1.archi.services";
+package m1.archi;
 
-import "offre.proto";
+import "models/offre.proto";
 import "google/protobuf/timestamp.proto";
 
 
-message RechercheChambresRequest {
+message RechercherChambresRequest {
   string ville = 1;
   google.protobuf.Timestamp dateArrivee = 2;  // Utilise un type Timestamp pour représenter LocalDateTime
   google.protobuf.Timestamp dateDepart = 3;
@@ -16,10 +17,10 @@ message RechercheChambresRequest {
   int32 nombrePersonne = 7;
 }
 
-message RechercheChambresResponse {
+message RechercherChambresResponse {
   repeated Offre offre = 1;
 }
 
-service RechercheChambresService {
-  rpc RechercherChambres(RechercheChambresRequest) returns (RechercheChambresResponse);
+service RechercherChambresService {
+  rpc RechercherChambres(RechercherChambresRequest) returns (RechercherChambresResponse);
 }

@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-package proto;
+option java_package = "m1.archi.models";
+package m1.archi;
 
 message Adresse {
   int64 idAdresse = 1;

@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-package proto;
+option java_package = "m1.archi.models";
+package m1.archi;
 
-import "adresse.proto";
-import "chambre.proto";
-import "reservation.proto";
-import "offre.proto";
+import "models/adresse.proto";
+import "models/chambre.proto";
+import "models/reservation.proto";
+import "models/offre.proto";
 
 message Hotel {
   int64 idHotel = 1;
