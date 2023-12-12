@@ -188,15 +188,11 @@ int *initialisationReseau(char *adresseIPPconfig, char *portPconfig, struct sock
 // Agrawala
 // ###############################################################################
 
-enum etat { dehors, demandeur, dedans };
-
-enum demande { REQUEST, PERMISSION };
-
-typedef struct {
-    enum demande typei;
+struct Message {
+    char* typei;
     int datej;
     int numeroi;
-} Message;
+};
 
 // ################### Mutex
 
@@ -205,7 +201,7 @@ typedef struct {
     int tailleAttendusi;
     int* differesi;
     int tailleDifferesi;
-    enum etat etati;
+    char* etati;
     int hi;
     int lasti;
     int prioritairei;
@@ -226,7 +222,7 @@ typedef struct {
 
 typedef struct {
     Parametres* parametre;
-    Message message;
+    struct Message message;
 } ParametresThread;
 
 // ###################
@@ -234,16 +230,18 @@ typedef struct {
 
 
 // ################### Fonctions message
-int envoyerMessage(int socketVoisin, void *message, size_t tailleMessage) {
+int envoyerMessage(int socketVoisin, struct Message message) {
     // Envoi de la taille du message
+    ssize_t tailleMessage = sizeof(struct Message);
     ssize_t resSendTCPsize = sendTCP(socketVoisin, &tailleMessage, sizeof(tailleMessage));
     if (resSendTCPsize == 0 || resSendTCPsize == -1) {
         perror("Erreur lors de l'envoi de la taille du message");
         return -1;
     }
+    printf("Taille du message envoyé : %zu\n", tailleMessage);
 
     // Envoi du message
-    ssize_t resSendTCP = sendTCP(socketVoisin, message, tailleMessage);
+    ssize_t resSendTCP = sendTCP(socketVoisin, &message, tailleMessage);
     if (resSendTCP == 0 || resSendTCP == -1) {
         perror("Erreur lors de l'envoi du message");
         return -1;
@@ -252,32 +250,6 @@ int envoyerMessage(int socketVoisin, void *message, size_t tailleMessage) {
     return 0;
 }
 
-int recevoirMessage(int socketVoisin, void *message, size_t *tailleMessage) {
-    // Réception de la taille du message
-    ssize_t resRecvTCPsize = recvTCP(socketVoisin, tailleMessage, sizeof(*tailleMessage));
-    if (resRecvTCPsize == 0 || resRecvTCPsize == -1) {
-        perror("Erreur lors de la réception de la taille du message");
-        return -1; // ou une autre valeur d'erreur selon ta logique
-    }
-
-    // Allouer de la mémoire pour le message
-    message = malloc(*tailleMessage);
-    if (message == NULL) {
-        // Gestion de l'erreur d'allocation
-        perror("Erreur d'allocation mémoire pour le message");
-        return -1;
-    }
-
-    // Réception du message
-    ssize_t resRecvTCP = recvTCP(socketVoisin, message, *tailleMessage);
-    if (resRecvTCP == 0 || resRecvTCP == -1) {
-        perror("Erreur lors de la réception du message");
-        free(message); // Libérer la mémoire allouée
-        return -1;
-    }
-
-    return 0;
-}
 // ###################
 
 // ################### Fonctions tableau
@@ -305,12 +277,12 @@ void demanderAcces(void * parametres) {
     int numeroPi = args->numeroPi;
     ExclusionMutuelle * exclusionMutex = args->exclusionMutex;
 
-    printf("\033[0;%dm[%d] --- 🔐 Debut de la demande d'accès. ---\033[0m\n", (30 + numeroPi), numeroPi);
+    printf("\033[0;%dm[%d] --- 🔐 Debut de la demande d'accès a mes %d voisins. ---\033[0m\n", (30 + numeroPi), numeroPi, args->nombreVoisins);
 
     // Initialisation des variable 
     pthread_mutex_lock(exclusionMutex->verrou);
     printf("\033[0;%dm[%d] 🔒 J'ai vérouillé pour remplir.\033[0m\n", (30 + numeroPi), numeroPi);
-    exclusionMutex->etati = demandeur;
+    exclusionMutex->etati = "demandeur";
     exclusionMutex->hi++;
     exclusionMutex->lasti = exclusionMutex->hi;
 
@@ -323,19 +295,20 @@ void demanderAcces(void * parametres) {
     }
 
     for (int j = 0; j < args->nombreVoisins; j++) {
-        if (j != numeroPi) {
-            Message demande;
-            demande.typei = REQUEST;
-            demande.datej = exclusionMutex->lasti;
-            demande.numeroi = numeroPi;
+        struct Message demande;
+        demande.typei = "REQUEST";
+        demande.datej = exclusionMutex->lasti;
+        demande.numeroi = numeroPi;
 
-            // Envoyer le Message à Pj
-            printf("\033[0;%dm[%d] 📨 Envois de la REQUEST.\033[0m\n", (30 + numeroPi), numeroPi);
+        // Envoyer le Message à Pj
+        printf("\033[0;%dm[%d] 📨 Envois de la REQUEST au voisin %d.\033[0m\n", (30 + numeroPi), numeroPi, args->tabSocketsVoisins[j]);
+        printf("demande.typei : '%s'\n", demande.typei);
+        printf("demande.datej : '%d'\n", demande.datej);
+        printf("demande.numeroi : '%d'\n", demande.numeroi);
 
-            int res = envoyerMessage(args->tabSocketsVoisins[j], &demande, sizeof(Message));
-            if (res == -1 || res == 0) {
-                // Gestion de l'erreur
-            }
+        int res = envoyerMessage(args->tabSocketsVoisins[j], demande);
+        if (res == -1 || res == 0) {
+            // Gestion de l'erreur
         }
     }
 
@@ -343,7 +316,7 @@ void demanderAcces(void * parametres) {
     pthread_cond_wait(exclusionMutex->cond, exclusionMutex->verrou);
     printf("\033[0;%dm[%d] 🥱 : Je me réveille.\033[0m\n", (30 + numeroPi), numeroPi);
 
-    exclusionMutex->etati = dedans;
+    exclusionMutex->etati = "dedans";
 
     pthread_mutex_unlock(exclusionMutex->verrou);
     printf("\033[0;%dm[%d] 🔑 : Je suis libre !\033[0m\n", (30 + numeroPi), numeroPi);
@@ -361,18 +334,18 @@ void libererAcces(void * parametres) {
     pthread_mutex_lock(exclusionMutex->verrou);
     printf("\033[0;%dm[%d] 🔒 J'ai vérouillé pour libérer.\033[0m\n", (30 + numeroPi), numeroPi);
 
-    exclusionMutex->etati = dehors;
+    exclusionMutex->etati = "dehors";
 
     // Envoi de PERMISSION à tous les processus dans differesi
     for (int i = 0; i < exclusionMutex->tailleDifferesi; i++) {
-        Message permission;
-        permission.typei = PERMISSION;
+        struct Message permission;
+        permission.typei = "PERMISSION";
         permission.numeroi = numeroPi;
 
         // Envoyer le Message à Pj
         printf("\033[0;%dm[%d] 📨 Envois de la PERMISSION.\033[0m\n", (30 + numeroPi), numeroPi);
 
-        int res = envoyerMessage(args->tabSocketsVoisins[exclusionMutex->differesi[i]], &permission, sizeof(Message));
+        int res = envoyerMessage(args->tabSocketsVoisins[exclusionMutex->differesi[i]], permission);
         if (res == -1 || res == 0) {
             // Gestion de l'erreur
         }
@@ -392,7 +365,7 @@ void libererAcces(void * parametres) {
 void* traiterReceptionRequest(void * parametres) {
     ParametresThread * argsThread = (ParametresThread *) parametres;
     Parametres* args = argsThread->parametre;
-    Message messageRecu = argsThread->message;
+    struct Message messageRecu = argsThread->message;
 
     int numeroPi = args->numeroPi;
     ExclusionMutuelle * exclusionMutex = args->exclusionMutex;
@@ -404,7 +377,7 @@ void* traiterReceptionRequest(void * parametres) {
     printf("\033[0;%dm[%d] 🔒 J'ai vérouillé pour modifier.\033[0m\n", (30 + numeroPi), numeroPi);
 
     exclusionMutex->hi = (exclusionMutex->hi > messageRecu.datej) ? exclusionMutex->hi : messageRecu.datej;
-    if (exclusionMutex->etati != dehors) {
+    if (!strcmp(exclusionMutex->etati, "dehors")) {
         if (exclusionMutex->lasti < messageRecu.datej || 
             (exclusionMutex->lasti == messageRecu.datej && args->numeroPi < messageRecu.numeroi)) {
             exclusionMutex->prioritairei = 1;
@@ -421,13 +394,13 @@ void* traiterReceptionRequest(void * parametres) {
         exclusionMutex->tailleDifferesi++;
     } else {
         // Envoyer <PERMISSION, i> à Pj
-        Message permission;
-        permission.typei = PERMISSION;
+        struct Message permission;
+        permission.typei = "PERMISSION";
         permission.numeroi = args->numeroPi;
 
         printf("\033[0;%dm[%d] 📨 Envois de la PERMISSION.\033[0m\n", (30 + numeroPi), numeroPi);
 
-        envoyerMessage(args->tabSocketsVoisins[messageRecu.numeroi], &permission, sizeof(Message));
+        envoyerMessage(args->tabSocketsVoisins[messageRecu.numeroi], permission);
 
     }
 
@@ -441,7 +414,7 @@ void* traiterReceptionRequest(void * parametres) {
 void* traiterReceptionPermission(void * parametres) {
     ParametresThread * argsThread = (ParametresThread *) parametres;
     Parametres* args = argsThread->parametre;
-    Message messageRecu = argsThread->message;
+    struct Message messageRecu = argsThread->message;
 
     int numeroPi = args->numeroPi;
     ExclusionMutuelle * exclusionMutex = args->exclusionMutex;
@@ -499,32 +472,56 @@ void* processusReception(void* parametres) {
             exit(1);
         }
 
+        printf("\033[0;%dm[%d] Message recu !!\033[0m\n", (30 + numeroPi), numeroPi);
+
         // --- On parcours le tableau de multiplexage pour savoir quelle socket a recu un message
         for (int descripteurSocket = 2; descripteurSocket <= max; descripteurSocket++)
         {
-            Message messageRecu;
-            size_t tailleMessage;
+            struct Message messageRecu;
+            int tailleMessage;
 
             if (FD_ISSET(descripteurSocket, &setCopie))
             {
-                recevoirMessage(descripteurSocket, &messageRecu, &tailleMessage);
+                ssize_t resRecvTCPsize = recvTCP(descripteurSocket, &tailleMessage, sizeof(tailleMessage));
+                if (resRecvTCPsize == 0 || resRecvTCPsize == -1) {
+                    perror("Erreur lors de la réception de la taille du message");
+                    exit(1);
+                }
 
-                printf("\033[0;%dm[%d]\t 📃 Type message reçus du processus %d : '%u'.\033[0m\n", (30 + numeroPi), numeroPi, messageRecu.numeroi, messageRecu.typei);
+                printf("\033[0;%dm[%d] Taille : %d\033[0m\n", (30 + numeroPi), numeroPi, tailleMessage);
+
+                messageRecu.typei = malloc(tailleMessage);
+
+                // Réception du message
+                ssize_t resRecvTCP = recvTCP(descripteurSocket, (struct Message *)&messageRecu, sizeof(struct Message));
+                if (resRecvTCP == 0 || resRecvTCP == -1) {
+                    perror("Erreur lors de la réception du message");
+                    exit(1);
+                }
+
+                printf("message.typei : '%s'\n", messageRecu.typei);
+                printf("message.datej : '%d'\n", messageRecu.datej);
+                printf("message.numeroi : '%d'\n", messageRecu.numeroi);
+
+                printf("\033[0;%dm[%d]\t 📃 Type message reçus du processus %d : '%s'.\033[0m\n", (30 + numeroPi), numeroPi, messageRecu.numeroi, messageRecu.typei);
 
                 pthread_t threads;
                 ParametresThread parametresThread;
                 parametresThread.parametre = args;
                 parametresThread.message = messageRecu;
-                if (messageRecu.typei == REQUEST) {
+                if (strcmp(messageRecu.typei, "REQUEST")) {
                     if (pthread_create(&threads, NULL, traiterReceptionRequest, &parametresThread) != 0) {
                         perror("❌ Pi : Erreur creation thread request");
                     }
                 }
-                else {
+                else if (strcmp(messageRecu.typei, "PERMISSION")) {
                     if (pthread_create(&threads, NULL, traiterReceptionPermission, &parametresThread) != 0) {
                         perror("❌ Pi : Erreur creation thread permission");
                     }
                 }
+                else {
+                    printf("C'est une demande de type ERREUR !\n");
+                } 
             }
         }
     }
@@ -590,7 +587,7 @@ int main(int argc, char *argv[])
     exclusionMutex.tailleDifferesi = 0;
 
 
-    exclusionMutex.etati = dehors;
+    exclusionMutex.etati = "dehors";
     exclusionMutex.hi = 0;
     exclusionMutex.lasti = 0;
     exclusionMutex.prioritairei = 0;
