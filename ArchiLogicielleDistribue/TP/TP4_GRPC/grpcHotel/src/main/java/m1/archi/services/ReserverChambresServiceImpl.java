@@ -1,11 +1,9 @@
-package m1.archi.service;
+package m1.archi.services;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import m1.archi.models.HotelOuterClass;
 import m1.archi.models.ReservationOuterClass;
-import m1.archi.services.Reserver;
-import m1.archi.services.ReserverChambreServiceGrpc;
 
 public class ReserverChambresServiceImpl extends ReserverChambreServiceGrpc.ReserverChambreServiceImplBase {
     private final HotelOuterClass.Hotel hotel;

@@ -1,14 +1,16 @@
-package m1.archi.service;
+package m1.archi.services;
 
 import com.google.protobuf.Timestamp;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+import m1.archi.dao.HotelDao;
+import m1.archi.dao.OffreDao;
+import m1.archi.domaines.Hotel;
+import m1.archi.domaines.Offre;
 import m1.archi.models.ChambreOuterClass;
 import m1.archi.models.HotelOuterClass;
 import m1.archi.models.OffreOuterClass;
 import m1.archi.models.ReservationOuterClass;
-import m1.archi.services.Rechercher;
-import m1.archi.services.RechercherChambresServiceGrpc;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,7 +38,7 @@ public class RechercherChambresServiceImpl extends RechercherChambresServiceGrpc
                 return;
             }
 
-           // Appelle la fonction de recherche
+            // Appelle la fonction de recherche
             ArrayList<OffreOuterClass.Offre> offres = rechercherChambres(
                     request.getVille(),
                     request.getDateArrivee(),
@@ -46,6 +48,28 @@ public class RechercherChambresServiceImpl extends RechercherChambresServiceGrpc
                     request.getNombreEtoiles(),
                     request.getNombrePersonne()
             );
+
+            // Ajouter les offres dans la base de données
+            OffreDao offreDao = new OffreDao();
+
+            for (OffreOuterClass.Offre offreProto : offres) {
+                Offre offre = new Offre(offreProto);
+                // Enregistrer l'offre dans la base de données
+                offreDao.create(offre);
+            }
+
+            // Ajoute les offres a la liste des offres de l'hotel
+            HotelDao hotelDao = new HotelDao();
+
+            // Obtenez l'hôtel par son ID (assurez-vous d'avoir l'ID de l'hôtel dans votre protocole)
+            Hotel hotelDB = hotelDao.findById(hotel.getIdHotel());
+
+            // Mettez à jour la liste d'offres de l'hôtel avec les nouvelles offres
+            hotelDB.getOffres().addAll(offres.stream().map(Offre::new).toList());
+
+            // Enregistrez la mise à jour dans la base de données
+            hotelDao.update(hotelDB);
+
 
             // Construit la réponse avec les résultats
             Rechercher.RechercherChambresResponse response = Rechercher.RechercherChambresResponse.newBuilder()
