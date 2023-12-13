@@ -5,62 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="38ee8a78-11de-459c-bae9-4631ceabac98" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/commons_configuration_1_6.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TP_HMIN122M-hadoop.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960552/._SUCCESS.crc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960552/.part-r-00000.crc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960552/_SUCCESS" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960552/part-r-00000" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960802/._SUCCESS.crc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960802/.part-r-00000.crc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960802/_SUCCESS" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960802/part-r-00000" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960898/._SUCCESS.crc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960898/.part-r-00000.crc" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960898/_SUCCESS" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/output/wordCount-1701960898/part-r-00000" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/reponse.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/Formula.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/GetVars.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/IFormula.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/And.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/Equ.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/Imp.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/NonTerminalFormula.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/Not.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/Or.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/nonTerminal/Xor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/terminal/Bot.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/terminal/TerminalFormula.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/terminal/Top.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/main/java/org/example/formula/terminal/Var.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../../IngenierieLogicielle/TP-Interpreteur/Interpreteur/src/test/java/org/example/AppTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../ProgRepartie/TD-TP/TP_Exclusion/Pi.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ProgRepartie/TD-TP/TP_Exclusion/Pi.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../ProgRepartie/TD-TP/TP_Exclusion/bin/Pi" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ProgRepartie/TD-TP/TP_Exclusion/bin/Pi" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../ProgRepartie/TD-TP/TP_Exclusion/obj/Pi.o" beforeDir="false" afterPath="$PROJECT_DIR$/../../../ProgRepartie/TD-TP/TP_Exclusion/obj/Pi.o" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Join.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/GroupBy$Map.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/GroupBy$Map.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/GroupBy$Reduce.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/GroupBy$Reduce.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/GroupBy.class" beforeDir="false" afterPath="$PROJECT_DIR$/bin/GroupBy.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GroupBy.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GroupBy.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="2ZDcf4JVYAB8yyHd6a8dqHOuvuj" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -69,29 +38,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Application.GroupBy.executor": "Run",
-    "Application.WordCount.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/e20190003223/Documents/M1/M1-GL/Entrepot-et-Big-Data/TP-MAP-REDUCE/TP_HMIN122M-hadoop/lib-dev/jackson-mapper-asl-1.9.13.jar",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.09587729",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Application.GroupBy.executor&quot;: &quot;Run&quot;,
+    &quot;Application.WordCount.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;F:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/Entrepot-et-Big-Data/TP-MAP-REDUCE/TP_HMIN122M-hadoop&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.09587729&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.38353196&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\DossierLoris\MonProfil\MesDocumentEcole\Fac\M1\M1-GL\Entrepot-et-Big-Data\TP-MAP-REDUCE\TP_HMIN122M-hadoop\lib-dev" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.GroupBy">
     <configuration name="GroupBy" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <envs>
@@ -127,7 +101,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="jdk-21.0.1-openjdk-21.0.1-3183f394aec4-920bfa72" />
+        <option value="jdk-21.0.1-openjdk-21.0.1-3183f394aec4-7d648f2c" />
       </set>
     </attachedChunks>
   </component>
@@ -140,6 +114,12 @@
       <option name="presentableId" value="Default" />
       <updated>1701960195467</updated>
       <workItem from="1701960196245" duration="2939000" />
+      <workItem from="1702480235563" duration="250000" />
+      <workItem from="1702480934710" duration="3603000" />
+      <workItem from="1702484652758" duration="599000" />
+      <workItem from="1702501833187" duration="596000" />
+      <workItem from="1702504697779" duration="332000" />
+      <workItem from="1702505039238" duration="1713000" />
     </task>
     <servers />
   </component>

@@ -1,6 +1,7 @@
 
 import java.io.IOException;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -35,6 +36,35 @@ public class GroupBy {
 		}
 	}
 
+	// ############ Exercice 3 :
+	/*
+	public static class Map extends Mapper<LongWritable, Text, Text, DoubleWritable> {
+
+		@Override
+		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+			String line = value.toString();
+			String[] fields = line.split(",");
+			String customerID = fields[5];
+			double profit = Double.parseDouble(fields[20]);
+			context.write(new Text(customerID), new DoubleWritable(profit));
+		}
+	}
+
+	public static class Reduce extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+
+		@Override
+		public void reduce(Text key, Iterable<DoubleWritable> values, Context context)
+				throws IOException, InterruptedException {
+			double sum = 0;
+			for (DoubleWritable val : values) {
+				sum += val.get();
+			}
+			context.write(key, new DoubleWritable(sum));
+		}
+	}
+	*/
+
+	/* ############ Exercice 4 - Partie 1 :
 	public static class Map extends Mapper<LongWritable, Text, Text, DoubleWritable> {
 
 		@Override
@@ -50,7 +80,7 @@ public class GroupBy {
 					context.write(new Text("Date: " + date + ", etat: " + state), new DoubleWritable(sales));
 					context.write(new Text("Date: " + date + ", categorie" + category), new DoubleWritable(sales));
 				} catch (NumberFormatException e) {
-					// Ignore the line if the sales field is not a valid number.
+					// Rien à faire
 				}
 			}
 		}
@@ -66,6 +96,46 @@ public class GroupBy {
 				sum += val.get();
 			}
 			context.write(key, new DoubleWritable(sum));
+		}
+	}
+	 */
+
+	// ############ Exercice 4 - Partie 2 :
+	public static class Map extends Mapper<LongWritable, Text, Text, Text> {
+		@Override
+		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+			String line = value.toString();
+			String[] fields = line.split(",");
+			if (fields.length > 20) {
+				try {
+					String orderId = fields[1];
+					String productId = fields[13];
+					String quantity = fields[18];
+					context.write(new Text(orderId), new Text(productId + "," + quantity));
+				} catch (NumberFormatException e) {
+					// Rien à faire
+				}
+			}
+		}
+	}
+
+	public static class Reduce extends Reducer<Text, Text, Text, Text> {
+		@Override
+		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+			int distinctProducts = 0;
+			int totalQuantity = 0;
+			HashSet<String> products = new HashSet<>();
+			for (Text val : values) {
+				String[] fields = val.toString().split(",");
+				String productId = fields[0];
+				int quantity = Integer.parseInt(fields[1]);
+				if (!products.contains(productId)) {
+					products.add(productId);
+					distinctProducts++;
+				}
+				totalQuantity += quantity;
+			}
+			context.write(key, new Text("Nombre de produits différents: " + distinctProducts + ", Nombre total d'exemplaires: " + totalQuantity));
 		}
 	}
 
