@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+package m1.archi;
+option java_package = "m1.archi.services";
+option java_multiple_files = true;
+
+import "models/offre.proto";
+import "models/reservation.proto";
+import "models/hotel.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service HotelService {
+  rpc GetAllHotels (google.protobuf.Empty) returns (HotelListResponse);
+  rpc GetAllIdHotels (google.protobuf.Empty) returns (IdHotelListResponse);
+  rpc GetHotelById (GetHotelByIdRequest) returns (HotelResponse);
+  rpc CreateHotel (HotelRequest) returns (HotelResponse);
+  rpc UpdateHotel (UpdateHotelRequest) returns (HotelResponse);
+  rpc DeleteHotel (DeleteHotelRequest) returns (google.protobuf.Empty);
+  // Partie recherche et reservation
+  rpc RechercherChambres(RechercherChambresRequest) returns (RechercherChambresResponse);
+  rpc ReserverChambres(ReserverChambresRequest) returns (ReserverChambresResponse);
+  // Partie offre
+  rpc UpdateOffreHotel(UpdateOffreRequest) returns (UpdateOffreResponse);
+}
+
+message HotelRequest {
+  Hotel hotel = 1;
+}
+
+message HotelListResponse {
+  repeated Hotel hotels = 1;
+}
+
+message IdHotelListResponse {
+  repeated int64 idHotel = 1;
+}
+
+message HotelResponse {
+  Hotel hotel = 1;
+}
+
+message GetHotelByIdRequest {
+  int64 idHotel = 1;
+}
+
+message UpdateHotelRequest {
+  int64 idHotel = 1;
+  Hotel hotel = 2;
+}
+
+message DeleteHotelRequest {
+  int64 idHotel = 1;
+}
+
+// Partie recherche et reservation
+message RechercherChambresRequest {
+  int64 idHotel = 1;
+  string ville = 2;
+  google.protobuf.Timestamp dateArrivee = 3;  // Utilisation d'un type Timestamp pour représenter LocalDateTime
+  google.protobuf.Timestamp dateDepart = 4;
+  int32 prixMin = 5;
+  int32 prixMax = 6;
+  int32 nombreEtoiles = 7;
+  int32 nombrePersonne = 8;
+}
+
+message RechercherChambresResponse {
+  repeated Offre offre = 1;
+}
+
+message ReserverChambresRequest {
+  int64 idOffre = 1;
+  bool petitDejeuner = 2;
+  string nomClient = 3;
+  string prenomClient = 4;
+  string email = 5;
+  string telephone = 6;
+  string nomCarte = 7;
+  string numeroCarte = 8;
+  string expirationCarte = 9;
+  string CCVCarte = 10;
+}
+
+message ReserverChambresResponse {
+  Reservation reservation = 1;
+}
+
+// Partie offre
+message UpdateOffreRequest {
+  int64 idHotel = 1;
+  int64 idOffre = 2;
+  Offre offre = 3;
+}
+
+message UpdateOffreResponse {
+  Offre offre = 1;
+}
