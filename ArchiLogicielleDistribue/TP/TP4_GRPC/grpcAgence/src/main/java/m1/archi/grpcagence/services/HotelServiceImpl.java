@@ -1,4 +1,4 @@
-package m1.archi.grpchotel.services;
+package m1.archi.grpcagence.services;
 
 import com.google.protobuf.Empty;
 import com.google.protobuf.Timestamp;
@@ -10,7 +10,7 @@ import m1.archi.grpchotel.exceptions.InternalErrorException;
 import m1.archi.grpchotel.exceptions.OffreExpiredException;
 import m1.archi.grpchotel.models.*;
 import m1.archi.grpchotel.repositories.*;
-import m1.archi.services.*;
+import m1.archi.services.RechercherChambresResponse;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,15 +39,11 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
 
     @Override
     public void getAllHotels(Empty request, StreamObserver<HotelListResponse> responseObserver) {
-        try {
-            List<Hotel> hotels = hotelRepository.findAll();
-            // Convertir la liste d'hôtels en réponse gRPC
-            HotelListResponse response = HotelListResponse.newBuilder().addAllHotels(hotels.stream().map(Hotel::toProto).toList()).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        } catch (Exception e) {
-            throw new InternalErrorException("Erreur lors de la récupération des hotels", e);
-        }
+        List<Hotel> hotels = hotelRepository.findAll();
+        // Convertir la liste d'hôtels en réponse gRPC
+        HotelListResponse response = HotelListResponse.newBuilder().addAllHotels(hotels.stream().map(Hotel::toProto).toList()).build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override

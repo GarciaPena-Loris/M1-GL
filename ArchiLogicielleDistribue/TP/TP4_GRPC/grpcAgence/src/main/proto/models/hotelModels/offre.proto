@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.models";
+package m1.archi;
+
+import "models/hotelModels/chambre.proto";
+import "google/protobuf/timestamp.proto";
+
+message Offre {
+  int64 idOffre = 1;
+  int32 nombreLitsTotal = 2;
+  double prix = 3;
+  double prixAvecReduction = 4;
+  google.protobuf.Timestamp dateArrivee = 5;
+  google.protobuf.Timestamp dateDepart = 6;
+  google.protobuf.Timestamp dateExpiration = 7;
+  repeated Chambre chambres = 8;
+  int64 idHotel = 9;
+}

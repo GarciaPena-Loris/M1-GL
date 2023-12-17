@@ -1,11 +1,10 @@
-package m1.archi.grpchotel.models;
+package m1.archi.grpcagence.models.hotelModels;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import m1.archi.models.HotelOuterClass;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +30,7 @@ public class Hotel {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Offre> offres;
 
-    public Hotel(HotelOuterClass.Hotel hotel) {
+    public Hotel(m1.archi.models.HotelOuterClass.Hotel hotel) {
         this.idHotel = hotel.getIdHotel();
         this.nom = hotel.getNom();
         this.adresse = new Adresse(hotel.getAdresse());
@@ -42,8 +41,8 @@ public class Hotel {
         this.offres = hotel.getOffresList().stream().map(Offre::new).collect(Collectors.toList());
     }
 
-    public HotelOuterClass.Hotel toProto() {
-        return HotelOuterClass.Hotel.newBuilder()
+    public m1.archi.models.HotelOuterClass.Hotel toProto() {
+        return m1.archi.models.HotelOuterClass.Hotel.newBuilder()
                 .setIdHotel(this.idHotel)
                 .setNom(this.nom)
                 .setAdresse(this.adresse.toProto())
