@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import m1.archi.proto.models.CarteOuterClass;
 
 @Data
 @AllArgsConstructor
@@ -22,7 +23,7 @@ public class Carte {
     private String dateExpiration;
     private String CCV;
 
-    public Carte(m1.archi.models.CarteOuterClass.Carte carte) {
+    public Carte(CarteOuterClass.Carte carte) {
         this.idCarte = carte.getIdCarte();
         this.nom = carte.getNom();
         this.numero = carte.getNumero();
@@ -30,8 +31,8 @@ public class Carte {
         this.CCV = carte.getCCV();
     }
 
-    public m1.archi.models.CarteOuterClass.Carte toProto() {
-        return m1.archi.models.CarteOuterClass.Carte.newBuilder()
+    public CarteOuterClass.Carte toProto() {
+        return CarteOuterClass.Carte.newBuilder()
                 .setIdCarte(this.idCarte)
                 .setNom(this.nom)
                 .setNumero(this.numero)

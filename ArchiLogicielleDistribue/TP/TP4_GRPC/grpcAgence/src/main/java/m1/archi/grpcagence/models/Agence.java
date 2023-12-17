@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import m1.archi.models.AgenceOuterClass;
 import m1.archi.grpcagence.models.hotelModels.Hotel;
+import m1.archi.proto.models.AgenceOuterClass;
 
 import java.util.List;
 import java.util.Map;
@@ -15,27 +15,21 @@ import java.util.stream.Collectors;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @Entity
 public class Agence {
     @Id
     @GeneratedValue
-    private long idAgence;
+    private Long idAgence;
     private String nom;
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinTable(name = "agence_reduction_hotels",
-            joinColumns = @JoinColumn(name = "agence_id"),
-            inverseJoinColumns = @JoinColumn(name = "hotel_id"))
-    @MapKeyColumn(name = "reduction")
-    private Map<Integer, Hotel> reductionHotels;
+    @ElementCollection
+    private Map<Long, Integer> reductionHotels;
     @ManyToMany
     private List<Utilisateur> listeUtilisateurs;
 
     public Agence(AgenceOuterClass.Agence agence) {
         this.idAgence = agence.getIdAgence();
         this.nom = agence.getNom();
-        this.reductionHotels = agence.getReductionHotelsMap().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> new Hotel(e.getValue())));
+        this.reductionHotels = agence.getReductionHotelsMap();
         this.listeUtilisateurs = agence.getListeUtilisateursList().stream()
                 .map(Utilisateur::new)
                 .collect(Collectors.toList());
@@ -45,11 +39,22 @@ public class Agence {
         return AgenceOuterClass.Agence.newBuilder()
                 .setIdAgence(this.idAgence)
                 .setNom(this.nom)
-                .putAllReductionHotels(this.reductionHotels.entrySet().stream()
-                        .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().toProto())))
+                .putAllReductionHotels(this.reductionHotels)
                 .addAllListeUtilisateurs(this.listeUtilisateurs.stream()
                         .map(Utilisateur::toProto)
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder("L'" + this.nom + " (" + this.getIdAgence() + ") possède " + this.getReductionHotels().size() + " hotels partenaires :\n");
+
+        int compteur = 1;
+        for (Map.Entry<Long, Integer> reductionHotel : this.getReductionHotels().entrySet()) {
+            res.append("\t").append(compteur).append("- L'hotel (").append(reductionHotel.getKey()).append(") avec une reduction de ").append(reductionHotel.getValue()).append("% sur les chambres.\n");
+            compteur++;
+        }
+        return res.toString();
     }
 }

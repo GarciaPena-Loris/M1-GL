@@ -28,4 +28,10 @@ public class GrpcExceptionAdvice {
         return Status.INVALID_ARGUMENT.withDescription(e.getMessage()).asException();
     }
 
+    @GrpcExceptionHandler(UserException.class)
+    public StatusException handleUserException(UserException e) {
+        return Status.PERMISSION_DENIED.withDescription(e.getMessage()).asException();
+    }
+
+
 }

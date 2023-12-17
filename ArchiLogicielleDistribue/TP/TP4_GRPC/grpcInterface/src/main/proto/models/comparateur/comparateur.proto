@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+message Comparateur {
+  int64 idComparateur = 1;
+  string nom = 2;
+  repeated int64 idAgences = 3;
+}

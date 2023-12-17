@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package m1.archi;
+option java_package = "m1.archi.proto.services";
+option java_multiple_files = true;
+
+import "models/comparateur/comparateur.proto";
+import "models/hotel/reservation.proto";
+import "services/agence/agenceService.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service ComparateurService {
+  rpc GetFirstComparateur (google.protobuf.Empty) returns (Comparateur) {}
+  rpc GetFirstIdComparateur (google.protobuf.Empty) returns (IdComparateurResponse) {}
+  rpc CountAgence (google.protobuf.Empty) returns (CountResponse) {}
+  // Partie recherche et reservation
+  rpc RechercheChambresComparateur (RechercherChambresComparateurRequest) returns (RechercherChambresComparateurResponse) {}
+  rpc ReserverChambresComparateur (ReserverChambresComparateurRequest) returns (Reservation) {}
+}
+
+message IdComparateurResponse {
+  int64 idComparateur = 1;
+}
+
+message CountResponse {
+  int32 count = 1;
+}
+
+// Partie recherche et reservation
+message RechercherChambresComparateurRequest {
+  string ville = 1;
+  google.protobuf.Timestamp dateArrivee = 2;
+  google.protobuf.Timestamp dateDepart = 3;
+  int32 prixMin = 4;
+  int32 prixMax = 5;
+  int32 nombreEtoiles = 6;
+  int32 nombrePersonne = 7;
+}
+
+message RechercherChambresComparateurResponse {
+  map<int64, OffresParAgence> offresParAgence = 1;
+}
+
+message OffresParAgence {
+  repeated OffresParHotel offresParHotel = 1;
+}
+
+message ReserverChambresComparateurRequest {
+  string email = 1;
+  string motDePasse = 2;
+  int64 idAgence = 3;
+  int64 idOffre = 5;
+  bool petitDejeuner = 6;
+  string nomClient = 7;
+  string prenomClient = 8;
+  string telephone = 9;
+  string nomCarte = 10;
+  string numeroCarte = 11;
+  string expirationCarte = 12;
+  string CCVCarte = 13;
+}

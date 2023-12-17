@@ -10,7 +10,7 @@ import m1.archi.grpchotel.exceptions.InternalErrorException;
 import m1.archi.grpchotel.exceptions.OffreExpiredException;
 import m1.archi.grpchotel.models.*;
 import m1.archi.grpchotel.repositories.*;
-import m1.archi.services.*;
+import m1.archi.proto.services.*;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -128,9 +128,9 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
 
     // Focntion de Recherche
     @Override
-    public void rechercherChambres(
-            RechercherChambresRequest request,
-            StreamObserver<RechercherChambresResponse> responseObserver
+    public void rechercherChambresHotel(
+            RechercherChambresHotelRequest request,
+            StreamObserver<RechercherChambresHotelResponse> responseObserver
     ) {
         long idHotel = request.getIdHotel();
         Hotel hotel = hotelRepository.findById(idHotel).orElseThrow(() -> new EntityNotFoundException("Hotel", idHotel));
@@ -159,7 +159,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
             );
 
             if (offres.isEmpty()) {
-                RechercherChambresResponse response = RechercherChambresResponse.newBuilder().addAllOffre(new ArrayList<>()).build();
+                RechercherChambresHotelResponse response = RechercherChambresHotelResponse.newBuilder().addAllOffre(new ArrayList<>()).build();
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
             } else {
@@ -170,7 +170,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
                 hotelRepository.save(hotel);
 
                 // Construit la réponse avec les résultats
-                RechercherChambresResponse response = RechercherChambresResponse.newBuilder()
+                RechercherChambresHotelResponse response = RechercherChambresHotelResponse.newBuilder()
                         .addAllOffre(offres.stream().map(Offre::toProto).toList())
                         .build();
 
@@ -185,7 +185,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
 
     // Fonction de reservation
     @Override
-    public void reserverChambres(ReserverChambresRequest request, StreamObserver<ReserverChambresResponse> responseObserver) {
+    public void reserverChambresHotel(ReserverChambresHotelRequest request, StreamObserver<ReserverChambresHotelResponse> responseObserver) {
         long idOffre = request.getIdOffre();
         Offre storedOffre = offreRepository.findById(idOffre).orElseThrow(() -> new EntityNotFoundException("Offre", idOffre));
         long idHotel = storedOffre.getIdHotel();
@@ -225,7 +225,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
             clientPrincipal.getHistoriqueReservations().add(reservation);
             clientRepository.save(clientPrincipal);
 
-            ReserverChambresResponse response = ReserverChambresResponse.newBuilder()
+            ReserverChambresHotelResponse response = ReserverChambresHotelResponse.newBuilder()
                     .setReservation(reservation.toProto())
                     .build();
 
@@ -337,7 +337,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
                         double prix = Math.round(chambre.getPrix() * nombreNuits * 10.0) / 10.0;
 
                         java.sql.Timestamp dateExpiration = java.sql.Timestamp.from(Instant.now().plusSeconds(3600));
-                        Offre offre = new Offre(null, chambre.getNombreLits(), prix, prix, TimeConverter.convertTimestamp(dateArrivee), TimeConverter.convertTimestamp(dateDepart), dateExpiration, new ArrayList<>(Collections.singletonList(chambre)), hotel.getIdHotel());
+                        Offre offre = new Offre(null, chambre.getNombreLits(), prix, prix, TimeConverter.convertTimestamp(dateArrivee), TimeConverter.convertTimestamp(dateDepart), dateExpiration, new ArrayList<>(Collections.singletonList(chambre)), hotel.getIdHotel(), hotel.getNombreEtoiles());
 
                         offres.add(offre);
                         return offres;
@@ -357,7 +357,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
                     double prix = Math.round(combinaisonChambresDisponibles.stream().mapToDouble(Chambre::getPrix).sum() * nombreNuits * 10.0) / 10.0;
 
                     java.sql.Timestamp dateExpiration = java.sql.Timestamp.from(Instant.now().plusSeconds(3600));
-                    Offre offre = new Offre(null, nombrePersonne, prix, prix, TimeConverter.convertTimestamp(dateArrivee), TimeConverter.convertTimestamp(dateDepart), dateExpiration, combinaisonChambresDisponibles, hotel.getIdHotel());
+                    Offre offre = new Offre(null, nombrePersonne, prix, prix, TimeConverter.convertTimestamp(dateArrivee), TimeConverter.convertTimestamp(dateDepart), dateExpiration, combinaisonChambresDisponibles, hotel.getIdHotel(), hotel.getNombreEtoiles());
 
                     offres.add(offre);
                 }

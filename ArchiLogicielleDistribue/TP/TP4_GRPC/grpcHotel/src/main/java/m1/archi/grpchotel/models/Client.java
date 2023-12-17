@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import m1.archi.proto.models.ClientOuterClass;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Client {
     @OneToMany
     private List<Reservation> historiqueReservations;
 
-    public Client(m1.archi.models.ClientOuterClass.Client client) {
+    public Client(ClientOuterClass.Client client) {
         this.idClient = client.getIdClient();
         this.nom = client.getNom();
         this.prenom = client.getPrenom();
@@ -35,8 +36,8 @@ public class Client {
         this.carte = new Carte(client.getCarte());
     }
 
-    public m1.archi.models.ClientOuterClass.Client toProto() {
-        return m1.archi.models.ClientOuterClass.Client.newBuilder()
+    public ClientOuterClass.Client toProto() {
+        return ClientOuterClass.Client.newBuilder()
                 .setIdClient(this.idClient)
                 .setNom(this.nom)
                 .setPrenom(this.prenom)

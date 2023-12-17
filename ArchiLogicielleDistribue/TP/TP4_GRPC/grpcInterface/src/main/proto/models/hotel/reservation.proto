@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+import "models/hotel/chambre.proto";
+import "google/protobuf/timestamp.proto";
+
+message Reservation {
+  int64 idReservation = 1;
+  int64 idHotel = 2;
+  repeated Chambre chambresReservees = 3;
+  int64 idClientPrincipal = 4;
+  google.protobuf.Timestamp dateArrivee = 5;
+  google.protobuf.Timestamp dateDepart = 6;
+  int32 nombrePersonnes = 7;
+  double montantReservation = 8;
+  bool petitDejeuner = 9;
+}

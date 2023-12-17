@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import m1.archi.models.UtilisateurOuterClass;
+import m1.archi.proto.models.UtilisateurOuterClass;
 
 import java.util.ArrayList;
 import java.util.List;

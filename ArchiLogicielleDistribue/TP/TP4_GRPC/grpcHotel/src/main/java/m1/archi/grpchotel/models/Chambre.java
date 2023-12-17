@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import m1.archi.proto.models.ChambreOuterClass;
 
 @Data
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class Chambre {
     private Long idHotel;
     private String imageChambre;
 
-    public Chambre(m1.archi.models.ChambreOuterClass.Chambre chambre) {
+    public Chambre(ChambreOuterClass.Chambre chambre) {
         this.idChambre = chambre.getIdChambre();
         this.numero = chambre.getNumero();
         this.prix = chambre.getPrix();
@@ -32,8 +33,8 @@ public class Chambre {
         this.imageChambre = chambre.getImageChambre();
     }
 
-    public m1.archi.models.ChambreOuterClass.Chambre toProto() {
-        return m1.archi.models.ChambreOuterClass.Chambre.newBuilder()
+    public ChambreOuterClass.Chambre toProto() {
+        return ChambreOuterClass.Chambre.newBuilder()
                 .setIdChambre(this.idChambre)
                 .setNumero(this.numero)
                 .setPrix(this.prix)

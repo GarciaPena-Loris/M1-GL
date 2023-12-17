@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import m1.archi.proto.models.HotelOuterClass;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +31,7 @@ public class Hotel {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Offre> offres;
 
-    public Hotel(m1.archi.models.HotelOuterClass.Hotel hotel) {
+    public Hotel(HotelOuterClass.Hotel hotel) {
         this.idHotel = hotel.getIdHotel();
         this.nom = hotel.getNom();
         this.adresse = new Adresse(hotel.getAdresse());
@@ -41,8 +42,8 @@ public class Hotel {
         this.offres = hotel.getOffresList().stream().map(Offre::new).collect(Collectors.toList());
     }
 
-    public m1.archi.models.HotelOuterClass.Hotel toProto() {
-        return m1.archi.models.HotelOuterClass.Hotel.newBuilder()
+    public HotelOuterClass.Hotel toProto() {
+        return HotelOuterClass.Hotel.newBuilder()
                 .setIdHotel(this.idHotel)
                 .setNom(this.nom)
                 .setAdresse(this.adresse.toProto())

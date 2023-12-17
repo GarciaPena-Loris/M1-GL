@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+import "models/hotel/carte.proto";
+import "models/hotel/reservation.proto";
+
+message Client {
+  int64 idClient = 1;
+  string nom = 2;
+  string prenom = 3;
+  string email = 4;
+  string telephone = 5;
+  Carte carte = 6;
+  repeated Reservation historiqueReservations = 7;
+}

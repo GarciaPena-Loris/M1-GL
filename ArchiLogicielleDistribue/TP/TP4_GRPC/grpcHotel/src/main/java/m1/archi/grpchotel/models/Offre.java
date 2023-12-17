@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import m1.archi.grpchotel.data.TimeConverter;
+import m1.archi.proto.models.OffreOuterClass;
 
 import java.util.List;
 
@@ -29,8 +30,9 @@ public class Offre {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Chambre> chambres;
     private Long idHotel;
+    private int nombreEtoiles;
 
-    public Offre(m1.archi.models.OffreOuterClass.Offre offre) {
+    public Offre(OffreOuterClass.Offre offre) {
         this.idOffre = offre.getIdOffre();
         this.nombreLitsTotal = offre.getNombreLitsTotal();
         this.prix = offre.getPrix();
@@ -40,10 +42,11 @@ public class Offre {
         this.dateExpiration = TimeConverter.convertTimestamp(offre.getDateExpiration());
         this.chambres = offre.getChambresList().stream().map(Chambre::new).collect(java.util.stream.Collectors.toList());
         this.idHotel = offre.getIdHotel();
+        this.nombreEtoiles = offre.getNombreEtoiles();
     }
 
-    public m1.archi.models.OffreOuterClass.Offre toProto() {
-        return m1.archi.models.OffreOuterClass.Offre.newBuilder()
+    public OffreOuterClass.Offre toProto() {
+        return OffreOuterClass.Offre.newBuilder()
                 .setIdOffre(this.idOffre)
                 .setNombreLitsTotal(this.nombreLitsTotal)
                 .setPrix(this.prix)
@@ -53,6 +56,7 @@ public class Offre {
                 .setDateExpiration(TimeConverter.convertTimestamp(this.dateExpiration))
                 .addAllChambres(this.chambres.stream().map(Chambre::toProto).collect(java.util.stream.Collectors.toList()))
                 .setIdHotel(this.idHotel)
+                .setNombreEtoiles(this.nombreEtoiles)
                 .build();
     }
 

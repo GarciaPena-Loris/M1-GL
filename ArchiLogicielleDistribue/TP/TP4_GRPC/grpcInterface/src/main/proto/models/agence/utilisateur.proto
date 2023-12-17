@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+message Utilisateur {
+  int64 idUtilisateur = 1;
+  string email = 2;
+  string motDePasse = 3;
+  string nom = 4;
+  string prenom = 5;
+  repeated int64 idReservations = 6;
+}

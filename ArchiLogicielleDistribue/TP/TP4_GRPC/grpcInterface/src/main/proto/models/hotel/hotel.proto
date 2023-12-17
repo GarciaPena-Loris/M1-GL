@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+import "models/hotel/adresse.proto";
+import "models/hotel/chambre.proto";
+import "models/hotel/reservation.proto";
+import "models/hotel/offre.proto";
+
+message Hotel {
+  int64 idHotel = 1;
+  string nom = 2;
+  Adresse adresse = 3;
+  int32 nombreEtoiles = 4;
+  string imageHotel = 5;
+  repeated Chambre chambres = 6;
+  repeated Reservation reservations = 7;
+  repeated Offre offres = 8;
+}

@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+message Carte {
+  int64 idCarte = 1;
+  string nom = 2;
+  string numero = 3;
+  string dateExpiration = 4;
+  string CCV = 5;
+}

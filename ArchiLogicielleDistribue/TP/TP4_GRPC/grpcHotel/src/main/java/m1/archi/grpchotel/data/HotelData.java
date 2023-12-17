@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class HotelData {
-    /* Attributs */
     private final Logger logger = LoggerFactory.getLogger(HotelData.class);
 
     @Bean

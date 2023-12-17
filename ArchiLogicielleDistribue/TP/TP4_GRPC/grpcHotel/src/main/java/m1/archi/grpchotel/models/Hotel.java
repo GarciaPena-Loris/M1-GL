@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import m1.archi.models.HotelOuterClass;
+import m1.archi.proto.models.HotelOuterClass;
 
 import java.util.List;
 import java.util.stream.Collectors;

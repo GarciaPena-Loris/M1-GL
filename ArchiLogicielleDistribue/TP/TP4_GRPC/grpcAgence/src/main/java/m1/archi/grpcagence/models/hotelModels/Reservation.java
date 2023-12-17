@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import m1.archi.grpchotel.data.TimeConverter;
-import m1.archi.models.ReservationOuterClass;
+import m1.archi.grpcagence.data.TimeConverter;
+import m1.archi.proto.models.ReservationOuterClass;
 
 import java.sql.Timestamp;
 import java.util.List;

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option java_package = "m1.archi.proto.models";
+package m1.archi;
+
+import "models/agence/utilisateur.proto";
+
+message Agence {
+  int64 idAgence = 1;
+  string nom = 2;
+  map<int64, int32> reductionHotels = 3;
+  repeated Utilisateur listeUtilisateurs = 4;
+}
