@@ -86,8 +86,11 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
             Map<Long, List<List<Offre>>> mapOffresParAgences = new HashMap<>();
             List<Long> idAgences = comparateur.getIdAgences();
 
-            for (long idAgence : idAgences) {
+
+            for (Long idAgence : idAgences) {
+                System.out.println(idAgence.getClass());
                 RechercherChambresAgenceRequest agenceRequest = RechercherChambresAgenceRequest.newBuilder()
+                        .setIdAgence(idAgence)
                         .setVille(request.getVille())
                         .setDateArrivee(request.getDateArrivee())
                         .setDateDepart(request.getDateDepart())
@@ -117,6 +120,8 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
                 }
             }
 
+            System.out.println(mapOffresParAgences);
+
             if (mapOffresParAgences.isEmpty()) {
                 throw new NoRoomAvailableException("No offers found");
             }
@@ -128,6 +133,8 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
                                     .addAllOffres(offres.stream().map(Offre::toProto).collect(Collectors.toList()))
                                     .build()).collect(Collectors.toList()))
                             .build()));
+
+            System.out.println(offresParAgenceMap);
 
             RechercherChambresComparateurResponse response = RechercherChambresComparateurResponse.newBuilder()
                     .putAllOffresParAgence(offresParAgenceMap)

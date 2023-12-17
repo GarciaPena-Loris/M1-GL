@@ -1,9 +1,6 @@
 package m1.archi.grpccomparateur.models;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +20,7 @@ public class Comparateur {
     @GeneratedValue
     private Long idComparateur;
     private String nom;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Long> idAgences;
 
     public Comparateur(ComparateurOuterClass.Comparateur comparateur) {

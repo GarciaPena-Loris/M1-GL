@@ -1,9 +1,6 @@
 package m1.archi.grpcagence.models;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,12 +18,12 @@ import java.util.List;
 public class Utilisateur {
     @Id
     @GeneratedValue
-    private long idUtilisateur;
+    private Long idUtilisateur;
     private String email;
     private String motDePasse;
     private String nom;
     private String prenom;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<Long> idReservations;
 
     public Utilisateur(UtilisateurOuterClass.Utilisateur utilisateur) {

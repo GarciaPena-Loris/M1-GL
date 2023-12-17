@@ -21,9 +21,9 @@ public class Agence {
     @GeneratedValue
     private Long idAgence;
     private String nom;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private Map<Long, Integer> reductionHotels;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Utilisateur> listeUtilisateurs;
 
     public Agence(AgenceOuterClass.Agence agence) {
