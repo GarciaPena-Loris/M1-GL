@@ -10,7 +10,9 @@ import m1.archi.grpccomparateur.exceptions.NoRoomAvailableException;
 import m1.archi.grpccomparateur.models.Comparateur;
 import m1.archi.grpccomparateur.models.hotelModels.Offre;
 import m1.archi.grpccomparateur.repositories.ComparateurRepository;
+import m1.archi.proto.models.AgenceOuterClass;
 import m1.archi.proto.models.ComparateurOuterClass;
+import m1.archi.proto.models.HotelOuterClass;
 import m1.archi.proto.models.ReservationOuterClass;
 import m1.archi.proto.services.*;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -68,7 +70,7 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
     }
 
     @Override
-    public void countAgence(Empty request, StreamObserver<CountResponse> responseObserver) {
+    public void countAgences(Empty request, StreamObserver<CountResponse> responseObserver) {
         try {
             Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new EntityNotFoundException("Comparator", "first"));
             responseObserver.onNext(CountResponse.newBuilder().setCount(comparateur.getIdAgences().size()).build());
@@ -79,6 +81,47 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
     }
 
     @Override
+    public void getAgenceById(GetAgenceByIdRequest request, StreamObserver<AgenceOuterClass.Agence> responseObserver) {
+        try {
+            Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new EntityNotFoundException("Comparator", "first"));
+            long idAgence = request.getIdAgence();
+
+            if (!comparateur.getIdAgences().contains(idAgence)) {
+                throw new EntityNotFoundException("Agency", idAgence);
+            }
+
+            AgenceOuterClass.Agence agence = agenceServiceBlockingStub.getAgenceById(request);
+
+            responseObserver.onNext(agence);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            throw new InternalErrorException("Impossible de récupérer l'agence : " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void getHotelById(GetHotelAgenceByIdRequest request, StreamObserver<HotelOuterClass.Hotel> responseObserver) {
+        try {
+            Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new EntityNotFoundException("Comparator", "first"));
+            long idAgence = request.getIdAgence();
+
+            if (!comparateur.getIdAgences().contains(idAgence)) {
+                throw new EntityNotFoundException("Agency", idAgence);
+            }
+
+            HotelOuterClass.Hotel hotel = agenceServiceBlockingStub.getHotelById(request);
+
+            responseObserver.onNext(hotel);
+            responseObserver.onCompleted();
+        }
+        catch (Exception e) {
+            throw new InternalErrorException("Impossible de récupérer l'hotel : " + e.getMessage(), e);
+        }
+    }
+
+
+    // Partie Recherche et Reservation
+    @Override
     public void rechercheChambresComparateur(RechercherChambresComparateurRequest request, StreamObserver<RechercherChambresComparateurResponse> responseObserver) {
         Comparateur comparateur = comparateurRepository.findFirst().orElseThrow(() -> new EntityNotFoundException("Comparator", "first"));
 
@@ -88,7 +131,6 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
 
 
             for (Long idAgence : idAgences) {
-                System.out.println(idAgence.getClass());
                 RechercherChambresAgenceRequest agenceRequest = RechercherChambresAgenceRequest.newBuilder()
                         .setIdAgence(idAgence)
                         .setVille(request.getVille())
@@ -120,8 +162,6 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
                 }
             }
 
-            System.out.println(mapOffresParAgences);
-
             if (mapOffresParAgences.isEmpty()) {
                 throw new NoRoomAvailableException("No offers found");
             }
@@ -133,8 +173,6 @@ public class ComparateurServiceImpl extends ComparateurServiceGrpc.ComparateurSe
                                     .addAllOffres(offres.stream().map(Offre::toProto).collect(Collectors.toList()))
                                     .build()).collect(Collectors.toList()))
                             .build()));
-
-            System.out.println(offresParAgenceMap);
 
             RechercherChambresComparateurResponse response = RechercherChambresComparateurResponse.newBuilder()
                     .putAllOffresParAgence(offresParAgenceMap)

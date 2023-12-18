@@ -51,7 +51,9 @@ public class ComparateurData {
                 comparateurRepository.save(comparateur);
 
                 logger.info("Preloading database with " + comparateur);
-                logger.info("Server comparateur ready!");
+
+                logger.info("Server comparateur ready on port 8100!");
+                logger.info("Grpc serveur ready on port 9100!");
 
                 channel.shutdown();
 

@@ -10,10 +10,13 @@ import m1.archi.grpchotel.exceptions.InternalErrorException;
 import m1.archi.grpchotel.exceptions.OffreExpiredException;
 import m1.archi.grpchotel.models.*;
 import m1.archi.grpchotel.repositories.*;
+import m1.archi.proto.models.HotelOuterClass;
 import m1.archi.proto.services.*;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -64,12 +67,11 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
     }
 
     @Override
-    public void getHotelById(GetHotelByIdRequest request, StreamObserver<HotelResponse> responseObserver) {
+    public void getHotelById(GetHotelByIdRequest request, StreamObserver<HotelOuterClass.Hotel> responseObserver) {
         long idHotel = request.getIdHotel();
         Hotel hotel = hotelRepository.findById(idHotel).orElseThrow(() -> new EntityNotFoundException("Hotel", idHotel));
         try {
-            HotelResponse response = HotelResponse.newBuilder().setHotel(hotel.toProto()).build();
-            responseObserver.onNext(response);
+            responseObserver.onNext(hotel.toProto());
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la récupération de l'hotel", e);
@@ -77,12 +79,11 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
     }
 
     @Override
-    public void createHotel(HotelRequest request, StreamObserver<HotelResponse> responseObserver) {
+    public void createHotel(HotelOuterClass.Hotel request, StreamObserver<HotelOuterClass.Hotel> responseObserver) {
         try {
-            Hotel newHotel = new Hotel(request.getHotel());
+            Hotel newHotel = new Hotel(request);
             Hotel savedHotel = hotelRepository.save(newHotel);
-            HotelResponse response = HotelResponse.newBuilder().setHotel(savedHotel.toProto()).build();
-            responseObserver.onNext(response);
+            responseObserver.onNext(savedHotel.toProto());
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la création de l'hotel", e);
@@ -90,7 +91,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
     }
 
     @Override
-    public void updateHotel(UpdateHotelRequest request, StreamObserver<HotelResponse> responseObserver) {
+    public void updateHotel(UpdateHotelRequest request, StreamObserver<HotelOuterClass.Hotel> responseObserver) {
         try {
             long hotelId = request.getIdHotel();
             Hotel newHotel = new Hotel(request.getHotel());
@@ -105,8 +106,7 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
                 return hotelRepository.save(newHotel);
             });
 
-            HotelResponse response = HotelResponse.newBuilder().setHotel(updatedHotel.toProto()).build();
-            responseObserver.onNext(response);
+            responseObserver.onNext(updatedHotel.toProto());
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la mise à jour de l'hotel", e);
@@ -146,10 +146,11 @@ public class HotelServiceImpl extends HotelServiceGrpc.HotelServiceImplBase {
         }
 
         try {
+            String villeDecode = URLDecoder.decode(request.getVille(), StandardCharsets.UTF_8);
             // Appelle la fonction de recherche
             ArrayList<Offre> offres = rechercherChambres(
                     hotel,
-                    request.getVille(),
+                    villeDecode,
                     request.getDateArrivee(),
                     request.getDateDepart(),
                     request.getPrixMin(),

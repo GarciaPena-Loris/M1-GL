@@ -10,10 +10,14 @@ import m1.archi.grpcagence.exceptions.InternalErrorException;
 import m1.archi.grpcagence.exceptions.UserException;
 import m1.archi.grpcagence.models.Agence;
 import m1.archi.grpcagence.models.Utilisateur;
+import m1.archi.grpcagence.models.hotelModels.Hotel;
 import m1.archi.grpcagence.models.hotelModels.Offre;
 import m1.archi.grpcagence.models.hotelModels.Reservation;
 import m1.archi.grpcagence.repositories.AgenceRepository;
 import m1.archi.grpcagence.repositories.UtilisateurRepository;
+import m1.archi.proto.models.AgenceOuterClass;
+import m1.archi.proto.models.HotelOuterClass;
+import m1.archi.proto.models.UtilisateurOuterClass;
 import m1.archi.proto.services.*;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -80,14 +85,11 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
     }
 
     @Override
-    public void getAgenceById(GetAgenceByIdRequest request, StreamObserver<AgenceResponse> responseObserver) {
+    public void getAgenceById(GetAgenceByIdRequest request, StreamObserver<AgenceOuterClass.Agence> responseObserver) {
         long idAgence = request.getIdAgence();
         Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new EntityNotFoundException("Agence", idAgence));
         try {
-            AgenceResponse response = AgenceResponse.newBuilder()
-                    .setAgence(agence.toProto())
-                    .build();
-            responseObserver.onNext(response);
+            responseObserver.onNext(agence.toProto());
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la récupération de l'agence", e);
@@ -95,14 +97,11 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
     }
 
     @Override
-    public void createAgence(AgenceRequest request, StreamObserver<AgenceResponse> responseObserver) {
+    public void createAgence(AgenceOuterClass.Agence request, StreamObserver<AgenceOuterClass.Agence> responseObserver) {
         try {
-            Agence agence = new Agence(request.getAgence());
+            Agence agence = new Agence(request);
             Agence savedAgence = agenceRepository.save(agence);
-            AgenceResponse response = AgenceResponse.newBuilder()
-                    .setAgence(savedAgence.toProto())
-                    .build();
-            responseObserver.onNext(response);
+            responseObserver.onNext(savedAgence.toProto());
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la création de l'agence", e);
@@ -110,7 +109,7 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
     }
 
     @Override
-    public void updateAgence(UpdateAgenceRequest request, StreamObserver<AgenceResponse> responseObserver) {
+    public void updateAgence(UpdateAgenceRequest request, StreamObserver<AgenceOuterClass.Agence> responseObserver) {
         try {
             long agenceId = request.getIdAgence();
             Agence newAgence = new Agence(request.getAgence());
@@ -124,8 +123,7 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
                 return agenceRepository.save(newAgence);
             });
 
-            AgenceResponse response = AgenceResponse.newBuilder().setAgence(updatedAgence.toProto()).build();
-            responseObserver.onNext(response);
+            responseObserver.onNext(updatedAgence.toProto());
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la mise à jour de l'agence", e);
@@ -142,6 +140,54 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
             responseObserver.onCompleted();
         } catch (Exception e) {
             throw new InternalErrorException("Erreur lors de la suppression de l'agence", e);
+        }
+    }
+
+    @Override
+    public void countHotels(CountRequest request, StreamObserver<CountResponse> responseObserver) {
+        try {
+            long idAgence = request.getIdAgence();
+            Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new EntityNotFoundException("Agence", idAgence));
+            responseObserver.onNext(CountResponse.newBuilder().setCount(agence.getReductionHotels().size()).build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            throw new InternalErrorException("Erreur lors du comptage des hotels", e);
+        }
+    }
+
+    @Override
+    public void getAllIdHotels(GetAllIdHotelsRequest request, StreamObserver<IdHotelListResponse> responseObserver) {
+        try {
+            long idAgence = request.getIdAgence();
+            Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new EntityNotFoundException("Agence", idAgence));
+            List<Long> idHotels = new ArrayList<>(agence.getReductionHotels().keySet());
+            IdHotelListResponse response = IdHotelListResponse.newBuilder()
+                    .addAllIdHotel(idHotels)
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            throw new InternalErrorException("Erreur lors de la récupération des id des hotels", e);
+        }
+    }
+
+    @Override
+    public void getHotelById(GetHotelAgenceByIdRequest request, StreamObserver<HotelOuterClass.Hotel> responseObserver) {
+        try {
+            long idAgence = request.getIdAgence();
+            Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new EntityNotFoundException("Agence", idAgence));
+            long idHotel = request.getIdHotel();
+            if (!agence.getReductionHotels().containsKey(idHotel)) {
+                throw new EntityNotFoundException("Hotel", idHotel);
+            }
+            GetHotelByIdRequest getHotelByIdRequest = GetHotelByIdRequest.newBuilder()
+                    .setIdHotel(idHotel)
+                    .build();
+            HotelOuterClass.Hotel hotel = hotelServiceBlockingStub.getHotelById(getHotelByIdRequest);
+            responseObserver.onNext(hotel);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            throw new InternalErrorException("Erreur lors de la récupération de l'hotel", e);
         }
     }
 
@@ -228,7 +274,7 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
             if (!utilisateur.getMotDePasse().equals(motDePasse)) {
                 throw new UserException("Wrong password");
             }
-            if (agence.getListeUtilisateurs().stream().noneMatch(utilisateurAgence -> utilisateurAgence.getIdUtilisateur() == utilisateur.getIdUtilisateur())) {
+            if (agence.getListeUtilisateurs().stream().noneMatch(utilisateurAgence -> Objects.equals(utilisateurAgence.getIdUtilisateur(), utilisateur.getIdUtilisateur()))) {
                 throw new UserException("Utilisateur not registered in this agency");
             }
 
@@ -265,7 +311,7 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
 
     // Partie user
     @Override
-    public void findUtilisateurById(FindUtilisateurByIdRequest request, StreamObserver<UtilisateurResponse> responseObserver) {
+    public void getUtilisateurById(GetUtilisateurByIdRequest request, StreamObserver<UtilisateurOuterClass.Utilisateur> responseObserver) {
         long idAgence = request.getIdAgence();
         long idUtilisateur = request.getIdUtilisateur();
 
@@ -276,16 +322,44 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
                 .findFirst()
                 .orElseThrow(() -> new UserException("Utilisateur with id " + idUtilisateur + " not registered in this agency"));
 
-        UtilisateurResponse response = UtilisateurResponse.newBuilder()
-                .setUtilisateur(utilisateur.toProto())
-                .build();
-
-        responseObserver.onNext(response);
+        responseObserver.onNext(utilisateur.toProto());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void addAgenceUtilisateur(AddAgenceUtilisateurRequest request, StreamObserver<UtilisateurResponse> responseObserver) {
+    public void getUtilisateurByEmailMotDePasse(GetUtilisateurByEmailMotDePasseRequest request, StreamObserver<UtilisateurOuterClass.Utilisateur> responseObserver) {
+        long idAgence = request.getIdAgence();
+        String email = request.getEmail();
+        String motDePasse = request.getMotDePasse();
+
+        Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new EntityNotFoundException("Agence", idAgence));
+
+        Utilisateur utilisateur = agence.getListeUtilisateurs().stream()
+                .filter(utilisateurAgence -> utilisateurAgence.getEmail().equals(email))
+                .findFirst()
+                .orElseThrow(() -> new UserException("Utilisateur with email " + email + " not registered in this agency"));
+
+        if (!utilisateur.getMotDePasse().equals(motDePasse))
+            throw new UserException("Wrong password");
+
+        responseObserver.onNext(utilisateur.toProto());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void createUtilisateur(CreateUtilisateurRequest request, StreamObserver<UtilisateurOuterClass.Utilisateur> responseObserver) {
+        long idAgence = request.getIdAgence();
+        Utilisateur utilisateur = new Utilisateur(request.getUtilisateur());
+
+        Agence agence = agenceRepository.findById(idAgence).orElseThrow(() -> new EntityNotFoundException("Agence", idAgence));
+        utilisateurRepository.save(utilisateur);
+
+        responseObserver.onNext(utilisateur.toProto());
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void addAgenceUtilisateur(AddAgenceUtilisateurRequest request, StreamObserver<UtilisateurOuterClass.Utilisateur> responseObserver) {
         long idAgence = request.getIdAgence();
         Utilisateur utilisateur = new Utilisateur(request.getUtilisateur());
 
@@ -297,11 +371,7 @@ public class AgenceServiceImpl extends AgenceServiceGrpc.AgenceServiceImplBase {
         agence.getListeUtilisateurs().add(utilisateur);
         agenceRepository.save(agence);
 
-        UtilisateurResponse response = UtilisateurResponse.newBuilder()
-                .setUtilisateur(utilisateur.toProto())
-                .build();
-
-        responseObserver.onNext(response);
+        responseObserver.onNext(utilisateur.toProto());
         responseObserver.onCompleted();
     }
 }

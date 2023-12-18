@@ -24,7 +24,7 @@ public class Client {
     private String telephone;
     @OneToOne
     private Carte carte;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Reservation> historiqueReservations;
 
     public Client(ClientOuterClass.Client client) {

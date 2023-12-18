@@ -13,9 +13,9 @@ import "google/protobuf/empty.proto";
 service HotelService {
   rpc GetAllHotels (google.protobuf.Empty) returns (HotelListResponse);
   rpc GetAllIdHotels (google.protobuf.Empty) returns (IdHotelListResponse);
-  rpc GetHotelById (GetHotelByIdRequest) returns (HotelResponse);
-  rpc CreateHotel (HotelRequest) returns (HotelResponse);
-  rpc UpdateHotel (UpdateHotelRequest) returns (HotelResponse);
+  rpc GetHotelById (GetHotelByIdRequest) returns (Hotel);
+  rpc CreateHotel (Hotel) returns (Hotel);
+  rpc UpdateHotel (UpdateHotelRequest) returns (Hotel);
   rpc DeleteHotel (DeleteHotelRequest) returns (google.protobuf.Empty);
   // Partie recherche et reservation
   rpc RechercherChambresHotel(RechercherChambresHotelRequest) returns (RechercherChambresHotelResponse);
@@ -24,20 +24,12 @@ service HotelService {
   rpc UpdateOffreHotel(UpdateOffreRequest) returns (UpdateOffreResponse);
 }
 
-message HotelRequest {
-  Hotel hotel = 1;
-}
-
 message HotelListResponse {
   repeated Hotel hotels = 1;
 }
 
 message IdHotelListResponse {
   repeated int64 idHotel = 1;
-}
-
-message HotelResponse {
-  Hotel hotel = 1;
 }
 
 message GetHotelByIdRequest {

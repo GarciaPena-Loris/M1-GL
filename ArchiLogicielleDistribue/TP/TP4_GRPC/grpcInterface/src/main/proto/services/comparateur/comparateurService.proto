@@ -6,14 +6,19 @@ option java_multiple_files = true;
 
 import "models/comparateur/comparateur.proto";
 import "models/hotel/reservation.proto";
+import "models/agence/agence.proto";
+import "models/hotel/hotel.proto";
 import "services/agence/agenceService.proto";
+import "services/hotel/hotelService.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 
 service ComparateurService {
   rpc GetFirstComparateur (google.protobuf.Empty) returns (Comparateur) {}
   rpc GetFirstIdComparateur (google.protobuf.Empty) returns (IdComparateurResponse) {}
-  rpc CountAgence (google.protobuf.Empty) returns (CountResponse) {}
+  rpc CountAgences (google.protobuf.Empty) returns (CountResponse) {}
+  rpc GetAgenceById (GetAgenceByIdRequest) returns (Agence) {}
+  rpc GetHotelById (GetHotelAgenceByIdRequest) returns (Hotel) {}
   // Partie recherche et reservation
   rpc RechercheChambresComparateur (RechercherChambresComparateurRequest) returns (RechercherChambresComparateurResponse) {}
   rpc ReserverChambresComparateur (ReserverChambresComparateurRequest) returns (Reservation) {}
@@ -23,9 +28,6 @@ message IdComparateurResponse {
   int64 idComparateur = 1;
 }
 
-message CountResponse {
-  int32 count = 1;
-}
 
 // Partie recherche et reservation
 message RechercherChambresComparateurRequest {

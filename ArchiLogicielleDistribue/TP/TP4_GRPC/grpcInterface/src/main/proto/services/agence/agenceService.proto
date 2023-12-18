@@ -7,27 +7,30 @@ option java_multiple_files = true;
 import "models/agence/agence.proto";
 import "models/agence/utilisateur.proto";
 import "models/hotel/offre.proto";
+import "models/hotel/hotel.proto";
 import "models/hotel/reservation.proto";
+import "services/hotel/hotelService.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 service AgenceService {
   rpc GetAllAgences (google.protobuf.Empty) returns (AgenceListResponse);
   rpc GetAllIdAgences (google.protobuf.Empty) returns (IdAgenceListResponse);
-  rpc GetAgenceById (GetAgenceByIdRequest) returns (AgenceResponse);
-  rpc CreateAgence (AgenceRequest) returns (AgenceResponse);
-  rpc UpdateAgence (UpdateAgenceRequest) returns (AgenceResponse);
+  rpc GetAgenceById (GetAgenceByIdRequest) returns (Agence);
+  rpc CreateAgence (Agence) returns (Agence);
+  rpc UpdateAgence (UpdateAgenceRequest) returns (Agence);
   rpc DeleteAgence (DeleteAgenceRequest) returns (google.protobuf.Empty);
+  rpc CountHotels (CountRequest) returns (CountResponse);
+  rpc GetAllIdHotels (GetAllIdHotelsRequest) returns (IdHotelListResponse);
+  rpc GetHotelById (GetHotelAgenceByIdRequest) returns (Hotel);
   // Partie recherche et réservation
   rpc RechercherChambresAgence (RechercherChambresAgenceRequest) returns (RechercherChambresAgenceResponse);
   rpc ReserverChambresAgence (ReserverChambresAgenceRequest) returns (ReservationChambresAgenceResponse);
   // Partie Utilisateur
-  rpc FindUtilisateurById (FindUtilisateurByIdRequest) returns (UtilisateurResponse);
-  rpc AddAgenceUtilisateur (AddAgenceUtilisateurRequest) returns (UtilisateurResponse);
-}
-
-message AgenceRequest {
-  Agence agence = 1;
+  rpc GetUtilisateurById (GetUtilisateurByIdRequest) returns (Utilisateur);
+  rpc GetUtilisateurByEmailMotDePasse (GetUtilisateurByEmailMotDePasseRequest) returns (Utilisateur);
+  rpc CreateUtilisateur (CreateUtilisateurRequest) returns (Utilisateur);
+  rpc AddAgenceUtilisateur (AddAgenceUtilisateurRequest) returns (Utilisateur);
 }
 
 message AgenceListResponse {
@@ -36,10 +39,6 @@ message AgenceListResponse {
 
 message IdAgenceListResponse {
   repeated int64 idAgence = 1;
-}
-
-message AgenceResponse {
-  Agence agence = 1;
 }
 
 message GetAgenceByIdRequest {
@@ -55,6 +54,22 @@ message DeleteAgenceRequest {
   int64 idAgence = 1;
 }
 
+message CountRequest {
+  int64 idAgence = 1;
+}
+
+message CountResponse {
+  int32 count = 1;
+}
+
+message GetAllIdHotelsRequest {
+  int64 idAgence = 1;
+}
+
+message GetHotelAgenceByIdRequest {
+  int64 idAgence = 1;
+  int64 idHotel = 2;
+}
 
 // Partie recherche et réservation
 message RechercherChambresAgenceRequest {
@@ -97,13 +112,20 @@ message ReservationChambresAgenceResponse {
 
 
 // Partie Utilisateur
-message FindUtilisateurByIdRequest {
+message GetUtilisateurByIdRequest {
   int64 idAgence = 1;
   int64 idUtilisateur = 2;
 }
 
-message UtilisateurResponse {
-  Utilisateur utilisateur = 1;
+message GetUtilisateurByEmailMotDePasseRequest {
+  int64 idAgence = 1;
+  string email = 2;
+  string motDePasse = 3;
+}
+
+message CreateUtilisateurRequest {
+  int64 idAgence = 1;
+  Utilisateur utilisateur = 2;
 }
 
 message AddAgenceUtilisateurRequest {

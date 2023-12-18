@@ -54,7 +54,7 @@ public class HotelData {
                 logger.info("[" + (i+1) + "] Preloading database with " + hotel);
             }
             logger.info("Server hotel ready on port 8080!");
-
+            logger.info("Grpc serveur ready on port 9080!");
         };
     }
 }

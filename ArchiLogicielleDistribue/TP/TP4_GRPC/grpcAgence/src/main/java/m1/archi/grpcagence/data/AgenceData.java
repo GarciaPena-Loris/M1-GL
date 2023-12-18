@@ -65,7 +65,8 @@ public class AgenceData {
                     // Sauvegarde de l'agence
                     logger.info("\n[" + (i + 1) + "] Preloading database with " + agence);
                 }
-                logger.info("Server agence ready!");
+                logger.info("Server agence ready on port 8090!");
+                logger.info("Grpc serveur ready on port 9090!");
 
                 channel.shutdown();
 
