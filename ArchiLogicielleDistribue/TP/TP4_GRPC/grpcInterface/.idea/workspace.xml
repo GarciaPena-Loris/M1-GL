@@ -5,27 +5,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9537bb6f-784c-4bab-8e2f-d9629ea8c485" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/m1/archi/proto/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/models/agence/agence.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/models/agence/utilisateur.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/client.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/hotel.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/offre.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/reservation.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/services/agence/agenceService.proto" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/proto/services/hotel/hotelService.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../grpcHotel/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/java/m1/archi/grpchotel/models/Offre.java" beforeDir="false" afterPath="$PROJECT_DIR$/../grpcHotel/src/main/java/m1/archi/grpchotel/models/Offre.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/adresse.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/adresse.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/carte.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/carte.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/chambre.proto" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/proto/models/hotel/chambre.proto" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/client.proto" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/hotel.proto" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/offre.proto" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/models/reservation.proto" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../grpcHotel/src/main/proto/services/hotelService.proto" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../TP4_GRPC.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/TP4_GRPC.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/TP-Interpreteur.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Interpreteur/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../Entrepot-et-Big-Data/TP-MAP-REDUCE/TP_HMIN122M-hadoop/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../Entrepot-et-Big-Data/TP-MAP-REDUCE/TP_HMIN122M-hadoop/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/Compte.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/Compte.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/CompteBasique.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/CompteBasique.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/Produit.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/Produit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/ProduitSolde.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Double-Dispatch-et-Decorateur/ProduitSolde.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Emission-Execution/Commandes/src/main/java/m1/ingelo/Partie.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-Emission-Execution/Commandes/src/main/java/m1/ingelo/Partie.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-State/climatiseur/src/main/java/m1/ingelo/EEteint.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-State/climatiseur/src/main/java/m1/ingelo/EEteint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-State/climatiseur/src/main/java/m1/ingelo/EReglageTimer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-State/climatiseur/src/main/java/m1/ingelo/EReglageTimer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-State/climatiseur/src/main/java/m1/ingelo/EtatClimatiseur.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../IngenierieLogicielle/TP-State/climatiseur/src/main/java/m1/ingelo/EtatClimatiseur.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,9 +42,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2ZfjaKZQFoLdPVIQz206WJpl714" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -55,7 +62,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "F:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP4_GRPC/grpcInterface/src/main",
+    "last_opened_file_path": "F:/DossierLoris/MonProfil/MesDocumentEcole/Fac/M1/M1-GL/ArchiLogicielleDistribue/TP/TP4_GRPC/grpcInterface",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -69,6 +76,13 @@
       <recent name="F:\DossierLoris\MonProfil\MesDocumentEcole\Fac\M1\M1-GL\ArchiLogicielleDistribue\TP\TP4_GRPC\grpcInterface\src\main" />
     </key>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.1-openjdk-21.0.1-3183f394aec4-7d648f2c" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -78,6 +92,10 @@
       <option name="presentableId" value="Default" />
       <updated>1702820090333</updated>
       <workItem from="1702820091427" duration="384000" />
+      <workItem from="1702919685289" duration="8295000" />
+      <workItem from="1703002810632" duration="2481000" />
+      <workItem from="1704194699011" duration="239000" />
+      <workItem from="1704647286029" duration="328000" />
     </task>
     <servers />
   </component>

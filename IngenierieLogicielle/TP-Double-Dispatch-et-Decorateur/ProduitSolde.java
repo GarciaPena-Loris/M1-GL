@@ -10,10 +10,6 @@ public class ProduitSolde extends Produit {
         return super.getPrix() * (1 - rabais);
     }
 
-    public double prixLocation(Compte compte) {
-        return compte.prixLocation(this);
-    }
-
     @Override
     public String toString() {
         return super.toString() + " (solde " + String.format("%.2f", rabais * 100) + "%)";

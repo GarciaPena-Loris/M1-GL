@@ -10,11 +10,23 @@ public class EEteint extends EtatClimatiseur {
     }
 
     public void incr() {
-        throw new ClimatiseurException("Impossible d'incrémenter, le climatiseur est éteint");
+        throw new ClimatiseurException("Impossible d'incrï¿½menter, le climatiseur est ï¿½teint");
     }
 
     public void decr() {
-        throw new ClimatiseurException("Impossible de décrémenter, le climatiseur est éteint");
+        throw new ClimatiseurException("Impossible de dï¿½crï¿½menter, le climatiseur est ï¿½teint");
+    }
+
+    int timer() {
+        throw new ClimatiseurException("Impossible d'aller en mode timer, le climatiseur est ï¿½teint");
+    }
+
+    int airFlow() {
+        throw new ClimatiseurException("Impossible de rï¿½gler le dï¿½bit d'air, le climatiseur est ï¿½teint");
+    }
+
+    int home() {
+        throw new ClimatiseurException("Impossible d'aller en mode home, le climatiseur est ï¿½teint");
     }
 
     @Override

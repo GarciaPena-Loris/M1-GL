@@ -51,8 +51,8 @@ public class Partie {
 
     // Méthode pour exécuter une action donnée
     public void executerAction(Commande action) throws InterruptedException {
-        historiqueCommandes.push(action);
         action.executer();
+        historiqueCommandes.push(action);
         reelHistoriqueCommandes.push(action);
         Thread.sleep(1000);
     }

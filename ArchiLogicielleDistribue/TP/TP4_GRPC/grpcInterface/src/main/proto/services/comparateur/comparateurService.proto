@@ -9,7 +9,6 @@ import "models/hotel/reservation.proto";
 import "models/agence/agence.proto";
 import "models/hotel/hotel.proto";
 import "services/agence/agenceService.proto";
-import "services/hotel/hotelService.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 

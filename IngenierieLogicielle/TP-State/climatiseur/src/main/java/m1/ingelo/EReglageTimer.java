@@ -18,6 +18,10 @@ public class EReglageTimer extends EAllume {
         return (2);
     }
 
+    int airFlow() {
+        throw new ClimatiseurException("Impossible de r�gler le d�bit d'air, le climatiseur est en mode timer");
+    }
+
     @Override
     public String toString() {
         return "Etat reglage timer";

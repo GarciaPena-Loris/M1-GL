@@ -221,41 +221,6 @@
           (warn "ERR : <src> l'adresse mémoire @~s est hors limite [~s , ~s]" src 0 (- (vm_get_memory_size vm) 1))
           (vm_set_register vm dest (svref (vm_get_memory vm) src))))))))
 
-(defun vm_load_old (vm src dest)
-  (if (not (is_register_? dest))
-    (warn "ERR : <dest> : ~s doit être un registre" dest)
-    (if (not (or (integerp src) (is_register_? src)))
-      (warn "ERR : <src> : ~s doit être un registre ou une adresse mémoire (int)" src)
-      (if (is_register_? src)
-        (if (or (< (- (vm_get_memory_size vm) 1) (vm_get_register vm src)) (> (vm_get_register vm 'BP) (vm_get_register vm src)))
-          (warn "ERR : <src> l'adresse mémoire @~s est hors limite [~s , ~s]" (vm_get_register vm src) (vm_get_register vm 'BP) (- (vm_get_memory_size vm) 1))
-          (vm_set_register vm dest (svref (vm_get_memory vm) (vm_get_register vm src))))
-        (if (or (< (- (vm_get_memory_size vm) 1) src) (> (vm_get_register vm 'BP) src))
-          (warn "ERR : <src> l'adresse mémoire @~s est hors limite [~s , ~s]" src (vm_get_register vm 'BP) (- (vm_get_memory_size vm) 1))
-          (vm_set_register vm dest (svref (vm_get_memory vm) src)))))))
-
-(defun vm_load_old_old (vm src dest)
-  (if (not (is_register_? dest))
-    (warn "ERR : <dest> : ~s doit être un registre" dest)
-    (if (not (or (constantp src) (is_register_? src)))
-      (warn "ERR : <src> : ~s doit être un registre ou une adresse mémoire (int)" src)
-      (if (is_register_? src)
-        (if (< (- (get vm :memory_size) 1) (vm_get_register src))
-          (warn (concatenate 'string "ERR : <src> l'adresse mémoire @" (write-to-string src) " est hors limites [0 , " (write-to-string (- (get vm :memory_size) 1)) "]"))
-          (let ((getSrc
-            (svref (get vm :memory) (vm_get_register src))))
-          (if (not getSrc)
-            (warn "ERR : <src> l'emplacement mémoire est vide")
-            (vm_set_register  vm dest getSrc))))
-        (if (< (- (get vm :memory_size) 1) src)
-          (warn (concatenate 'string "ERR : <src> l'adresse mémoire @" (write-to-string src) " est hors limites [0 , " (write-to-string (- (get vm :memory_size) 1)) "]"))
-          (let ((getSrc
-            (svref (get vm :memory) src)))
-          (if (not getSrc)
-            (warn "ERR : <src> l'emplacement mémoire est vide")
-            (vm_set_register  vm dest getSrc))))))))
-;(trace vm_load)
-
 ; (STORE <src> <dest> = chargement de registre à mémoire
   (defun vm_store (vm src dest)
     (if (not (is_register_? src))
@@ -427,24 +392,12 @@
   (if (not (vm_get_hashTab_etq_resolu_val vm label))
    (vm_set_hashTab_etq_resolu vm label (vm_get_register vm 'PCO))))
 
-(defun vm_label_old (vm label)
-  (vm_set_hashTab_etq_resolu vm label (vm_get_register vm 'SP))
-  (if (vm_get_hashTab_etq_non_resolu_val vm label)
-    (vm_move vm (vm_get_hashTab_etq_resolu_val vm label) 'PC)))
-
-(defun vm_label_old_old (vm label)
-  (vm_set_hashTab_etq_resolu vm label (vm_get_register vm 'SP)))
-;(trace vm_label)
 
 ; (JMP <label>)     = saut inconditionnel à une étiquette ou une adresse
 (defun vm_jmp (vm label)
-  (print label)
-  (read)
   (if (integerp label)
     (vm_move vm label 'PC)
     (progn
-      (print '(vm_get_hashTab_etq_resolu_val vm label))
-      (print (vm_get_hashTab_etq_resolu_val vm label))
       (if (vm_get_hashTab_etq_resolu_val vm label)
         (progn  (vm_move vm (vm_get_hashTab_etq_resolu_val vm label) 'PC)
           (vm_set_hashTab_etq_non_resolu vm label (vm_get_register vm 'SP)))))))
@@ -776,125 +729,6 @@
   (print (list "Le resultat de " exprLisp "est :" (vm_get_register vm 'R0))))
 ;(trace vm_exec)
 
-;Chargeur
-(defun vm_read_asm (vm asm)
-  (loop
-    while (not (atom asm))
-    do
-    (progn (let ((fun (caar asm))
-      (args (cdar asm))
-      (rest (cdr asm)))
-    (print (car asm))
-    (cond
-      ((eq fun 'LOAD)
-        (progn
-          (vm_load vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'STORE)
-        (progn
-          (vm_store vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'MOVE)
-        (progn
-          (vm_move vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'ADD)
-        (progn
-          (vm_add vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'SUB)
-        (progn
-          (vm_sub vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'MUL)
-        (progn
-          (vm_mul vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'DIV)
-        (progn
-          (vm_div vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'INCR)
-        (progn
-          (vm_incr vm (first args))
-          (setf asm rest)))
-      ((eq fun 'DECR)
-        (progn
-          (vm_decr vm (first args))
-          (setf asm rest)))
-      ((eq fun 'PUSH)
-        (progn
-          (vm_push vm (first args))
-          (setf asm rest)))
-      ((eq fun 'POP)
-        (progn
-          (vm_pop vm (first args))
-          (setf asm rest)))
-      ((eq fun 'LABEL)
-        (progn
-          (vm_label vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JMP)
-        (progn
-          (vm_jmp vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JSR)
-        (progn
-          (vm_jsr vm (first args))
-          (setf asm rest)))
-      ((eq fun 'RTN)
-        (progn
-          (vm_rtn vm)
-          (setf asm rest)))
-      ((eq fun 'CMP)
-        (progn
-          (vm_cmp vm (first args) (second args))
-          (setf asm rest)))
-      ((eq fun 'JGT)
-        (progn
-          (vm_jgt vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JGE)
-        (progn
-          (vm_jge vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JLT)
-        (progn
-          (vm_jlt vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JLE)
-        (progn
-          (vm_jle vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JEQ)
-        (progn
-          (vm_jeq vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JNE)
-        (progn
-          (vm_jne vm (first args))
-          (setf asm rest)))
-      ((eq fun 'TEST)
-        (progn
-          (vm_test vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JTRUE)
-        (progn
-          (vm_jtrue vm (first args))
-          (setf asm rest)))
-      ((eq fun 'JNIL)
-        (progn
-          (vm_jnil vm (first args))
-          (setf asm rest)))
-      ((eq fun 'NOP)
-        (progn
-          (vm_nop vm)
-          (setf asm rest)))
-      ((eq fun 'HALT)
-        (progn
-          (vm_halt vm)
-          (setf asm rest))))))))
-;(trace vm_read_asm)
 
 (defun vm_new_read_asm (vm asm)
   (print "first read")
@@ -1035,27 +869,3 @@
 
 (defun getListElt (l i) (if (atom l) -1 (if (eq i 0) (car l) (getListElt (cdr l) (- i 1)))))
 
-(defun vm_run_old (vm)
-  (loop
-    while (<= (vm_get_register vm 'BP) (vm_get_register vm 'PC))
-    do
-    (progn (print (concatenate 'string "PC : "(write-to-string (vm_get_register vm 'PC))))
-      (vm_load vm 'PC 'R2)
-      (print (vm_get_register vm 'R2))
-      (vm_decr vm 'PC)
-      (if (not (atom (vm_get_register vm 'R2)))
-       (if (eq (car (vm_get_register vm 'R2)) ':call)
-        (progn
-          (print "Cas call" )
-            (vm_load vm 'FP 'R1);nbArgs -> R1
-            (let ((i (vm_get_register vm 'R1)) (l nil))
-              (loop while (> i 0) do
-                (progn
-                  (vm_load vm (- (vm_get_register vm 'FP) i) 'R0)
-                  (print (vm_get_register vm 'R0))
-                  (setf l (append l (list (cdr (vm_get_register vm 'R0)))))
-                  (print l)
-                  (setf i (- i 1))
-                  ))
-              (vm_move vm (apply (cdr (vm_get_register vm 'R2)) l) 'R0)
-              )))))))

@@ -1,16 +1,16 @@
 ;; ########### Initialisation des REGISTRES et DRAPEAUX ########### ;
-; Définition des registres et des drapeaux
-(setq resgistres '(R0 R1 R2 BP SP PC PCO FP))
+; Definition des registres et des drapeaux
+(setq resgistres '(R0 R1 R2 BP SP PC FP PCc MAXPILE))
 (setq drapeaux '(FLT FEQ FGT FNIL))
 ;; ################################################## ;;
 
 
 ;; ########### Getter et Setter REGISTRES ########### ;;
-; Vérifie si un registre donné 'reg' est présent dans la liste des registres 
+; Verifie si un registre donne 'reg' est present dans la liste des registres 
 (defun check-register-presence (reg)
     (member reg resgistres))
 
-; Accéder à la valeur du registre
+; Acceder a la valeur du registre
 (defun get-register-value (vm reg)
     (if (check-register-presence reg)
         (get vm reg)))
@@ -23,11 +23,11 @@
 
 
 ;; ########### Getter et Setter DRAPEAUX ########### ;;
-; Vérifie si un drapeau donné 'flag' est présent dans la liste des drapeaux
+; Verifie si un drapeau donne 'flag' est present dans la liste des drapeaux
 (defun check-flag-presence (flag)
     (position flag drapeaux))
 
-; Accède à la valeur du drapeau dans la machine virtuelle
+; Accede a la valeur du drapeau dans la machine virtuelle
 (defun get-flag-value (vm flag)
     (if (check-flag-presence flag)
         (get vm flag)))
@@ -37,389 +37,371 @@
     (if (check-flag-presence flag)
         (setf (get vm flag) T)))
 
-; Désactive le drapeau dans la machine virtuelle
+; Desactive le drapeau dans la machine virtuelle
 (defun set-flag-off (vm flag)
     (if (check-flag-presence flag)
         (setf (get vm flag) nil)))
 ;; ################################################## ;;
 
 ;; ########### Fonction de la MACHINE VIRTUELLE ########### ;;
-; Obtenir la mémoire de la machine virtuelle
+; Obtenir la memoire de la machine virtuelle 
 (defun get-memoire-vm (vm)
-    (get vm :memory))
+    (or (get vm :memory) 0))
 
-; Obtenir la taille de la mémoire de la machine virtuelle
+; Obtenir la taille de la memoire de la machine virtuelle
 (defun get-taille-memoire-vm (vm)
     (get vm :memory_size))
 
-; Définir la mémoire de la machine virtuelle
+; Definir la memoire de la machine virtuelle
 (defun set-memoire-vm (vm taille)
     (setf (get vm :memory) (make-array taille :initial-element nil))
     (setf (get vm :memory_size) taille))
 
-; État de la mémoire de la machine virtuelle
+; etat de la memoire de la machine virtuelle
 (defun get-etat-memoire-vm (vm)
     (list 'memory
         (get-memoire-vm vm)))
 
-; Élément de la mémoire de la machine virtuelle à l'indice i
+; element de la memoire de la machine virtuelle a l'indice i
 (defun get-etat-element-memoire-vm (vm indice)
     (aref (get-memoire-vm vm) indice))
 
 
 ;; --- Partie des TABLES DE HACHAGE --- ;;
-; Initialiser la table de hachage pour les étiquettes résolues
-(defun init-hashTab-etq-resolu (vm)
+; Initialiser la table de hachage pour les etiquettes resolues
+(defun init-hashTab-label-resolu (vm)
     (setf (get vm :hashTab_etq_resolu) (make-hash-table :test 'equal)))
 
-; Obtenir la table de hachage pour les étiquettes résolues
-(defun get-hashTab-etq-resolu (vm)
+; Obtenir la table de hachage pour les etiquettes resolues
+(defun get-hashTab-label-resolu (vm)
     (get vm :hashTab_etq_resolu))
 
-; Obtenir la valeur associée à une étiquette résolue dans la table de hachage
-(defun get-hashTab-etq-resolu-val (vm etq)
-    (gethash etq (get-hashTab-etq-resolu vm)))
+; Obtenir la valeur associee a une etiquette resolue dans la table de hachage
+(defun get-hashTab-label-resolu-val (vm label)
+    (gethash label (get-hashTab-label-resolu vm)))
 
-; Définir une valeur associée à une étiquette résolue dans la table de hachage
-(defun set-hashTab-etq-resolu (vm etq valeur)
-    (setf (gethash etq (get-hashTab-etq-resolu vm)) valeur))
+; Definir une valeur associee a une etiquette resolue dans la table de hachage
+(defun set-hashTab-label-resolu (vm label valeur)
+    (setf (gethash label (get-hashTab-label-resolu vm)) valeur))
 
-; État de la table de hachage pour les étiquettes résolues
-(defun state-hashTab-etq-resolu (vm)
-    (list 'hashTab_etq (get-hashTab-etq-resolu vm)))
+; etat de la table de hachage pour les etiquettes resolues
+(defun state-hashTab-label-resolu (vm)
+    (list 'hashTab_etq (get-hashTab-label-resolu vm)))
 
-; Initialiser la table de hachage pour les étiquettes non résolues
-(defun init-hashTab-etq-non-resolu (vm)
+; Initialiser la table de hachage pour les etiquettes non resolues
+(defun init-hashTab-label-non-resolu (vm)
     (setf (get vm :hashTab_etq_non_resolu) (make-hash-table)))
 
-; Obtenir la table de hachage pour les étiquettes non résolues
-(defun get-hashTab-etq-non-resolu (vm)
+; Obtenir la table de hachage pour les etiquettes non resolues
+(defun get-hashTab-label-non-resolu (vm)
     (get vm :hashTab_etq_non_resolu))
 
-; Obtenir la valeur associée à une étiquette non résolue dans la table de hachage
-(defun get-hashTab-etq-non-resolu-val (vm etq)
-    (gethash etq (get-hashTab-etq-non-resolu vm)))
+; Obtenir la valeur associee a une etiquette non resolue dans la table de hachage
+(defun get-hashTab-label-non-resolu-val (vm label)
+    (gethash label (get-hashTab-label-non-resolu vm)))
 
-; Définir une valeur associée à une étiquette non résolue dans la table de hachage
-(defun set-hashTab-etq-non-resolu (vm etq valeur)
-    (setf (gethash etq (get-hashTab-etq-non-resolu vm)) valeur))
+; Definir une valeur associee a une etiquette non resolue dans la table de hachage
+(defun set-hashTab-label-non-resolu (vm label valeur)
+    (setf (gethash label (get-hashTab-label-non-resolu vm)) valeur))
 
-; État de la table de hachage pour les étiquettes non résolues
-(defun state-hashTab-etq-non-resolu (vm)
-    (list 'hashTab-etq (get-hashTab-etq-non-resolu vm)))
+; etat de la table de hachage pour les etiquettes non resolues
+(defun state-hashTab-label-non-resolu (vm)
+    (list 'hashTab-label (get-hashTab-label-non-resolu vm)))
 
 ;; --- Affichage de la machine virtuelle --- ;;
-; Obtenir l'état de la machine virtuelle (registres, drapeaux, mémoire, tables de hachage)
+; Obtenir l'etat de la machine virtuelle (registres, drapeaux, memoire, tables de hachage)
 (defun etat-vm (vm)
     (progn (print "#### Machine Virtuelle ####")
-        (print "- Registres généraux")
+        (print "- Registres generaux") ; Affiche les registres generaux
         (print (list 'R0 (get-register-value vm 'R0)))
         (print (list 'R1 (get-register-value vm 'R1)))
         (print (list 'R2 (get-register-value vm 'R2)))
-        (print "- Registres spéciaux")
+        (print "- Registres speciaux") ; Affiche les registres speciaux
         (print (list 'SP (get-register-value vm 'SP)))
         (print (list 'BP (get-register-value vm 'BP)))
-        (print (list 'FP (get-register-value vm 'FP)))
         (print (list 'PC (get-register-value vm 'PC)))
-        (print (list 'PCO (get-register-value vm 'PCO)))
-        (print "- Drapeaux :")
+        (print (list 'FP (get-register-value vm 'FP)))
+        (print (list 'PCc (get-register-value vm 'PCc)))
+        (print (list 'MAXPILE (get-register-value vm 'MAXPILE)))
+        (print "- Drapeaux :") ; Affiche les drapeaux
         (print (list 'FLT (get-flag-value vm 'FLT)))
         (print (list 'FEQ (get-flag-value vm 'FEQ)))
         (print (list 'FGT (get-flag-value vm 'FGT)))
         (print (list 'FNIL (get-flag-value vm 'FNIL)))
-        (print "- Mémoire : ")
+        (print "- Memoire : ") ; Affiche la memoire
         (print (list 'memory (get-etat-memoire-vm vm)))
-        (print "- Table de hachage pour les étiquettes : ")
-        (print (list 'hashTab_etq (state-hashTab-etq-resolu vm)))
-        (print (list 'hashTab_etq (state-hashTab-etq-non-resolu vm)))))
-(trace etat-vm)
-
+        (print "- Table de hachage pour les etiquettes : ")
+        (print (list 'hashTab_etq (state-hashTab-label-resolu vm)))
+        (print (list 'hashTab_etq (state-hashTab-label-non-resolu vm)))))
 ;; ################################################## ;;
 
 
 ;; ########### Initialisation de la MACHINE VIRTUELLE ########### ;;
-;; Initialise la machine virtuelle avec une mémoire de taille 'size' 
-;; et initialise les registres et les drapeaux à 0 
-;; et initialise les tables de hachage pour les étiquettes résolues et non résolues
+;; Initialise la machine virtuelle avec une memoire de taille 'size' 
+;; et initialise les registres et les drapeaux a 0 
+;; et initialise les tables de hachage pour les etiquettes resolues et non resolues
 (defun init-vm (vm size)
-    (set-memoire-vm vm size) ; Initialise la mémoire
+    (set-memoire-vm vm size) ; Initialise la memoire
     (set-register-value vm 'R0 0) ; Initialise le registre R0
     (set-register-value vm 'R1 0) ; Initialise le registre R1
     (set-register-value vm 'R2 0) ; Initialise le registre R2
-    (set-register-value vm 'BP (floor (/ size 10))) ; Initialise le registre du Base Pointer
     (set-register-value vm 'SP (floor (/ size 10))) ; Initialise le registre du Stack Pointer
-    (set-register-value vm 'FP (floor (/ size 10))) ; Initialise le registre du Frame Pointer
+    (set-register-value vm 'BP (floor (/ size 10))) ; Initialise le registre du Base Pointer
     (set-register-value vm 'PC 0) ; Initialise le registre du Program Counter
+    (set-register-value vm 'FP (floor (/ size 10))) ; Initialise le registre du Frame Pointer
+    (set-register-value vm 'PCc 0) ; Initialise le registre du Program Counter Offset
+    (set-register-value vm 'MAXPILE (floor (* size 0.8))) ; Initialise le registre du Max Pile
     (set-flag-off vm 'FLT) ; Initialise le drapeau FLT
     (set-flag-off vm 'FEQ) ; Initialise le drapeau FEQ
     (set-flag-off vm 'FGT) ; Initialise le drapeau FGT
     (set-flag-off vm 'FNIL) ; Initialise le drapeau FNIL
-    (init-hashTab-etq-resolu vm) ; Initialise la table des références résolues
-    (init-hashTab-etq-non-resolu vm)) ; Initialise la table des références non résolues
-(trace init-vm)
+    (init-hashTab-label-resolu vm) ; Initialise la table des references resolues
+    (init-hashTab-label-non-resolu vm)) ; Initialise la table des references non resolues
 ;; ################################################## ;;
-
 
 
 ;; ########### Instruction de la MACHINE VIRTUELLE ########### ;;
 ;; Instruction de la machine virtuelle qui permettent de 
 ;; manipuler les registres et les drapeaux de la machine virtuelle
 
+; # EVAL-LI : Evalue une expression arithmetique
+(defun eval-li (expr vm)
+    (cond ((numberp expr) expr) ; Si expr est un nombre, renvoie expr
+            ((symbolp expr) (get-register-value vm expr)) ; Si expr est un symbole, renvoie la valeur du registre
+            ((listp expr) ; Si expr est une liste, evalue l'expression
+            (let ((op (car expr))
+                (args (mapcar #'(lambda (x) (eval-li x vm)) (cdr expr))))
+            (apply op args))) ; Applique l'operateur sur les arguments
+            (t (error "EVAL-LI : expression invalide ~s" expr)))) ; Si expr n'est ni un nombre, ni un symbole, ni une liste, affiche une erreur
+
 ;; --- Instructions de manipulation des REGISTRES --- ;;
-; # LOAD : Charge une valeur depuis une source vers une destination dans la machine virtuelle
+; # LOAD : Charge le contenu de l'adresse <src> en memoire dans le registre <dest>
 (defun load-vm (vm src dest)
-    ; Vérifie si dest est un registre
-    (if (not (check-register-presence dest))
-        (warn "❌ LOAD : dest '~s' n'est pas un registre !" dest)
-        ; Vérifie si src n'est pas une valeur atomique (peut être une expression)
-        (if (not (atom src))
-            ; Si src est une expression, calcule l'adresse à partir de la base et du décalage
-            (let* (
-                (base (if (eq (first src) ':REF) ; Si la source est une référence (étiquette)
-                            (get-register-value vm (second src))
-                            src)) ; Si la base est un registre, utilise sa valeur, sinon utilise la base directe
-                (offset (if (integerp (third src))
-                                (third src)
-                                (error "❌ LOAD : Le décalage doit être un entier relatif"))))
-                ; Calcule l'adresse totale en ajoutant la base et le décalage
-                (let ((address (+ base offset)))
-                    ; Vérifie si l'adresse est dans les limites de la mémoire
-                    (if (or (< (- (get-taille-memoire-vm vm) 1) address) (> 0 address))
-                        (warn "❌ LOAD : l'adresse mémoire @~s est hors limite [~s , ~s]" address 0 (- (get-taille-memoire-vm vm) 1))
-                        ; Charge la valeur à l'adresse calculée dans le registre de destination
-                        (set-register-value vm dest (svref (get-memoire-vm vm) address)))))
-        ; Si src est une valeur atomique (entier ou registre), charge la valeur correspondante
-        (if (not (or (integerp src) (check-register-presence src)))
-            (warn "❌ LOAD : src '~s' n'est ni registre, ni adresse mémoire (int) !" src)
-            (if (check-register-presence src) ; Si src est un registre
-                (if (or (< (- (get-taille-memoire-vm vm) 1) (get-register-value vm src)) (> 0 (get-register-value vm src)))
-                    ; Si src est un registre et si son adresse mémoire est dans les limites
-                    (warn "❌ LOAD : l'adresse mémoire @~s est hors limite [~s , ~s]" (get-register-value vm src) 0 (- (get-taille-memoire-vm vm) 1))
-                    ; Charge la valeur à l'adresse du registre src dans le registre de destination
-                    (set-register-value vm dest (svref (get-memoire-vm vm) (get-register-value vm src))))
-                (if (or (< (- (get-taille-memoire-vm vm) 1) src) (> 0 src)) ; Si src est une adresse mémoire directe
-                    (warn "❌ LOAD : l'adresse mémoire @~s est hors limite [~s , ~s]" src 0 (- (get-taille-memoire-vm vm) 1))
-                    ; Charge la valeur à l'adresse directe src dans le registre de destination
-                    (set-register-value vm dest (svref (get-memoire-vm vm) src))))))))
+        (let* ((src-address (if (check-register-presence src)
+                            (get-register-value vm src) ; Si src est un registre, recupere sa valeur
+                            (eval-li src vm))) ; Si src est une expression, evalue l'expression
+            (dest-register (if (check-register-presence dest)
+                                dest ; Si dest est un registre, recupere sa valeur
+                                (warn "LOAD : dest '~s' n'est pas un registre !" dest)))) ; Si dest n'est pas un registre, affiche un avertissement
+        ;(format t "LOAD : src-address = ~s, dest-register = ~s~%" src-address dest-register)
+        (if (and (integerp src-address) (<= 0 src-address (- (get-taille-memoire-vm vm) 1)))
+            ; Verifie si src-address est une adresse memoire dans les limites
+            (set-register-value vm dest-register (aref (get-memoire-vm vm) src-address)) ; Charge le contenu dans dest-register
+            (warn "LOAD : l'adresse memoire @~s est hors limite [~s , ~s]" src-address 0 (- (get-taille-memoire-vm vm) 1)))))
+
 
 ; # STORE : Stocke une valeur depuis une source vers une destination dans la machine virtuelle
 (defun store-vm (vm src dest)
-    ; Vérifie si src est un registre
-    (if (not (check-register-presence src))
-        (warn "❌ STORE : src '~s' n'est pas un registre !" src)
-        ; Vérifie si dest n'est pas une valeur atomique (peut être une expression)
-        (if (not (or (integerp dest) (eq (car dest) ':REF)))
-            (warn "❌ STORE : dest '~s' n'est ni un registre, ni une adresse mémoire (int) ou une étiquette (:REF) !" dest)
-            ; Si la destination est un registre, stocke la valeur du registre src à l'adresse mémoire spécifiée
-            (if (eq (car dest) ':REF)
-                (setf (aref (get-memoire-vm vm) (get-register-value vm (cadr dest))) (get-register-value vm src))
-                ; Si la destination est une adresse mémoire directe et si elle est dans les limites
-                (if (or (< (- (get-taille-memoire-vm vm) 1) dest) (> -1 dest))
-                    ; Si l'adresse est hors limite, affiche un avertissement
-                    (warn "❌ STORE : l'adresse mémoire @~s est hors limite [~s , ~s]" dest 0 (- (get-taille-memoire-vm vm) 1))
-                    ; Sinon, stocke la valeur du registre src à l'adresse mémoire spécifiée
-                    (setf (aref (get-memoire-vm vm) dest) (get-register-value vm src)))))))
+    (let* ((src-value (cond ; Verifie si src est un registre, une constante ou une expression
+                        ((check-register-presence src) (get-register-value vm src)) ; Si src est un registre, recupere sa valeur
+                        ((and (listp src) (eq (car src) ':CONST)) (cdr src)) ; Si src est une constante, recupere sa valeur
+                        (t (eval-li src vm)))) ; Si src est une expression, evalue l'expression
+            (dest-address (if (check-register-presence dest)
+                            (get-register-value vm dest) ; Si dest est un registre, recupere sa valeur
+                            (eval-li dest vm)))) ; Si dest est une expression, evalue l'expression
+    ;(format t "STORE : src-value = ~s, dest-address = ~s~%" src-value dest-address)
+    (if (and (integerp dest-address) (<= 0 dest-address (- (get-taille-memoire-vm vm) 1))) 
+        ; Verifie si dest-address est une adresse memoire dans les limites
+        (setf (aref (get-memoire-vm vm) dest-address) src-value) ; Ecrit src-value a l'adresse dest-address
+        (warn "STORE : l'adresse memoire @~s est hors limite [~s , ~s]" dest-address 0 (- (get-taille-memoire-vm vm) 1)))))
+    
 
-; # MOVE :  Déplacer une valeur d'un emplacement source vers un emplacement destination dans la machine virtuelle
+; # MOVE : Transfere des valeurs entre registres dans la machine virtuelle
 (defun move-vm (vm src dest)
-    ; Vérifie si dest est un registre
-    (if (not (check-register-presence dest))
-        (warn "❌ MOVE : dest '~s' n'est pas un registre !" dest)
-        (if (check-register-presence src)
-            ; Si src est un registre, charge la valeur du registre src dans le registre dest
-            (set-register-value vm dest (get-register-value vm src))
-            ; Si src est une constante (:CONST) ou une étiquette (:REF)
-            (if (or (integerp src) (eq (car src) ':CONST))
-                ; Si src est une constante, charge la constante dans le registre dest
-                (set-register-value vm dest (if (integerp src) src (cadr src)))
-                (if (eq (car src) ':REF)
-                    ; Si src est une étiquette, charge la valeur de l'étiquette dans le registre dest
-                    (set-register-value vm dest (aref (get-memoire-vm vm) (get-register-value vm (cadr src))))
-                    ; Si src n'est ni un registre, ni une constante, ni une étiquette, affiche un avertissement
-                    (warn "❌ MOVE : <src> doit être un registre, une constante (:CONST) ou une étiquette (:REF)"))))))
-
+    (let* ((src-value (cond ; Verifie si src est un registre, une constante ou une expression
+                        ((check-register-presence src) (get-register-value vm src)) ; Si src est un registre, recupere sa valeur
+                        ((and (listp src) (eq (car src) ':CONST)) (cdr src)) ; Si src est une constante, recupere sa valeur
+                        ; cas valeur atomique
+                        ((integerp src) src) ; Si src est un entier, recupere sa valeur
+                        (src))) ; Sinon on recupere simplement la valeur de src
+            (dest-register (if (check-register-presence dest)
+                            dest ; Si dest est un registre, recupere sa valeur
+                            (warn "MOVE : dest '~s' n'est pas un registre !" dest)))) ; Si dest n'est pas un registre, affiche un avertissement
+    ;(format t "MOVE : src-value = ~s, dest-register = ~s~%" src-value dest-register)
+    (set-register-value vm dest-register src-value))) ; Copie src-value dans dest
 ;; -------------------------------------------------- ;;
 
-;; --- Instruction d'opérations arithmétiques sur les REGISTRES --- ;;
+;; --- Instruction d'operations arithmetiques sur les REGISTRES --- ;;
 ; # ADD : Addition de registres dans la machine virtuelle
 (defun add-vm (vm src dest)
     (cond
-        ; Vérifie si dest est un registre
+        ; Verifie si dest est un registre
         ((not (check-register-presence dest))
-        (warn "❌ ADD : dest '~s' n'est pas un registre !" dest))
-        ; Si src est une valeur atomique (entier), ajoute la valeur à celle du registre dest
+        (warn "ADD : dest '~s' n'est pas un registre !" dest))
+        ; Si src est une valeur atomique (entier), ajoute la valeur a celle du registre dest
         ((atom src)
         (if (not (check-register-presence src))
-            ; Vérifie si src est un registre
+            ; Verifie si src est un registre
             (if (not (integerp src))
-                (warn "❌ ADD : src n'est ni un registre ni un entier !")
+                (warn "ADD : src n'est ni un registre ni un entier !")
                 ; Si src est un entier, ajoute la valeur du registre dest avec l'entier src
                 (move-vm vm (+ (get-register-value vm dest) src) dest))
-            ; Si src est un registre, ajoute la valeur du registre src à celle du registre dest
+            ; Si src est un registre, ajoute la valeur du registre src a celle du registre dest
             (move-vm vm (+ (get-register-value vm src) (get-register-value vm dest)) dest)))
         ; Si src est une expression
         ((not (atom src))
         (if (not (and (eq (car src) ':LIT) (integerp (cdr src))))
-            ; Si src n'est pas une expression de la forme <:LIT entier>, affiche un avertissement
-            (warn "❌ ADD : src n'est pas une paire de la forme <:LIT entier>")
-            ; Sinon ajoute la valeur entière n à celle du registre dest
+            ; Si src n'est pas une expression de la forme <:LIT . entier>, affiche un avertissement
+            (warn "ADD : src n'est pas une paire de la forme <:LIT . entier>")
+            ; Sinon ajoute la valeur entiere n a celle du registre dest
             (move-vm vm (+ (cdr src) (get-register-value vm dest)) dest)))))
 
-; # SUB : Soustraction de registres dans la machine virtuelle
+; # SUB : Soustraction de registres dans la machine virtuelle (dest - src)
 (defun sub-vm (vm src dest)
     (cond
-        ; Vérifie si dest est un registre
+        ; Verifie si dest est un registre
         ((not (check-register-presence dest))
-        (warn "❌ SUB : dest '~s' n'est pas un registre !" dest))
-        ; Si src est une valeur atomique (entier), soustrait la valeur à celle du registre dest
+        (warn "SUB : dest '~s' n'est pas un registre !" dest))
+        ; Si src est une valeur atomique (entier), soustrait la valeur a celle du registre dest
         ((atom src)
         (if (not (check-register-presence src))
-            ; Vérifie si src est un registre
+            ; Verifie si src est un registre
             (if (not (integerp src))
-                (warn "❌ SUB : src n'est ni un registre ni un entier !")
+                (warn "SUB : src n'est ni un registre ni un entier !")
                 ; Si src est un entier, soustrait la valeur du registre dest avec l'entier src
                 (move-vm vm (- (get-register-value vm dest) src) dest))
-            ; Si src est un registre, soustrait la valeur du registre src à celle du registre dest
+            ; Si src est un registre, soustrait la valeur du registre src a celle du registre dest
             (move-vm vm (- (get-register-value vm dest) (get-register-value vm src)) dest)))
         ; Si src est une expression
         ((not (atom src))
         (if (not (and (eq (car src) ':LIT) (integerp (cdr src))))
-            ; Si src n'est pas une expression de la forme <:LIT entier>, affiche un avertissement
-            (warn "❌ SUB : src n'est pas une paire de la forme <:LIT entier>")
-            ; Sinon soustrait la valeur entière n à celle du registre dest
+            ; Si src n'est pas une expression de la forme <:LIT . entier>, affiche un avertissement
+            (warn "SUB : src n'est pas une paire de la forme <:LIT . entier>")
+            ; Sinon soustrait la valeur entiere n a celle du registre dest
             (move-vm vm (- (get-register-value vm dest) (cdr src)) dest)))))
 
 ; # MUL : Multiplication de registres dans la machine virtuelle
 (defun mul-vm (vm src dest)
     (cond
-        ; Vérifie si dest est un registre
+        ; Verifie si dest est un registre
         ((not (check-register-presence dest))
-        (warn "❌ MUL : dest '~s' n'est pas un registre !" dest))
-        ; Si src est une valeur atomique (entier), multiplie la valeur à celle du registre dest
+        (warn "MUL : dest '~s' n'est pas un registre !" dest))
+        ; Si src est une valeur atomique (entier), multiplie la valeur a celle du registre dest
         ((atom src)
         (if (not (check-register-presence src))
-            ; Vérifie si src est un registre
+            ; Verifie si src est un registre
             (if (not (integerp src))
-                (warn "❌ MUL : src n'est ni un registre ni un entier !")
+                (warn "MUL : src n'est ni un registre ni un entier !")
                 ; Si src est un entier, multiplie la valeur du registre dest avec l'entier src
                 (move-vm vm (* (get-register-value vm dest) src) dest))
-            ; Si src est un registre, multiplie la valeur du registre src à celle du registre dest
+            ; Si src est un registre, multiplie la valeur du registre src a celle du registre dest
             (move-vm vm (* (get-register-value vm src) (get-register-value vm dest)) dest)))
         ; Si src est une expression
         ((not (atom src))
         (if (not (and (eq (car src) ':LIT) (integerp (cdr src))))
-            ; Si src n'est pas une expression de la forme <:LIT entier>, affiche un avertissement
-            (warn "❌ MUL : src n'est pas une paire de la forme <:LIT entier>")
-            ; Sinon multiplie la valeur entière n à celle du registre dest
+            ; Si src n'est pas une expression de la forme <:LIT . entier>, affiche un avertissement
+            (warn "MUL : src n'est pas une paire de la forme <:LIT . entier>")
+            ; Sinon multiplie la valeur entiere n a celle du registre dest
             (move-vm vm (* (cdr src) (get-register-value vm dest)) dest)))))
 
 
 ; # DIV : Division de registres dans la machine virtuelle
 (defun div-vm (vm src dest)
     (cond
-        ; Vérifie si dest est un registre
+        ; Verifie si dest est un registre
         ((not (check-register-presence dest))
-        (warn "❌ DIV : dest '~s' n'est pas un registre !" dest))
-        ; Si src est une valeur atomique (entier), divise la valeur à celle du registre dest
+        (warn "DIV : dest '~s' n'est pas un registre !" dest))
+        ; Si src est une valeur atomique (entier), divise la valeur a celle du registre dest
         ((atom src)
         (if (not (check-register-presence src))
-            ; Vérifie si src est un registre
+            ; Verifie si src est un registre
             (if (not (integerp src))
-                (warn "❌ DIV : src n'est ni un registre ni un entier !")
-                ; Si src est un entier, divise la valeur du registre dest avec l'entier src
-                (move-vm vm (/ (get-register-value vm dest) src) dest))
-            ; Si src est un registre, divise la valeur du registre dest par la valeur du registre src
-            (move-vm vm (/ (get-register-value vm dest) (get-register-value vm src)) dest)))
+                (warn "DIV : src n'est ni un registre ni un entier !")
+                ; Si src est un entier, effectue une division entiere
+                (if (zerop src)
+                    (warn "DIV : division par zero !")
+                    (move-vm vm (floor (/ (get-register-value vm dest) src)) dest)))
+            ; Si src est un registre, effectue une division entiere
+            (let ((src-value (get-register-value vm src)))
+            (if (zerop src-value)
+                (error "DIV : division par zero !")
+                (move-vm vm (floor (/ (get-register-value vm dest) src-value)) dest)))))
         ; Si src est une expression
         ((not (atom src))
         (if (not (and (eq (car src) ':LIT) (integerp (cdr src))))
-            ; Si src n'est pas une expression de la forme <:LIT entier>, affiche un avertissement
-            (warn "❌ DIV : src n'est pas une paire de la forme <:LIT entier>")
-            ; Sinon divise la valeur entière n à celle du registre dest
-            (move-vm vm (/ (get-register-value vm dest) (cdr src)) dest)))))
+            ; Si src n'est pas une expression de la forme <:LIT . entier>, affiche un avertissement
+            (warn "DIV : src n'est pas une paire de la forme <:LIT . entier>")
+            ; Sinon effectue une division entiere
+            (let ((src-value (cdr src)))
+            (if (zerop src-value)
+                (warn "DIV : division par zero !")
+                (move-vm vm (floor (/ (get-register-value vm dest) src-value)) dest)))))))
 
 
-; # INCR : Incrémente la valeur d'un registre dans la machine virtuelle
+; # INCR : Incremente la valeur d'un registre dans la machine virtuelle
 (defun incr-vm (vm dest)
-    (cond
-        ; Vérifie si dest est un registre
-        ((not (check-register-presence dest))
-        (warn "❌ INCR : dest '~s' n'est pas un registre !" dest))
-        ; Si dest est un registre, incrémente la valeur du registre dest
-        (t
-        (if (>= (get-register-value vm dest) (get-register-value vm 'BP)) ; Vérifie si dest est dans les limites
-            (warn "❌ INCR : ~s est hors limite [~s , ~s]" dest (get-register-value vm 'BP) (get-register-value vm dest))
-            (set-register-value vm dest (+ (get-register-value vm dest) 1))))))
+    (if (not (check-register-presence dest))
+        (warn "INCR : dest '~s' n'est pas un registre !" dest)
+        (if (eq dest 'PC) ; Verifie si dest est le registre PC
+            (if (>= (get-register-value vm dest) (get-register-value vm 'MAXPILE)) ; Utilise MAXPILE comme limite superieure
+                (warn "INCR : ~s est hors limite [~s , ~s]" dest (get-register-value vm 'BP) (get-register-value vm 'MAXPILE))
+                (set-register-value vm dest (+ (get-register-value vm dest) 1)))
+            (set-register-value vm dest (+ (get-register-value vm dest) 1)))))
 
-; # DECR : Décrémente la valeur d'un registre dans la machine virtuelle
+
+; # DECR : Decremente la valeur d'un registre dans la machine virtuelle
 (defun decr-vm (vm dest)
-    (cond
-        ; Vérifie si dest est un registre
-        ((not (check-register-presence dest))
-        (warn "❌ DECR : dest '~s' n'est pas un registre !" dest))
-        ; Si dest est un registre, décrémente la valeur du registre dest
-        (t
-        (if (<= (get-register-value vm dest) 0) ; Vérifie si dest est dans les limites
-            (warn "❌ DECR : ~s est hors limite [~s , ~s]" dest 0 (get-register-value vm dest))
-            (set-register-value vm dest (- (get-register-value vm dest) 1))))))
-
+    (if (not (check-register-presence dest))
+        (warn "DECR : dest '~s' n'est pas un registre !" dest)
+        (if (eq dest 'PC) ; Verifie si dest est le registre PC
+            (if (<= (get-register-value vm dest) (get-register-value vm 'BP)) ; Utilise BP comme limite inferieure
+                (warn "DECR : ~s est hors limite [~s , ~s]" dest (get-register-value vm 'BP) (get-register-value vm 'MAXPILE))
+                (set-register-value vm dest (- (get-register-value vm dest) 1)))
+            (set-register-value vm dest (- (get-register-value vm dest) 1)))))
 ;; -------------------------------------------------- ;;
 
-;; --- Inscruction d'empilement et de dépilement de la PILE --- ;;
+;; --- Inscruction d'empilement et de depilement de la PILE --- ;;
 ; # PUSH : Empile une valeur dans la pile de la machine virtuelle
 (defun push-vm (vm src)
     (cond
         ; Si src est un registre
         ((check-register-presence src)
-        (progn
-        (incr-vm vm 'SP)          ; On incrémente SP
-        (store-vm vm src 'SP)))   ; On écrit la valeur de src à la nouvelle adresse de SP
-        ; Si src est une valeur entière
-        ((integerp src)
-        (progn
-        (incr-vm vm 'SP)          ; On incrémente SP
-        (move-vm vm src 'R0)      ; On déplace la valeur de src dans R0
-        (store-vm vm 'R0 'SP)))   ; On écrit la valeur de R0 à la nouvelle adresse de SP
-        ; Si src n'est ni un registre ni une valeur entière, affiche un avertissement
-        (t (warn "❌ PUSH : src '~s' n'est ni un registre ni une valeur entière" src))))
+            (incr-vm vm 'SP)          ; On incremente SP
+            (store-vm vm src 'SP))    ; On ecrit la valeur de src a la nouvelle adresse de SP
+        ; Si src est une valeur entiere ou une expression
+        ((or (integerp src) (and (consp src) (eq (car src) ':CONST)))
+            (incr-vm vm 'SP)          ; On incremente SP
+            (store-vm vm src 'SP))    ; On ecrit la valeur de src a la nouvelle adresse de SP
+        ; Si src est une expression arithmetique, evalue l'expression et empile le resultat
+        ((consp src)
+            (let ((result (eval-li src vm)))
+                (incr-vm vm 'SP)
+                (store-vm vm result 'SP)))
+        ; Si src n'est ni un registre ni une valeur entiere ni une expression arithmetique, affiche un avertissement
+        (t (warn "PUSH : src '~s' n'est ni un registre ni une valeur entiere ni une expression arithmetique" src))))
 
-
-; # POP : Dépile une valeur de la pile de la machine virtuelle
+; # POP : Depile une valeur de la pile de la machine virtuelle
 (defun pop-vm (vm dest)
     (cond
         ; Si dest est un registre
         ((check-register-presence dest)
         (progn
-        (load vm 'SP dest)   ; On charge la valeur à l'adresse de SP dans dest
-        (decr-vm vm 'SP)))   ; On décrémente SP
+        (load-vm vm 'SP dest)   ; On charge la valeur a l'adresse de SP dans dest
+        (decr-vm vm 'SP)))   ; On decremente SP
         ; Si dest n'est pas un registre, affiche un avertissement
-        (t (warn "❌ POP : dest '~s' n'est pas un registre" dest))))
-
+        (t (warn "POP : dest '~s' n'est pas un registre" dest))))
 ;; -------------------------------------------------- ;;
 
-;; --- Instructions d'étiqutage et de saut --- ;;
-; # LABEL : Définit une étiquette dans la machine virtuelle
-(defun label-vm (vm etq)
-    ; Vérifie si etq est un symbole (nom de l'étiquette)
-    (if (symbolp etq)
+;; --- Instructions d'etiqutage et de saut --- ;;
+; # LABEL : Definit une etiquette dans la machine virtuelle
+(defun label-vm (vm label)
+    ; Verifie si label est un symbole (nom de l'etiquette)
+    (if (consp label)
         (progn
-            ; Utilise le nom de l'étiquette comme clé pour la table de hachage
-            (unless (get-hashtab-etq-resolu-val vm etq)
-            ; Définit l'adresse de l'étiquette dans le registre PCO
-            (set-hashtab-etq-resolu vm etq (get-register-value vm 'PCO)))
-            ; Ajoute d'autres étapes si nécessaire
+            ; Utilise le nom de l'etiquette comme cle pour la table de hachage
+            (unless (get-hashtab-label-resolu-val vm label)
+            ; Definit l'adresse de l'etiquette dans le registre PCc
+            (set-hashtab-label-resolu vm label (get-register-value vm 'PCc)))
         )
-        (warn "❌ LABEL : etq '~s' n'est pas un symbole (nom de l'étiquette) !" etq)))
+        (warn "LABEL : label '~s' n'est pas un symbole (nom de l'etiquette) !" label)))
 
 
-; # JMP : Saut inconditionnel vers une étiquette ou une adresse dans la machine virtuelle
-(defun jump-vm (vm label)
-    (if (integerp label)
-        (move-vm vm label 'PC)   ; Si label est une adresse, on déplace la valeur de label dans PC
-        (when (get-hashtab-etq-resolu-val vm label)
-            (move-vm vm (get-hashtab-etq-resolu-val vm label) 'PC)   ; Si label est une étiquette, on déplace la valeur de label dans PC
-            (set-hashtab-etq-non-resolu vm label (get-register-value vm 'SP)))))   ; On ajoute l'adresse de l'instruction JMP dans la table des étiquettes non résolues 
-    ; pour conserver l'adresse actuelle de la pile avant de sauter à une autre partie du programme.
+; # JMP : Saut inconditionnel vers une etiquette ou une adresse dans la machine virtuelle
+(defun jump-vm (vm dest)
+    (if (integerp dest)
+        (move-vm vm dest 'PC)   ; Si dest est une adresse, on deplace la valeur de dest dans PC
+        (if (get-hashtab-label-resolu-val vm dest)
+            (move-vm vm (get-hashtab-label-resolu-val vm dest) 'PC))))   ; Si dest est une etiquette, on deplace la valeur de label dans PC
 
     
 ; # JSR : Saut vers une sous-routine dans la machine virtuelle
@@ -429,9 +411,9 @@
 
 ; # RTN : Retour d'une sous-routine dans la machine virtuelle
 (defun rtn-vm (vm)
-    (load vm 'SP 'R0) ; On charge le contenu du sommet de pile dans R0
-    (decr-vm vm 'SP) ; On décrémente SP
-    (jump-vm vm (get-register-value vm 'R0))) ; On saute à l'adresse contenue dans R0
+    (load-vm vm 'SP 'R0) ; On charge le contenu du sommet de pile dans R0
+    (decr-vm vm 'SP) ; On decremente SP
+    (jump-vm vm (get-register-value vm 'R0))) ; On saute a l'adresse contenue dans R0
 ;; -------------------------------------------------- ;;
 
 ;; --- Instructions de comparaison --- ;;
@@ -439,14 +421,14 @@
 (defun cmp-vm (vm src1 src2)
     (cond
         ((check-register-presence src1)
-            (setf src1 (get-register-value vm src1))) ; Si src1 est un registre, on récupère sa valeur
+            (setf src1 (get-register-value vm src1))) ; Si src1 est un registre, on recupere sa valeur
         ((and (not (atom src1)) (eq (car src1) ':LIT) (integerp (cdr src1)))
-            (setf src1 (cdr src1)))) ; Si src1 est une expression <:LIT entier>, on récupère la valeur entière
+            (setf src1 (cdr src1)))) ; Si src1 est une expression <:LIT . entier>, on recupere la valeur entiere
     (cond
         ((check-register-presence src2)
-            (setf src2 (get-register-value vm src2))) ; Si src2 est un registre, on récupère sa valeur
+            (setf src2 (get-register-value vm src2))) ; Si src2 est un registre, on recupere sa valeur
         ((and (not (atom src2)) (eq (car src1) ':LIT) (integerp (cdr src2)))
-            (setf src2 (cdr src2)))) ; Si src2 est une expression <:LIT entier>, on récupère la valeur entière
+            (setf src2 (cdr src2)))) ; Si src2 est une expression <:LIT . entier>, on recupere la valeur entiere
     (cond
         ((< src1 src2) ; Si src1 < src2
             (set-flag-on vm 'FLT) ; On active le drapeau FLT
@@ -461,39 +443,39 @@
             (set-flag-off vm 'FEQ)
             (set-flag-on vm 'FGT)))) ; On active le drapeau FGT
 
-; # JGT : Saut si le drapeau FGT est activé 'Greater Than' (!FEQ !FLT FGT)
+; # JGT : Saut si le drapeau FGT est active 'Greater Than' (!FEQ !FLT FGT)
 (defun jgt-vm (vm label)
     (if (and (not (get-flag-value vm 'FEQ)) (not (get-flag-value vm 'FLT)) (get-flag-value vm 'FGT))
         (jump-vm vm label)
         (incr-vm vm 'PC)))
 
-; # JGE : Saut si le drapeau FGT ou FEQ est activé 'Greater or Equal' (FEQ !FLT FGT)
+; # JGE : Saut si le drapeau FGT ou FEQ est active 'Greater or Equal' (FEQ !FLT FGT)
 (defun jge-vm (vm label)
     (if (and (not (get-flag-value vm 'FLT))
     (or (get-flag-value vm 'FEQ) (get-flag-value vm 'FGT)))
         (jump-vm vm label)
         (incr-vm vm 'PC)))
 
-; # JLT : Saut si le drapeau FLT est activé 'Lesser Than' (!FEQ !FGT FLT)
+; # JLT : Saut si le drapeau FLT est active 'Lesser Than' (!FEQ !FGT FLT)
 (defun jlt-vm (vm label)
     (if (and (not (get-flag-value vm 'FEQ)) (not (get-flag-value vm 'FGT)) (get-flag-value vm 'FLT))
         (jump-vm vm label)
         (incr-vm vm 'PC)))
 
-; # JLE : Saut si le drapeau FLT ou FEQ est activé 'Lesser or Equal' (FEQ !FGT FLT)
+; # JLE : Saut si le drapeau FLT ou FEQ est active 'Lesser or Equal' (FEQ !FGT FLT)
 (defun jle-vm (vm label)
     (if (and (not (get-flag-value vm 'FGT))
     (or (get-flag-value vm 'FEQ) (get-flag-value vm 'FLT)))
         (jump-vm vm label)
         (incr-vm vm 'PC)))
 
-; # JEQ : Saut si le drapeau FEQ est activé 'Equal' (FEQ !FGT !FLT)
+; # JEQ : Saut si le drapeau FEQ est active 'Equal' (FEQ !FGT !FLT)
 (defun jeq-vm (vm label)
     (if (and (not (get-flag-value vm 'FLT)) (not (get-flag-value vm 'FGT)) (get-flag-value vm 'FEQ))
         (jump-vm vm label)
         (incr-vm vm 'PC)))
 
-; # JNE : Saut si le drapeau FEQ n'est pas activé 'Not Equal' (!FEQ FGT FLT)
+; # JNE : Saut si le drapeau FEQ n'est pas active 'Not Equal' (!FEQ FGT FLT)
 (defun jne-vm (vm label)
     (if (not (get-flag-value vm 'FEQ))
         (jump-vm vm label)
@@ -505,20 +487,20 @@
 (defun test-vm (vm src)
     (cond
         ((check-register-presence src)
-            (setf src (get-register-value vm src))) ; Si src est un registre, on récupère sa valeur
+            (setf src (get-register-value vm src))) ; Si src est un registre, on recupere sa valeur
         ((and (not (atom src)) (eq (car src) ':LIT) (integerp (cdr src)))
-            (setf src (cdr src)))) ; Si src est une expression <:LIT entier>, on récupère la valeur entière
-    (if (eq src 0) ; Si src est NIL
+            (setf src (cdr src)))) ; Si src est une expression <:LIT . entier>, on recupere la valeur entiere
+    (if (or (eq src 0) (eq src nil)) ; Si src est NIL
         (set-flag-on vm 'FNIL) ; On active le drapeau FNIL
-        (set-flag-off vm 'FNIL))) ; Sinon on désactive le drapeau FNIL
+        (set-flag-off vm 'FNIL))) ; Sinon on desactive le drapeau FNIL
 
-; # JTRUE : Saut si le drapeau FNIL est désactivé
+; # JTRUE : Saut si le drapeau FNIL est desactive
 (defun jtrue-vm (vm label)
     (if (not (get-flag-value vm 'FNIL))
         (jump-vm vm label)
         (incr-vm vm 'PC)))
 
-; # JFALSE : Saut si le drapeau FNIL est activé
+; # JFALSE : Saut si le drapeau FNIL est active
 (defun jfalse-vm (vm label)
     (if (get-flag-value vm 'FNIL)
         (jump-vm vm label)
@@ -527,58 +509,226 @@
 
 ;; --- Instruction de fin --- ;;
 ; # NOP : Instruction vide
-(defun nop-vm (vm)
-    (incr-vm vm 'PC))
+(defun nop-vm (vm))
 
-; # HALT : Arrête l'exécution de la machine virtuelle
+; # HALT : Arrete l'execution de la machine virtuelle
 (defun halt-vm (vm)
     (set-register-value vm 'PC -1))
 ;; -------------------------------------------------- ;;
 ;; ################################################## ;;
 
 
+;; ########### Applique une fontion a des argument de la MACHINE VIRTUELLE ########### ;;
+(defun apply-vm (vm fonction nbArgs)
+    ;; Initialisation des variables locales
+    (let ((i nbArgs) (args nil))
+        ;; Boucle pour recuperer les arguments depuis la pile
+        (loop while (> i 0) do
+        (progn
+            ;; Charger la valeur depuis la pile
+            (load-vm vm (+ (- (get-register-value vm 'FP) i) 1) 'R0)
+            ;; Ajouter la valeur a la liste des arguments
+            (push (if (atom (get-register-value vm 'R0)) 
+                    (get-register-value vm 'R0)
+                    (cdr (get-register-value vm 'R0)))
+                args)
+            (setf i (- i 1))))
+        ;; Appliquer la fonction avec les arguments
+        (when (and (listp args) (car args))
+        (move-vm vm (apply fonction (reverse args)) 'R0))
+    ))
+;; ################################################## ;;
+
 
 ;; ########### Chargeur de la MACHINE VIRTUELLE ########### ;;
+(defun chargeur-lisp-vm (vm lisp)
+    (let ((asm (LI_TO_ASM (LISP2LI lisp nil) 0)))
+    ; Boucle principale de chargement du code dans la machine virtuelle
+    (loop
+        while (not (atom asm)) ; Tant que asm n'est pas vide
+        do
+        (progn
+            ; Affiche l'instruction actuelle
+            (print (car asm))
+            ; Deplace l'instruction dans le registre R0
+            (move-vm vm (car asm) 'R0)
+            ; Stocke la valeur du registre R0 dans le compteur ordinal (PCc)
+            (store-vm vm 'R0 'PCc)
+            ; Charge la valeur du compteur ordinal dans le registre R1
+            (load-vm vm 'PCc 'R1)
+            ; Si l'instruction est un LABEL, appelle la fonction vm_label avec l'argument du LABEL
+            (if (eq (car (get-register-value vm 'R1)) 'LABEL)
+                (label-vm vm (cdr (get-register-value vm 'R1))))
+            ; Incremente le compteur ordinal
+            (incr-vm vm 'PCc)
+            ; Passe a l'instruction suivante
+            (setf asm (cdr asm))
+        ))
+    ; Ajout de l'instruction HALT a la fin
+    (move-vm vm '(HALT) 'R0)
+    (store-vm vm 'R0 'PCc)
+    (incr-vm vm 'PCc)))
+
+(defun chargeur-asm-vm (vm asm)
+    ; Boucle principale de chargement du code dans la machine virtuelle
+    (loop
+        while (not (atom asm)) ; Tant que asm n'est pas un atome
+        do
+        (progn
+            ; Deplace l'instruction dans le registre R0
+            (move-vm vm (car asm) 'R0)
+            ; Stocke la valeur du registre R0 dans le compteur ordinal du chargeur (PCc)
+            (store-vm vm 'R0 'PCc)
+            ; Charge la valeur du compteur ordinal dans le registre R1
+            (load-vm vm 'PCc 'R1)
+            ; Si l'instruction est un LABEL, appelle la fonction vm_label avec l'argument du LABEL
+            (if (eq (car (get-register-value vm 'R1)) 'LABEL)
+                (label-vm vm (cdr (get-register-value vm 'R1))))
+            ; Incremente le compteur ordinal
+            (incr-vm vm 'PCc)
+            ; Passe a l'instruction suivante
+            (setf asm (cdr asm))
+        ))
+    ; Ajout de l'instruction HALT a la fin
+    (move-vm vm '(HALT) 'R0)
+    (store-vm vm 'R0 'PCc)
+    (incr-vm vm 'PCc))
 ;; ######################################################## ;;
 
 
 ;; ########### Exectuer la MACHINE VIRTUELLE ########### ;;
-;; --- Fonction d'exécution de la MACHINE VIRTUELLE --- ;;
-;; Définition de la fonction exec-vm qui exécute la machine virtuelle
-(defun vm-execute (vm)
-    ; Tant que PC (Program Counter) est supérieur ou égal à BP (Base Pointer) (début de la pile)
-    (loop while (<= (get-register-value vm 'BP) (get-register-value vm 'PC)) 
-    do
-        (let ((ist (get-etat-element-memoire-vm vm (get-register-value vm 'PC)))) ; On récupère l'instruction à l'adresse PC
-        (cond ; On exécute l'instruction en fonction de son type
-            ((equal (first ist) 'LOAD) (load-vm vm ist)) ; LOAD
-            ((equal (first ist) 'STORE) (store-vm vm ist)) ; STORE
-            ((equal (first ist) 'MOVE) (move-vm vm ist)) ; MOVE
-            ((equal (first ist) 'ADD) (add-vm vm ist)) ; ADD
-            ((equal (first ist) 'SUB) (sub-vm vm ist)) ; SUB
-            ((equal (first ist) 'MUL) (mul-vm vm ist)) ; MUL
-            ((equal (first ist) 'DIV) (div-vm vm ist)) ; DIV
-            ((equal (first ist) 'INCR) (incr-vm vm ist)) ; INCR
-            ((equal (first ist) 'DECR) (decr-vm vm ist)) ; DECR
-            ((equal (first ist) 'PUSH) (push-vm vm ist)) ; PUSH
-            ((equal (first ist) 'POP) (pop-vm vm ist)) ; POP
-            ((equal (first ist) 'LABEL) (label-vm vm ist)) ; LABEL
-            ((equal (first ist) 'JMP) (jump-vm vm ist)) ; JMP
-            ((equal (first ist) 'JSR) (jsr-vm vm ist)) ; JSR
-            ((equal (first ist) 'RTN) (rtn-vm vm)) ; RTN
-            ((equal (first ist) 'CMP) (cmp-vm vm ist)) ; CMP
-            ((equal (first ist) 'JGT) (jgt-vm vm ist)) ; JGT (Plus grand que)
-            ((equal (first ist) 'JGE) (jge-vm vm ist)) ; JGE (Plus grand ou égal)
-            ((equal (first ist) 'JLT) (jlt-vm vm ist)) ; JLT (Plus petit que)
-            ((equal (first ist) 'JLE) (jle-vm vm ist)) ; JLE (Plus petit ou égal)
-            ((equal (first ist) 'JEQ) (jeq-vm vm ist)) ; JEQ (Égal)
-            ((equal (first ist) 'JNE) (jne-vm vm ist)) ; JNE (Différent)
-            ((equal (first ist) 'TEST) (test-vm vm ist)) ; TEST
-            ((equal (first ist) 'JTRUE) (jtrue-vm vm ist)) ; JTRUE
-            ((equal (first ist) 'JFALSE) (jfalse-vm vm ist)) ; JFALSE
-            ((equal (first ist) 'NOP) (nop-vm vm)) ; NOP
-            ((equal (first ist) 'HALT) (halt-vm vm)) ; HALT
-            (t (warn "Instruction non reconnue : ~A" ist))
-        (decr-vm vm 'PC))))) ; On décrémente PC
-
+;; Definition de la fonction exec-vm qui execute la machine virtuelle
+(defun execute-vm (vm exprLisp)
+    (move-vm vm 'PCc 'PC)     ; Initialisation du compteur de programme
+    (format t "lisp -> ~s~%" exprLisp)
+    (format t "PCc -> ~s~%" (get-register-value vm 'PCc))
+    (format t "PC -> ~s~%" (get-register-value vm 'PC))
+    (chargeur-asm-vm vm exprLisp)  ; Chargement du programme en memoire
+    ; Execution du programme
+    (loop
+        ; Condition de sortie : tant que le drapeau FNIL est OFF
+        while (not (= (get-register-value vm 'PC) -1))
+        do
+        ; Execution de l'instruction a l'adresse PC
+        (progn
+            (load-vm vm 'PC 'R2)  ; Charger l'instruction dans le registre R2
+            (let ((fonction (car (get-register-value vm 'R2))) ; Extraire le nom de la fonction
+                (args (cdr (get-register-value vm 'R2)))) ; Extraire les arguments de la fonction
+            ; Appel de la fonction correspondante a l'instruction
+            (cond
+                ((equal fonction 'LOAD) 
+                    (progn 
+                        (load-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; LOAD
+                ((equal fonction 'STORE) 
+                    (progn 
+                        (store-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; STORE
+                ((equal fonction 'MOVE) 
+                    (progn 
+                        (move-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; MOVE
+                ((equal fonction 'ADD) 
+                    (progn 
+                        (add-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; ADD
+                ((equal fonction 'SUB) 
+                    (progn 
+                        (sub-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; SUB
+                ((equal fonction 'MUL) 
+                    (progn 
+                        (mul-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; MUL
+                ((equal fonction 'DIV) 
+                    (progn 
+                        (div-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; DIV
+                ((equal fonction 'INCR) 
+                    (progn 
+                        (incr-vm vm fonction)
+                        (incr-vm vm 'PC))) ; INCR
+                ((equal fonction 'DECR) 
+                    (progn 
+                        (decr-vm vm fonction)
+                        (incr-vm vm 'PC))) ; DECR
+                ((equal fonction 'PUSH) 
+                    (progn 
+                        (push-vm vm fonction)
+                        (incr-vm vm 'PC))) ; PUSH
+                ((equal fonction 'POP) 
+                    (progn 
+                        (pop-vm vm fonction)
+                        (incr-vm vm 'PC))) ; POP
+                ((equal fonction 'LABEL) 
+                    (progn 
+                        (label-vm vm fonction)
+                        (incr-vm vm 'PC))) ; LABEL
+                ((equal fonction 'JMP) 
+                    (progn 
+                        (jump-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JMP
+                ((equal fonction 'JSR) 
+                    (progn 
+                        (jsr-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JSR
+                ((equal fonction 'RTN) 
+                    (progn 
+                        (rtn-vm vm)
+                        (incr-vm vm 'PC))) ; RTN
+                ((equal fonction 'CMP) 
+                    (progn 
+                        (cmp-vm vm (first args) (second args))
+                        (incr-vm vm 'PC))) ; CMP
+                ((equal fonction 'JGT) 
+                    (progn 
+                        (jgt-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JGT (Plus grand que)
+                ((equal fonction 'JGE) 
+                    (progn 
+                        (jge-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JGE (Plus grand ou egal)
+                ((equal fonction 'JLT) 
+                    (progn 
+                        (jlt-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JLT (Plus petit que)
+                ((equal fonction 'JLE) 
+                    (progn 
+                        (jle-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JLE (Plus petit ou egal)
+                ((equal fonction 'JEQ) 
+                    (progn 
+                        (jeq-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JEQ (egal)
+                ((equal fonction 'JNE) 
+                    (progn 
+                        (jne-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JNE (Different)
+                ((equal fonction 'TEST) 
+                    (progn 
+                        (test-vm vm fonction)
+                        (incr-vm vm 'PC))) ; TEST
+                ((equal fonction 'JTRUE) 
+                    (progn 
+                        (jtrue-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JTRUE
+                ((equal fonction 'JFALSE) 
+                    (progn 
+                        (jfalse-vm vm fonction)
+                        (incr-vm vm 'PC))) ; JFALSE
+                ((equal fonction 'NOP) 
+                    (progn 
+                        (nop-vm vm)
+                        (incr-vm vm 'PC))) ; NOP
+                ((equal fonction 'HALT) 
+                    (progn 
+                        (halt-vm vm)
+                        (incr-vm vm 'PC))) ; HALT
+                ((equal fonction 'APPLY)
+                    (progn
+                        (apply-vm vm (first args) (second args))
+                        (incr-vm vm 'PC)))) ; APPLY
+                ))) ; Fin de la boucle principale
+        ; Affiche le resultat de l'expression Lisp
+        (print (list "Le resultat de l'expression `" exprLisp "` est : " (get-register-value vm 'R0)))) 
 ;; ######################################################## ;;

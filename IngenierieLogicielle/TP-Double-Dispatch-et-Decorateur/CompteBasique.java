@@ -6,7 +6,7 @@ public class CompteBasique extends AbstractCompte {
     }
 
     public double prixLocation(Produit produit) {
-        return produit.getPrix();
+        return produit.prixLocation();
     }
 
     public Client getClient() {

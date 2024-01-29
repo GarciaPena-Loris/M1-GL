@@ -135,4 +135,4 @@
 ;TEST -FIBO:
 ; (eval-li (lisp2li '(defun fibonae (n) (if (< n 2) n (+ (fibonae (- n 1)) (fibonae (- n 2)))))'() ) ())
 ; (eval-li (lisp2li '(defun fibonae (n) (if (< n 2) n (+ (fibonae (- n 1)) (fibonae (- n 2)))))'() ) ())
-; (eval-li (lisp2li '(fibonae 6) '()) ())
+(eval-li (lisp2li '(fibonae 12) '()) ())

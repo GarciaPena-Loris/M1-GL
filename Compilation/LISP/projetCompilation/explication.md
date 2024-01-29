@@ -9,6 +9,7 @@
   - BP (Base Pointer) : Indique le début de la pile d'exécution.
   - SP (Stack Pointer) : Indique le sommet de la pile d'exécution.
   - PC (Program Counter) : Contient le compteur de programme ou compteur ordinal.
+  - PCO (Counter Ordinal)
 
 - **Registre de Cadre (Introduit ultérieurement) :**
   - FP (Frame Pointer) : Pointeur de cadre utilisé pour structurer les blocs de la pile.

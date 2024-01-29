@@ -15,8 +15,8 @@ public class Produit {
         return prix;
     }
 
-    public double prixLocation(Compte compte) {
-        return compte.prixLocation(this);
+    public double prixLocation() {
+        return getPrix();
     }
 
     @Override

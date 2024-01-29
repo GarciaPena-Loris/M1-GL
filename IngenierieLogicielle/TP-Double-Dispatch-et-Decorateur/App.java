@@ -5,13 +5,13 @@ public class App {
         Produit lgv = new Produit("La grande vadrouille", 20);
         System.out.println(lgv);
         Compte cmt1 = new Compte(cl);
-        System.out.println("Compte : " + cmt1.prixLocation(lgv));
+        System.out.println("CompteNormal + ProduitNormal : " + cmt1.prixLocation(lgv));
         Compte cmt2 = new CompteAvecReduction(cl, 0.1);
-        System.out.println("CompteReduction (10%): " + cmt2.prixLocation(lgv));
+        System.out.println("CompteReduction (10%) + ProduitNormal : " + cmt2.prixLocation(lgv));
         Compte cmt3 = new CompteAvecSeuil(cl, 2);
-        System.out.println("CompteSeuil Seuil1: " + cmt3.prixLocation(lgv));
-        System.out.println("CompteSeuil Seuil2 " + cmt3.prixLocation(lgv));
-        System.out.println("CompteSeuil Seuil3 " + cmt3.prixLocation(lgv)); // doit afficher 0
+        System.out.println("CompteSeuil Seuil1 + ProduitNormal : " + cmt3.prixLocation(lgv));
+        System.out.println("CompteSeuil Seuil2 + ProduitNormal : " + cmt3.prixLocation(lgv));
+        System.out.println("CompteSeuil Seuil3 + ProduitNormal : " + cmt3.prixLocation(lgv)); // doit afficher 0
         Produit r4 = new ProduitSolde("RockyIV", 10.0, 0.5);
         System.out.println(r4);
         System.out.println("CompteNormal + ProduitSolde (50%) : " + cmt1.prixLocation(r4));
@@ -53,6 +53,23 @@ public class App {
         System.out.println("Seuil1 + Reduction + Solde (Expendable 4) : " + cmt.prixLocation(e4));
         System.out.println("Seuil2 + Reduction + Solde (Expendable 4) : " + cmt.prixLocation(e4));
         System.out.println("Seuil3 + Reduction + Solde (Expendable 4) : " + cmt.prixLocation(e4));
+
+        // Dupont achete un forfait réduction.
+        cmt = new ForfaitReduction(cmt, 0.2);
+        System.out.println("réduction (Expendable 4) : " + cmt.prixLocation(e4));
+        
+        cmt = new ForfaitReduction(cmt, 0.2);
+        System.out.println("réduction (Expendable 4) : " + cmt.prixLocation(e4));
+
+        cmt = new ForfaitReduction(cmt, 0.2);
+        System.out.println("réduction (Expendable 4) : " + cmt.prixLocation(e4));
+
+        cmt = new ForfaitReduction(cmt, 0.2);
+        System.out.println("réduction (Expendable 4) : " + cmt.prixLocation(e4));
+        
+        
+        // affiche l'instance de cmt
+        System.out.println(cmt);
 
     }
 }
