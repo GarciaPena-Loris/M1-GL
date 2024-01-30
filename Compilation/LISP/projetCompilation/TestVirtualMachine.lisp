@@ -1,9 +1,11 @@
 (require "VirtualMachine.lisp")
 
+; ########### Fonction de creation d'une machine vitruelle ###########
 (defun create-vm-instance (size) ; Fonction de creation d'une instance de la machine virtuelle
     (let ((vm))
         (init-vm vm size)  ; Initialisation de la machine virtuelle
     vm))
+; ################################################## ;;
 
 ;; ########### Fonction de test getter and setter ###########
 ;; Fonction de test pour les getter et setter de la machine virtuelle
@@ -45,23 +47,23 @@
     (format t "- Test des tables de hachage~%")
     ;; Test des fonctions liees aux tables de hachage des etiquettes resolues
     (let ((vm (create-vm-instance 100)))
-    (format t "   Etat initial de la table des etiquettes resolues : ~A~%" (state-hashTab-etq-resolu vm))
+    (format t "   Etat initial de la table des etiquettes resolues : ~A~%" (state-hashTab-label-resolu vm))
     
     ;; Test de l'ajout et de l'acces a une valeur dans la table des etiquettes resolues
-    (set-hashTab-etq-resolu vm 'LABEL1 10)
-    (format t "   Etat de la table des etiquettes resolues apres ajout : ~A~%" (state-hashTab-etq-resolu vm))
-    (format t "   Valeur associee a LABEL1 dans la table des etiquettes resolues : ~A~%" (get-hashTab-etq-resolu-val vm 'LABEL1)))
+    (set-hashTab-label-resolu vm '(LABEL1) 10)
+    (format t "   Etat de la table des etiquettes resolues apres ajout : ~A~%" (state-hashTab-label-resolu vm))
+    (format t "   Valeur associee a LABEL1 dans la table des etiquettes resolues : ~A~%" (get-hashTab-label-resolu-val vm '(LABEL1))))
 
     ;; Test des fonctions liees aux tables de hachage des etiquettes non resolues
     (let ((vm (create-vm-instance 100)))
-    (format t "   Etat initial de la table des etiquettes non resolues : ~A~%" (state-hashTab-etq-non-resolu vm))
+    (format t "   Etat initial de la table des etiquettes non resolues : ~A~%" (state-hashTab-label-non-resolu vm))
     
     ;; Test de l'ajout et de l'acces a une valeur dans la table des etiquettes non resolues
-    (set-hashTab-etq-non-resolu vm 'LABEL2 20)
-    (format t "   Etat de la table des etiquettes non resolues apres ajout : ~A~%" (state-hashTab-etq-non-resolu vm))
-    (format t "   Valeur associee a LABEL2 dans la table des etiquettes non resolues : ~A~%" (get-hashTab-etq-non-resolu-val vm 'LABEL2)))
+    (set-hashTab-label-non-resolu vm '(LABEL2) 20)
+    (format t "   Etat de la table des etiquettes non resolues apres ajout : ~A~%" (state-hashTab-label-non-resolu vm))
+    (format t "   Valeur associee a LABEL2 dans la table des etiquettes non resolues : ~A~%" (get-hashTab-label-non-resolu-val vm '(LABEL2))))
     
-    (format t "### Tests reussis pour les getters et setters de la machine virtuelle ###~%")
+    (format t "### Tests reussis pour les getters et setters de la machine virtuelle ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 
 ;; ################################################## ;;
@@ -75,52 +77,20 @@
     (let ((vm (create-vm-instance 100)))
     
     ;; Test de l'ajout d'une etiquette et de l'acces a sa valeur dans la table des etiquettes resolues
-    (label-vm vm 'LABEL1)
+    (label-vm vm '(LABEL1))
     (incr-vm vm 'PCc)
-    (format t "Adresse associee a LABEL1 dans la table des etiquettes resolues : ~A~%" (get-hashTab-etq-resolu-val vm 'LABEL1))
+    (format t "Adresse associee a LABEL1 dans la table des etiquettes resolues : ~A~%" (get-hashTab-label-resolu-val vm 'LABEL1))
     
     ;; Test de l'ajout d'une etiquette et de l'acces a sa valeur dans la table des etiquettes non resolues
-    (label-vm vm 'LABEL2)
+    (label-vm vm '(LABEL2))
     (incr-vm vm 'PCc)
-    (format t "Adresse associee a LABEL2 dans la table des etiquettes resolues : ~A~%" (get-hashTab-etq-resolu-val vm 'LABEL2))
+    (format t "Adresse associee a LABEL2 dans la table des etiquettes resolues : ~A~%" (get-hashTab-label-resolu-val vm 'LABEL2))
     
     ;; Test de la reutilisation d'une etiquette deja presente dans la table des etiquettes resolues
-    (label-vm vm 'LABEL1)
-    (format t "Adresse associee a LABEL1 apres reutilisation : ~A~%" (get-hashTab-etq-resolu-val vm 'LABEL1))
+    (label-vm vm '(LABEL1))
+    (format t "Adresse associee a LABEL1 apres reutilisation : ~A~%" (get-hashTab-label-resolu-val vm 'LABEL1))
 
-    (format t "### Tests reussis pour la fonction label-vm et les etiquettes ###~%")
-    t)) ; La fonction renvoie t si le test reussit, nil sinon
-;; ################################################## ;;
-
-;; ########### Fonction de test pour STORE ###########
-; Fonction de test pour la fonction store-vm
-(defun test-store-vm ()
-    (format t "### Test store-vm ###~%")
-    (let ((vm (create-vm-instance 100))) ; Cree une machine virtuelle de taille 100
-    (init-vm vm 100) ; Initialise la machine virtuelle
-
-    ; # Test avec des registres
-    (format t "- Stocke la valeur du registre R0 a l'adresse memoire 20~%")
-    (set-register-value vm 'R0 50) ; Initialise le registre R0 avec une valeur
-    (format t "   Valeur du registre R0 : ~A~%" (get-register-value vm 'R0))
-    (store-vm vm 'R0 20) ; Stocke la valeur du registre R0 a l'adresse memoire 20
-    (if (not (= (aref (get-memoire-vm vm) 20) 50))
-        (return-from test-store-vm nil)) ; Echec du test
-    (format t "   Valeur a l'adresse memoire 20 : ~A~%" (aref (get-memoire-vm vm) 20))
-
-    ; # Test avec des adresses memoire specifiques (hors limites)
-    (format t "- Stocke la valeur du registre R0 a l'adresse memoire 150 (hors limite)~%")
-    (store-vm vm 'R0 150) ; Stocke la valeur du registre R0 a l'adresse memoire 150 (hors limite)
-    ; Le test devrait afficher un avertissement, vous pouvez ajuster le test en consequence
-
-    ; # Test avec des registres a registres
-    (format t "- Stocke la valeur du registre R0 dans le registre R1~%")
-    (store-vm vm 'R0 'R1) ; Stocke la valeur du registre R0 dans le registre R1
-    (if (not (= (get-register-value vm 'R1) 50))
-        (return-from test-store-vm nil)) ; Echec du test
-    (format t "   Valeur du registre R1 : ~A~%" (get-register-value vm 'R1))
-
-    (print "### Test store-vm passe avec succes ###")
+    (format t "### Tests reussis pour la fonction label-vm et les etiquettes ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -163,7 +133,7 @@
     (format t "- Additionne la valeur du registre R1 avec une expression mal formee~%")
     (add-vm vm '(:LIT) 'R1)
 
-    (format t "### Tests reussis pour la fonction add-vm ###~%")
+    (format t "### Tests reussis pour la fonction add-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -206,7 +176,7 @@
     (format t "- Soustrait la valeur du registre R1 avec une expression mal formee~%")
     (sub-vm vm '(:LIT) 'R1)
 
-    (format t "### Tests reussis pour la fonction sub-vm ###~%")
+    (format t "### Tests reussis pour la fonction sub-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -249,7 +219,7 @@
     (format t "- Multiplie la valeur du registre R1 avec une expression mal formee~%")
     (mul-vm vm '(:LIT) 'R1)
 
-    (format t "### Tests reussis pour la fonction mul-vm ###~%")
+    (format t "### Tests reussis pour la fonction mul-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -299,7 +269,7 @@
     (format t "- Divise la valeur du registre R1 avec une expression mal formee~%")
     (div-vm vm '(:LIT) 'R1)
     
-    (format t "### Tests reussis pour la fonction div-vm ###~%")
+    (format t "### Tests reussis pour la fonction div-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -334,7 +304,7 @@
         (return-from test-incr-vm nil)) ; Echec du test
     (format t "   Valeur du registre PC : ~A~%" (get-register-value vm 'PC))
     
-    (format t "### Tests reussis pour la fonction incr-vm ###~%")
+    (format t "### Tests reussis pour la fonction incr-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -369,7 +339,7 @@
         (return-from test-decr-vm nil)) ; Echec du test
     (format t "   Valeur du registre PC : ~A~%" (get-register-value vm 'PC))
     
-    (format t "### Tests reussis pour la fonction decr-vm ###~%")
+    (format t "### Tests reussis pour la fonction decr-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -428,7 +398,14 @@
         (format t "- Tentative de stocker a une adresse memoire hors limite~%")
         (store-vm vm 'R0 1000) ; Devrait afficher un avertissement
 
-    (format t "### Tests reussis pour la fonction store-vm ###~%")
+        ; # Test 7: Test avec des litteraux
+        (format t "- Stocke la valeur 5 a l'adresse memoire 42~%")
+        (store-vm vm '(:LIT . 5) '(:LIT . 42)) ; Stocke la valeur 5 a l'adresse memoire 42
+        (if (not (= (aref (get-memoire-vm vm) 42) 5))
+            (return-from test-store-vm nil)) ; Echec du test
+        (format t "   Valeur a l'adresse memoire 5 : ~A~%" (aref (get-memoire-vm vm) 5))
+
+    (format t "### Tests reussis pour la fonction store-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -477,7 +454,15 @@
         (format t "- Tentative de chargement a une adresse memoire hors limite~%")
         (load-vm vm 1000 'R0) ; Devrait afficher un avertissement
 
-    (format t "### Tests reussis pour la fonction load-vm ###~%")
+        ;; Test 5: Charger la valeur (LIT . 5) dans le registre R0
+        (format t "- Charger la valeur <LIT . 5> dans le registre R0~%")
+        (store-vm vm 50 5) ; Met une valeur quelconque a l'adresse 50 pour les tests
+        (load-vm vm '(:LIT . 5) 'R1)
+        (if (not (= (get-register-value vm 'R1) 50))
+            (return-from test-load-vm nil)) ; Echec du test
+        (format t "   Valeur dans le registre R1 : ~A~%" (get-register-value vm 'R1))
+
+    (format t "### Tests reussis pour la fonction load-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -526,7 +511,7 @@
         ;; Test 5: Deplacement dans une constante (non supporte)
         (format t "- Deplacement dans une constante (non supporte)~%")
         (move-vm vm 'R0 '(:CONST . 50))
-    (format t "### Tests reussis pour la fonction move-vm ###~%")
+    (format t "### Tests reussis pour la fonction move-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -590,7 +575,7 @@
     (format t "   Valeur du registre SP : ~A~%" (get-register-value vm 'SP))
     (format t "   Valeur memoire a l'adresse SP : ~A~%" (get-etat-element-memoire-vm vm (get-register-value vm 'SP)))
 
-    (format t "### Tests reussis pour la fonction push-vm ###~%")
+    (format t "### Tests reussis pour la fonction push-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -647,7 +632,7 @@
         (format t "   Valeur du registre R0 : ~A~%" (get-register-value vm 'R0))
         (format t "   Valeur du registre SP : ~A~%" (get-register-value vm 'SP))
 
-    (format t "### Tests reussis pour la fonction pop-vm ###~%")
+    (format t "### Tests reussis pour la fonction pop-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ################################################## ;;
 
@@ -671,13 +656,13 @@
         ;; Test 2: Saut inconditionnel vers une etiquette (mode etiquette)
         (format t "- Saut inconditionnel vers une etiquette (mode etiquette)~%")
         (set-register-value vm 'PCc 25)
-        (label-vm vm 'etiquette1)
+        (label-vm vm '(etiquette1))
         (jump-vm vm 'etiquette1)
         (if (not (= (get-register-value vm 'PC) 25))
             (return-from test-jump-vm nil)) ; Échec du test
         (format t "   Valeur du registre PC apres le saut : ~A~%" (get-register-value vm 'PC))
     
-    (format t "### Tests reussis pour la fonction jump-vm ###~%")
+    (format t "### Tests reussis pour la fonction jump-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -694,7 +679,7 @@
         ;; Test 1: Saut avec sauvegarde de l'adresse courante sur la pile
         (format t "- Saut avec sauvegarde de l'adresse courante sur la pile~%")
         (set-register-value vm 'PCc 25)
-        (label-vm vm 'etiquette1)
+        (label-vm vm '(etiquette1))
         (jsr-vm vm 'etiquette1)
         (if (not (= (get-etat-element-memoire-vm vm 201) 101))
             (return-from test-jsr-vm nil)) ; Échec du test
@@ -703,7 +688,7 @@
         (format t "   Valeur memoire a l'adresse 201 : ~A~%" (get-etat-element-memoire-vm vm 201))
         (format t "   Valeur du registre PC apres le saut : ~A~%" (get-register-value vm 'PC))
     
-    (format t "### Tests reussis pour la fonction jsr-vm ###~%")
+    (format t "### Tests reussis pour la fonction jsr-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -733,7 +718,7 @@
             (return-from test-rtn-vm nil)) ; Échec du test
         (format t "   Valeur du registre SP apres le retour : ~A~%" (get-register-value vm 'SP))
 
-    (format t "### Tests reussis pour la fonction rtn-vm ###~%")
+    (format t "### Tests reussis pour la fonction rtn-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -769,7 +754,7 @@
             (return-from test-cmp-vm nil)) ; Échec du test
         (format t "   Valeur du drapeau FGT : ~A~%" (get-flag-value vm 'FGT))
 
-    (format t "### Tests reussis pour la fonction cmp-vm ###~%")
+    (format t "### Tests reussis pour la fonction cmp-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -795,7 +780,7 @@
             (return-from test-test-vm nil)) ; Échec du test
         (format t "   Valeur du drapeau FNIL : ~A~%" (get-flag-value vm 'FNIL))
 
-    (format t "### Tests reussis pour la fonction test-vm ###~%")
+    (format t "### Tests reussis pour la fonction test-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -804,7 +789,7 @@
     (format t "### Test de la fonction nop-vm ###~%")
     ;; Creation de la machine virtuelle
     (let ((vm (create-vm-instance 600)))
-        (format t "### Tests reussis pour la fonction nop-vm ###~%")
+        (format t "### Tests reussis pour la fonction nop-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -822,7 +807,7 @@
         (format t "   Valeur du registre PC : ~A~%" (get-register-value vm 'PC))
 
 
-        (format t "### Tests reussis pour la fonction halt-vm ###~%")
+        (format t "### Tests reussis pour la fonction halt-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -851,7 +836,7 @@
             (return-from test-vm-apply nil)) ; Échec du test
         (format t "   Resultat de l'addition dans le registre R0 : ~A~%" (get-register-value vm 'R0))
 
-    (format t "### Tests reussis pour la fonction vm-apply ###~%")
+    (format t "### Tests reussis pour la fonction vm-apply ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
@@ -883,7 +868,7 @@
         ; Affiche les 1 premiere emplacement de ma memoire6
         (format t "   Memoire : ~A~%" (subseq (get-memoire-vm vm) 2 6))
 
-    (format t "### Tests reussis pour le chargeur de la machine virtuelle ###~%")
+    (format t "### Tests reussis pour le chargeur de la machine virtuelle ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ; ######################################################### ;;
 
@@ -895,57 +880,95 @@
 
         ;; Test 1: Execution d'un programme simple
         (format t "- Execution d'un programme simple~%")
-        (let ((programme-simple '((LOAD (LIT . 5) R0) ; Charge la valeur 5 dans R0
-                                (STORE R0 (LIT . 0)) ; Stocke la valeur de R0 a l'adresse 0
+        (let ((programme-simple '((STORE (:LIT . 42) (:LIT . 5)) ; Stocke la valeur 42 a l'adresse 5
+                                (LOAD (:LIT . 5) R0) ; Charge la valeur a l'adresse 5 dans R0
                                 (HALT))))
         (execute-vm vm programme-simple)
         ;; Verifiez ici les resultats en fonction de la logique de votre programme simple
+        (if (not (= (get-register-value vm 'R0) 42))
+            (return-from test-execute-vm nil)) ; Échec du test
         (format t "   Succes du test~%"))
+
+        (reset-vm vm 600) ; Reinitialise la machine virtuelle pour le prochain test
 
         ;; Test 2: Execution d'un programme avec des sauts conditionnels
         (format t "- Execution d'un programme avec des sauts conditionnels~%")
-        (let ((programme-sauts '((LOAD (LIT . 5) R0) ; Charge la valeur 5 dans R0
-                                (LOAD (LIT . 10) R1) ; Charge la valeur 10 dans R1
+        (let ((programme-sauts '((STORE (:LIT . 888) (:LIT . 20)) ; Stocke la valeur 888 a l'adresse 20
+                                (STORE (:LIT . 999) (:LIT . 21)) ; Stocke la valeur a l'adresse 20 a l'adresse 10
+                                (LOAD (:LIT . 20) R0) ; Charge la valeur 20 dans R0
+                                (LOAD (:LIT . 21) R1) ; Charge la valeur 10 dans R1
                                 (CMP R0 R1) ; Compare R0 et R1
-                                (JGE :LABEL1) ; Saut a :LABEL1 si R0 >= R1
-                                (LOAD (LIT . 100) R2) ; Charge la valeur 100 dans R2
-                                :LABEL1
-                                (STORE R2 (LIT . 0)) ; Stocke la valeur de R2 a l'adresse 0
+                                (JGE LABEL1) ; Saut a :LABEL1 si R0 >= R1
+                                (STORE 1 (:LIT . 100)) ; Charge la valeur dans R0
+                                (LOAD (:LIT . 100) R0) ; Charge la valeur 1 a l'adresse 100
+                                (HALT)
+                                (LABEL LABEL1) ; Label :LABEL1
+                                (STORE 0 (:LIT . 100)) ; Charge la valeur 0 a l'adresse 100
+                                (LOAD (:LIT . 100) R0) ; Charge la valeur dans R0
                                 (HALT))))
         (execute-vm vm programme-sauts)
         ;; Verifiez ici les resultats en fonction de la logique de votre programme avec des sauts conditionnels
+        (if (not (= (get-register-value vm 'R0) 1))
+            (return-from test-execute-vm nil)) ; Échec du test
         (format t "   Succes du test~%"))
 
-        ;; Ajoutez d'autres tests en fonction des fonctionnalites de votre machine virtuelle
-
-    (format t "### Tests reussis pour la fonction execute-vm ###~%")
+    ;(format t "### Tests reussis pour la fonction execute-vm ###~%~%")
     t)) ; La fonction renvoie t si le test reussit, nil sinon
 ;; ######################################################### ;;
 
 
 ;; ~~~~~~~~~~~~~~~~~~~~~~ Appel des fonctions test ~~~~~~~~~~~~~~~~~~~~~~ ;;
-;(test-getters-setters-vm)
-;(test-label-vm)
-;(test-store-vm)
-;(test-add-vm)
-;(test-sub-vm)
-;(test-mul-vm)
-;(test-div-vm)
-;(test-incr-vm)
-;(test-decr-vm)
-;(test-store-vm)
-;(test-load-vm)
-;(test-move-vm)
-;(test-push-vm)
-;(test-pop-vm)
-;(test-jump-vm)
-;(test-jsr-vm)
-;(test-rtn-vm)
-;(test-cmp-vm)
-;(test-test-vm)
-;(test-nop-vm)
-;(test-halt-vm)
-;(test-apply-vm)
-;(test-chargeur-asm-vm)
-(test-execute-vm)
+(defun run-all-tests ()
+    (format t "~~~~~~~~~~~~~~~~~~~~~~ Lancement des tests ~~~~~~~~~~~~~~~~~~~~~~~%")
+    (let ((total-tests 0)
+        (passed-tests 0)
+        (failed-tests '()))
+
+    ; Fonction pour executer un test et enregistrer le resultat
+    (defun run-test (test-function)
+        (incf total-tests)
+        (if (funcall test-function)
+            (incf passed-tests)
+            (push test-function failed-tests)))
+
+    ; Executer tous les tests
+    (run-test 'test-getters-setters-vm)
+    (run-test 'test-label-vm)
+    (run-test 'test-add-vm)
+    (run-test 'test-sub-vm)
+    (run-test 'test-mul-vm)
+    (run-test 'test-div-vm)
+    (run-test 'test-incr-vm)
+    (run-test 'test-decr-vm)
+    (run-test 'test-store-vm)
+    (run-test 'test-load-vm)
+    (run-test 'test-move-vm)
+    (run-test 'test-push-vm)
+    (run-test 'test-pop-vm)
+    (run-test 'test-jump-vm)
+    (run-test 'test-jsr-vm)
+    (run-test 'test-rtn-vm)
+    (run-test 'test-cmp-vm)
+    (run-test 'test-test-vm)
+    (run-test 'test-nop-vm)
+    (run-test 'test-halt-vm)
+    (run-test 'test-apply-vm)
+    (run-test 'test-chargeur-asm-vm)
+    (run-test 'test-execute-vm)
+
+    (format t "~~~~~~~~~~~~~~~~~~~~~~ Fin des tests ~~~~~~~~~~~~~~~~~~~~~~~%~%")
+
+    ; Afficher le resultat global
+    (format t "Tests passes ~A/~A~%" passed-tests total-tests)
+
+    ; Afficher les tests echoues
+    (when failed-tests
+        (format t "Tests echoues : ~A~%" failed-tests))
+
+    ; Renvoyer vrai si tous les tests ont reussi, faux sinon
+    (= passed-tests total-tests)))
 ;; ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ;;
+
+; Executer tous les tests et afficher le resultat
+(run-all-tests)
+

@@ -390,7 +390,7 @@
   (if (consp label)
     (setf label (car label)))
   (if (not (vm_get_hashTab_etq_resolu_val vm label))
-   (vm_set_hashTab_etq_resolu vm label (vm_get_register vm 'PCO))))
+    (vm_set_hashTab_etq_resolu vm label (vm_get_register vm 'PCO))))
 
 
 ; (JMP <label>)     = saut inconditionnel à une étiquette ou une adresse

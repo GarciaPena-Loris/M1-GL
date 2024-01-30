@@ -157,6 +157,24 @@
     (set-flag-off vm 'FNIL) ; Initialise le drapeau FNIL
     (init-hashTab-label-resolu vm) ; Initialise la table des references resolues
     (init-hashTab-label-non-resolu vm)) ; Initialise la table des references non resolues
+
+(defun reset-vm (vm size)
+    (set-memoire-vm vm size) ; Reinitialise la memoire
+    (set-register-value vm 'R0 0) ; Reinitialise le registre R0
+    (set-register-value vm 'R1 0) ; Reinitialise le registre R1
+    (set-register-value vm 'R2 0) ; Reinitialise le registre R2
+    (set-register-value vm 'SP (floor (/ size 10))) ; Reinitialise le registre du Stack Pointer
+    (set-register-value vm 'BP (floor (/ size 10))) ; Reinitialise le registre du Base Pointer
+    (set-register-value vm 'PC 0) ; Reinitialise le registre du Program Counter
+    (set-register-value vm 'FP (floor (/ size 10))) ; Reinitialise le registre du Frame Pointer
+    (set-register-value vm 'PCc 0) ; Reinitialise le registre du Program Counter Offset
+    (set-register-value vm 'MAXPILE (floor (* size 0.8))) ; Reinitialise le registre du Max Pile
+    (set-flag-off vm 'FLT) ; Reinitialise le drapeau FLT
+    (set-flag-off vm 'FEQ) ; Reinitialise le drapeau FEQ
+    (set-flag-off vm 'FGT) ; Reinitialise le drapeau FGT
+    (set-flag-off vm 'FNIL) ; Reinitialise le drapeau FNIL
+    (clrhash (get-hashTab-label-resolu vm)) ; Reinitialise la table des references resolues
+    (clrhash (get-hashTab-label-non-resolu vm))) ; Reinitialise la table des references non resolues
 ;; ################################################## ;;
 
 
@@ -177,9 +195,11 @@
 ;; --- Instructions de manipulation des REGISTRES --- ;;
 ; # LOAD : Charge le contenu de l'adresse <src> en memoire dans le registre <dest>
 (defun load-vm (vm src dest)
-        (let* ((src-address (if (check-register-presence src)
-                            (get-register-value vm src) ; Si src est un registre, recupere sa valeur
-                            (eval-li src vm))) ; Si src est une expression, evalue l'expression
+        (let* ((src-address (cond
+                        ((check-register-presence src) (get-register-value vm src)) ; Si src est un registre, recupere sa valeur
+                        ((and (listp src) (eq (car src) ':CONST)) (cdr src)) ; Si src est une constante, recupere sa valeur
+                        ((and (listp src) (eq (car src) ':LIT)) (cdr src)) ; Si src est une expression <:LIT . entier>, recupere la valeur entiere
+                        (t (eval-li src vm)))) ; Si src est une expression, evalue l'expression
             (dest-register (if (check-register-presence dest)
                                 dest ; Si dest est un registre, recupere sa valeur
                                 (warn "LOAD : dest '~s' n'est pas un registre !" dest)))) ; Si dest n'est pas un registre, affiche un avertissement
@@ -195,10 +215,13 @@
     (let* ((src-value (cond ; Verifie si src est un registre, une constante ou une expression
                         ((check-register-presence src) (get-register-value vm src)) ; Si src est un registre, recupere sa valeur
                         ((and (listp src) (eq (car src) ':CONST)) (cdr src)) ; Si src est une constante, recupere sa valeur
+                        ((and (listp src) (eq (car src) ':LIT)) (cdr src)) ; Si src est une expression <:LIT . entier>, recupere la valeur entiere
                         (t (eval-li src vm)))) ; Si src est une expression, evalue l'expression
-            (dest-address (if (check-register-presence dest)
-                            (get-register-value vm dest) ; Si dest est un registre, recupere sa valeur
-                            (eval-li dest vm)))) ; Si dest est une expression, evalue l'expression
+            (dest-address (cond ; Verifie si dest est un registre, une constante ou une expression
+                        ((check-register-presence dest) (get-register-value vm dest)) ; Si dest est un registre, recupere sa valeur
+                        ((and (listp dest) (eq (car dest) ':CONST)) (cdr dest)) ; Si dest est une constante, recupere sa valeur
+                        ((and (listp dest) (eq (car dest) ':LIT)) (cdr dest)) ; Si dest est une expression <:LIT . entier>, recupere la valeur entiere
+                        (t (eval-li dest vm))))) ; Si dest est une expression, evalue l'expression
     ;(format t "STORE : src-value = ~s, dest-address = ~s~%" src-value dest-address)
     (if (and (integerp dest-address) (<= 0 dest-address (- (get-taille-memoire-vm vm) 1))) 
         ; Verifie si dest-address est une adresse memoire dans les limites
@@ -211,7 +234,7 @@
     (let* ((src-value (cond ; Verifie si src est un registre, une constante ou une expression
                         ((check-register-presence src) (get-register-value vm src)) ; Si src est un registre, recupere sa valeur
                         ((and (listp src) (eq (car src) ':CONST)) (cdr src)) ; Si src est une constante, recupere sa valeur
-                        ; cas valeur atomique
+                        ((and (listp src) (eq (car src) ':LIT)) (cdr src)) ; Si src est une expression <:LIT . entier>, recupere la valeur entiere
                         ((integerp src) src) ; Si src est un entier, recupere sa valeur
                         (src))) ; Sinon on recupere simplement la valeur de src
             (dest-register (if (check-register-presence dest)
@@ -388,10 +411,13 @@
     ; Verifie si label est un symbole (nom de l'etiquette)
     (if (consp label)
         (progn
+            (setf label (car label)) ; Recupere le nom de l'etiquette
             ; Utilise le nom de l'etiquette comme cle pour la table de hachage
             (unless (get-hashtab-label-resolu-val vm label)
             ; Definit l'adresse de l'etiquette dans le registre PCc
             (set-hashtab-label-resolu vm label (get-register-value vm 'PCc)))
+            ; Valeur de la table
+            ;(format t "LABEL : label: '~s', valeur: '~s'~%" label (get-hashtab-label-resolu-val vm label))
         )
         (warn "LABEL : label '~s' n'est pas un symbole (nom de l'etiquette) !" label)))
 
@@ -401,7 +427,8 @@
     (if (integerp dest)
         (move-vm vm dest 'PC)   ; Si dest est une adresse, on deplace la valeur de dest dans PC
         (if (get-hashtab-label-resolu-val vm dest)
-            (move-vm vm (get-hashtab-label-resolu-val vm dest) 'PC))))   ; Si dest est une etiquette, on deplace la valeur de label dans PC
+            (move-vm vm (get-hashtab-label-resolu-val vm dest) 'PC) ; Si dest est une etiquette, on deplace la valeur de label dans PC
+            (warn "JMP : dest '~s' n'est ni une adresse ni une etiquette !" dest))))
 
     
 ; # JSR : Saut vers une sous-routine dans la machine virtuelle
@@ -446,40 +473,34 @@
 ; # JGT : Saut si le drapeau FGT est active 'Greater Than' (!FEQ !FLT FGT)
 (defun jgt-vm (vm label)
     (if (and (not (get-flag-value vm 'FEQ)) (not (get-flag-value vm 'FLT)) (get-flag-value vm 'FGT))
-        (jump-vm vm label)
-        (incr-vm vm 'PC)))
+        (jump-vm vm label)))
 
 ; # JGE : Saut si le drapeau FGT ou FEQ est active 'Greater or Equal' (FEQ !FLT FGT)
 (defun jge-vm (vm label)
     (if (and (not (get-flag-value vm 'FLT))
     (or (get-flag-value vm 'FEQ) (get-flag-value vm 'FGT)))
-        (jump-vm vm label)
-        (incr-vm vm 'PC)))
+        (jump-vm vm label)))
 
 ; # JLT : Saut si le drapeau FLT est active 'Lesser Than' (!FEQ !FGT FLT)
 (defun jlt-vm (vm label)
     (if (and (not (get-flag-value vm 'FEQ)) (not (get-flag-value vm 'FGT)) (get-flag-value vm 'FLT))
-        (jump-vm vm label)
-        (incr-vm vm 'PC)))
+        (jump-vm vm label)))
 
 ; # JLE : Saut si le drapeau FLT ou FEQ est active 'Lesser or Equal' (FEQ !FGT FLT)
 (defun jle-vm (vm label)
     (if (and (not (get-flag-value vm 'FGT))
     (or (get-flag-value vm 'FEQ) (get-flag-value vm 'FLT)))
-        (jump-vm vm label)
-        (incr-vm vm 'PC)))
+        (jump-vm vm label)))
 
 ; # JEQ : Saut si le drapeau FEQ est active 'Equal' (FEQ !FGT !FLT)
 (defun jeq-vm (vm label)
     (if (and (not (get-flag-value vm 'FLT)) (not (get-flag-value vm 'FGT)) (get-flag-value vm 'FEQ))
-        (jump-vm vm label)
-        (incr-vm vm 'PC)))
+        (jump-vm vm label)))
 
 ; # JNE : Saut si le drapeau FEQ n'est pas active 'Not Equal' (!FEQ FGT FLT)
 (defun jne-vm (vm label)
     (if (not (get-flag-value vm 'FEQ))
-        (jump-vm vm label)
-        (incr-vm vm 'PC)))
+        (jump-vm vm label)))
 ;; -------------------------------------------------- ;;
 
 ;; --- Inscrutction de comparaison de NIL --- ;;
@@ -513,6 +534,7 @@
 
 ; # HALT : Arrete l'execution de la machine virtuelle
 (defun halt-vm (vm)
+    (format t "HALT : Fin de l'execution de la machine virtuelle~%")
     (set-register-value vm 'PC -1))
 ;; -------------------------------------------------- ;;
 ;; ################################################## ;;
@@ -600,10 +622,10 @@
 ;; Definition de la fonction exec-vm qui execute la machine virtuelle
 (defun execute-vm (vm exprLisp)
     (move-vm vm 'PCc 'PC)     ; Initialisation du compteur de programme
-    (format t "lisp -> ~s~%" exprLisp)
-    (format t "PCc -> ~s~%" (get-register-value vm 'PCc))
-    (format t "PC -> ~s~%" (get-register-value vm 'PC))
     (chargeur-asm-vm vm exprLisp)  ; Chargement du programme en memoire
+    ;(format t "lisp -> ~s~%" exprLisp)
+    ;(format t "PCc -> ~s~%" (get-register-value vm 'PCc))
+    ;(format t "PC -> ~s~%" (get-register-value vm 'PC))
     ; Execution du programme
     (loop
         ; Condition de sortie : tant que le drapeau FNIL est OFF
@@ -612,8 +634,10 @@
         ; Execution de l'instruction a l'adresse PC
         (progn
             (load-vm vm 'PC 'R2)  ; Charger l'instruction dans le registre R2
+            ;(format t "PC -> ~s~%" (get-register-value vm 'PC))
             (let ((fonction (car (get-register-value vm 'R2))) ; Extraire le nom de la fonction
                 (args (cdr (get-register-value vm 'R2)))) ; Extraire les arguments de la fonction
+                ;(format t "Fonction -> {~s}, Arguments -> {~s}~%" fonction args)
             ; Appel de la fonction correspondante a l'instruction
             (cond
                 ((equal fonction 'LOAD) 
@@ -679,42 +703,47 @@
                 ((equal fonction 'CMP) 
                     (progn 
                         (cmp-vm vm (first args) (second args))
-                        (incr-vm vm 'PC))) ; CMP
+                        (incr-vm vm 'PC)
+                        ; Afficher les drapeaux
+                        ;(format t "FEQ -> ~s~%" (get-flag-value vm 'FEQ))
+                        ;(format t "FGT -> ~s~%" (get-flag-value vm 'FGT))
+                        ;(format t "FLT -> ~s~%" (get-flag-value vm 'FLT))
+                        )) ; CMP
                 ((equal fonction 'JGT) 
                     (progn 
-                        (jgt-vm vm fonction)
+                        (jgt-vm vm (first args))
                         (incr-vm vm 'PC))) ; JGT (Plus grand que)
                 ((equal fonction 'JGE) 
                     (progn 
-                        (jge-vm vm fonction)
+                        (jge-vm vm (first args))
                         (incr-vm vm 'PC))) ; JGE (Plus grand ou egal)
                 ((equal fonction 'JLT) 
                     (progn 
-                        (jlt-vm vm fonction)
+                        (jlt-vm vm (first args))
                         (incr-vm vm 'PC))) ; JLT (Plus petit que)
                 ((equal fonction 'JLE) 
                     (progn 
-                        (jle-vm vm fonction)
+                        (jle-vm vm (first args))
                         (incr-vm vm 'PC))) ; JLE (Plus petit ou egal)
                 ((equal fonction 'JEQ) 
                     (progn 
-                        (jeq-vm vm fonction)
+                        (jeq-vm vm (first args))
                         (incr-vm vm 'PC))) ; JEQ (egal)
                 ((equal fonction 'JNE) 
                     (progn 
-                        (jne-vm vm fonction)
+                        (jne-vm vm (first args))
                         (incr-vm vm 'PC))) ; JNE (Different)
                 ((equal fonction 'TEST) 
                     (progn 
-                        (test-vm vm fonction)
+                        (test-vm vm (first args))
                         (incr-vm vm 'PC))) ; TEST
                 ((equal fonction 'JTRUE) 
                     (progn 
-                        (jtrue-vm vm fonction)
+                        (jtrue-vm vm (first args))
                         (incr-vm vm 'PC))) ; JTRUE
                 ((equal fonction 'JFALSE) 
                     (progn 
-                        (jfalse-vm vm fonction)
+                        (jfalse-vm vm (first args))
                         (incr-vm vm 'PC))) ; JFALSE
                 ((equal fonction 'NOP) 
                     (progn 
@@ -722,13 +751,12 @@
                         (incr-vm vm 'PC))) ; NOP
                 ((equal fonction 'HALT) 
                     (progn 
-                        (halt-vm vm)
-                        (incr-vm vm 'PC))) ; HALT
+                        (halt-vm vm))) ; HALT
                 ((equal fonction 'APPLY)
                     (progn
                         (apply-vm vm (first args) (second args))
                         (incr-vm vm 'PC)))) ; APPLY
                 ))) ; Fin de la boucle principale
         ; Affiche le resultat de l'expression Lisp
-        (print (list "Le resultat de l'expression `" exprLisp "` est : " (get-register-value vm 'R0)))) 
+        (format t "Le resultat de l'expression Lisp est : ~s~%" (get-register-value vm 'R0)))
 ;; ######################################################## ;;
